@@ -1,0 +1,204 @@
+# depslib dependency file v1.0
+1396320027 source:c:\users\sam\documents\projects\github\sunstone\server\src\main.cpp
+	<SFML/System.hpp>
+	"Network.h"
+
+1385004349 c:\sfml-2.1\include\sfml\system.hpp
+	<SFML/Config.hpp>
+	<SFML/System/Clock.hpp>
+	<SFML/System/Err.hpp>
+	<SFML/System/InputStream.hpp>
+	<SFML/System/Lock.hpp>
+	<SFML/System/Mutex.hpp>
+	<SFML/System/Sleep.hpp>
+	<SFML/System/String.hpp>
+	<SFML/System/Thread.hpp>
+	<SFML/System/ThreadLocal.hpp>
+	<SFML/System/ThreadLocalPtr.hpp>
+	<SFML/System/Utf.hpp>
+	<SFML/System/Vector2.hpp>
+	<SFML/System/Vector3.hpp>
+
+1385004349 c:\sfml-2.1\include\sfml\config.hpp
+
+1385004350 c:\sfml-2.1\include\sfml\system\clock.hpp
+	<SFML/System/Export.hpp>
+	<SFML/System/Time.hpp>
+
+1385004350 c:\sfml-2.1\include\sfml\system\export.hpp
+	<SFML/Config.hpp>
+
+1385004350 c:\sfml-2.1\include\sfml\system\time.hpp
+	<SFML/System/Export.hpp>
+
+1385004350 c:\sfml-2.1\include\sfml\system\err.hpp
+	<SFML/System/Export.hpp>
+	<ostream>
+
+1385004350 c:\sfml-2.1\include\sfml\system\inputstream.hpp
+	<SFML/Config.hpp>
+
+1385004350 c:\sfml-2.1\include\sfml\system\lock.hpp
+	<SFML/System/Export.hpp>
+	<SFML/System/NonCopyable.hpp>
+
+1385004350 c:\sfml-2.1\include\sfml\system\noncopyable.hpp
+	<SFML/System/Export.hpp>
+
+1385004350 c:\sfml-2.1\include\sfml\system\mutex.hpp
+	<SFML/System/Export.hpp>
+	<SFML/System/NonCopyable.hpp>
+
+1385004350 c:\sfml-2.1\include\sfml\system\sleep.hpp
+	<SFML/System/Export.hpp>
+	<SFML/System/Time.hpp>
+
+1385004350 c:\sfml-2.1\include\sfml\system\string.hpp
+	<SFML/System/Export.hpp>
+	<locale>
+	<string>
+
+1385004350 c:\sfml-2.1\include\sfml\system\thread.hpp
+	<SFML/System/Export.hpp>
+	<SFML/System/NonCopyable.hpp>
+	<cstdlib>
+	<SFML/System/Thread.inl>
+
+1385004350 c:\sfml-2.1\include\sfml\system\thread.inl
+
+1385004350 c:\sfml-2.1\include\sfml\system\threadlocal.hpp
+	<SFML/System/Export.hpp>
+	<SFML/System/NonCopyable.hpp>
+	<cstdlib>
+
+1385004350 c:\sfml-2.1\include\sfml\system\threadlocalptr.hpp
+	<SFML/System/ThreadLocal.hpp>
+	<SFML/System/ThreadLocalPtr.inl>
+
+1385004350 c:\sfml-2.1\include\sfml\system\threadlocalptr.inl
+
+1385004350 c:\sfml-2.1\include\sfml\system\utf.hpp
+	<SFML/Config.hpp>
+	<algorithm>
+	<locale>
+	<string>
+	<cstdlib>
+	<SFML/System/Utf.inl>
+
+1385004350 c:\sfml-2.1\include\sfml\system\utf.inl
+
+1385004350 c:\sfml-2.1\include\sfml\system\vector2.hpp
+	<SFML/System/Vector2.inl>
+
+1385004350 c:\sfml-2.1\include\sfml\system\vector2.inl
+
+1385004350 c:\sfml-2.1\include\sfml\system\vector3.hpp
+	<SFML/System/Vector3.inl>
+
+1385004350 c:\sfml-2.1\include\sfml\system\vector3.inl
+
+1396320027 source:c:\users\sam\documents\projects\github\sunstone\server\src\client.cpp
+	"Client.h"
+
+1396320027 c:\users\sam\documents\projects\github\sunstone\server\include\client.h
+	<SFML/Network.hpp>
+	<string>
+
+1385004349 c:\sfml-2.1\include\sfml\network.hpp
+	<SFML/System.hpp>
+	<SFML/Network/Ftp.hpp>
+	<SFML/Network/Http.hpp>
+	<SFML/Network/IpAddress.hpp>
+	<SFML/Network/Packet.hpp>
+	<SFML/Network/SocketSelector.hpp>
+	<SFML/Network/TcpListener.hpp>
+	<SFML/Network/TcpSocket.hpp>
+	<SFML/Network/UdpSocket.hpp>
+
+1385004350 c:\sfml-2.1\include\sfml\network\ftp.hpp
+	<SFML/Network/Export.hpp>
+	<SFML/Network/TcpSocket.hpp>
+	<SFML/System/NonCopyable.hpp>
+	<SFML/System/Time.hpp>
+	<string>
+	<vector>
+
+1385004350 c:\sfml-2.1\include\sfml\network\export.hpp
+	<SFML/Config.hpp>
+
+1385004350 c:\sfml-2.1\include\sfml\network\tcpsocket.hpp
+	<SFML/Network/Export.hpp>
+	<SFML/Network/Socket.hpp>
+	<SFML/System/Time.hpp>
+
+1385004350 c:\sfml-2.1\include\sfml\network\socket.hpp
+	<SFML/Network/Export.hpp>
+	<SFML/Network/SocketHandle.hpp>
+	<SFML/System/NonCopyable.hpp>
+	<vector>
+
+1385004350 c:\sfml-2.1\include\sfml\network\sockethandle.hpp
+	<SFML/Config.hpp>
+	<basetsd.h>
+
+1385004350 c:\sfml-2.1\include\sfml\network\http.hpp
+	<SFML/Network/Export.hpp>
+	<SFML/Network/IpAddress.hpp>
+	<SFML/Network/TcpSocket.hpp>
+	<SFML/System/NonCopyable.hpp>
+	<SFML/System/Time.hpp>
+	<map>
+	<string>
+
+1385004350 c:\sfml-2.1\include\sfml\network\ipaddress.hpp
+	<SFML/Network/Export.hpp>
+	<SFML/System/Time.hpp>
+	<istream>
+	<ostream>
+	<string>
+
+1385004350 c:\sfml-2.1\include\sfml\network\packet.hpp
+	<SFML/Network/Export.hpp>
+	<string>
+	<vector>
+
+1385004350 c:\sfml-2.1\include\sfml\network\socketselector.hpp
+	<SFML/Network/Export.hpp>
+	<SFML/System/Time.hpp>
+
+1385004350 c:\sfml-2.1\include\sfml\network\tcplistener.hpp
+	<SFML/Network/Export.hpp>
+	<SFML/Network/Socket.hpp>
+
+1385004350 c:\sfml-2.1\include\sfml\network\udpsocket.hpp
+	<SFML/Network/Export.hpp>
+	<SFML/Network/Socket.hpp>
+	<vector>
+
+1396330926 source:c:\users\sam\documents\projects\github\sunstone\server\src\network.cpp
+	"Network.h"
+
+1396328998 c:\users\sam\documents\projects\github\sunstone\server\include\network.h
+	<SFML/Network.hpp>
+	<string>
+	<map>
+	<iostream>
+	<sstream>
+	"Client.h"
+
+1396328998 source:c:\users\sam\documents\projects\github\sunstone\server\src\dungeon.cpp
+	"Dungeon.h"
+
+1396328998 c:\users\sam\documents\projects\github\sunstone\server\include\dungeon.h
+	<vector>
+	<iostream>
+	<cstdlib>
+	<time.h>
+	<stdlib.h>
+	"Room.h"
+
+1396328998 c:\users\sam\documents\projects\github\sunstone\server\include\room.h
+
+1396328998 source:c:\users\sam\documents\projects\github\sunstone\server\src\room.cpp
+	"Room.h"
+
