@@ -171,12 +171,12 @@ bool Dungeon::checkSquare(int x, int y, int width, int height, int value) {
     // check to see if a rectangle contains only a given value
     for(int _x = x; _x < x + width; _x++) {
         if(_x >= grid.size()) {
-            break;
+            return false;
         }
 
         for(int _y = y; _y < y + height; _y++) {
             if(_y >= grid[0].size()) {
-                break;
+                return false;
             }
 
             if(grid[_x][_y] != value) {
