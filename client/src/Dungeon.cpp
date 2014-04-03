@@ -6,8 +6,8 @@ Dungeon::Dungeon(int width, int height, int minRoom, int maxRoom, int seed) {
 
     lastRandomNumber = seed;
 
-    rooms.reserve(1024);
-    doors.reserve(1024);
+    rooms.reserve(128);
+    doors.reserve(128);
     roomsLength = 0;
 
     grid = std::vector< std::vector<int> >(width);
@@ -16,8 +16,13 @@ Dungeon::Dungeon(int width, int height, int minRoom, int maxRoom, int seed) {
     }
 }
 
-int Dungeon::getMid(int x, int y) {
-    return grid[x][y];
+int Dungeon::getRandomNumber() {
+    lastRandomNumber = abs(130021*lastRandomNumber+94291)%1543;
+    return lastRandomNumber;
+}
+
+int Dungeon::randInt(int min, int max) {
+    return min + getRandomNumber() % (max - min);
 }
 
 void Dungeon::create() {
@@ -57,11 +62,75 @@ void Dungeon::create() {
 
     carveSquare((int)grid.size()/2, (int)grid[0].size()/2, 8, 8, 3);       // overwrite the starting and final rooms with "3"
     carveSquare(rooms[finalRoom].x(), rooms[finalRoom].y(), rooms[finalRoom].width(), rooms[finalRoom].height(), 3);
-
-    //printGrid();
 }
 
+int Dungeon::getMid(int x, int y) {
+    return grid[x][y];
+}
 
+bool Dungeon::getFloor(int x, int y) {
+    return grid[x][y] == 0;
+}
+
+bool Dungeon::getWall(int x, int y) {
+    return grid[x][y] == 1;
+}
+
+std::vector< std::vector<bool> > Dungeon::getBitmap(int value) {
+    std::vector< std::vector<bool> > r = std::vector< std::vector<bool> >(grid.size());
+    for(int i=0; i<r.size(); i++){
+        r[i] = std::vector<bool>(grid[0].size());
+    }
+    for(int x=0; x<grid.size(); x++) {
+        for(int y=0; y<grid[0].size(); y++) {
+            r[x][y] = grid[x][y] == value;
+        }
+    }
+    return r;
+}
+
+std::vector< std::vector<bool> > Dungeon::getWalls() {
+    return getBitmap(1);
+}
+
+std::vector< std::vector<bool> > Dungeon::getFloors() {
+    return getBitmap(0);
+}
+
+bool Dungeon::checkSquare(int x, int y, int width, int height, int value) {
+    // check to see if a rectangle contains only a given value
+    for(int _x = x; _x < x + width; _x++) {
+        if(_x >= grid.size()) {
+            return false;
+        }
+        
+        for(int _y = y; _y < y + height; _y++) {
+            if(_y >= grid[0].size()) {
+                return false;
+            }
+            
+            if(grid[_x][_y] != value) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+void Dungeon::carveSquare(int x, int y, int width, int height, int value) {
+    // set a rectangle to a given value
+	for(int _y=y; _y<y+height; _y++) {
+		if(_y>=grid[0].size()) {
+            break;
+		}
+		for(int _x=x; _x<x+width; _x++) {
+			if(_x>=grid.size()) {
+				break;
+			}
+            grid[_x][_y] = value;
+		}
+	}
+}
 
 bool Dungeon::addBranch(Room room) { // try to add a random room to the input
     int width = minRoomSize + getRandomNumber() % (maxRoomSize - minRoomSize);
@@ -167,41 +236,6 @@ bool Dungeon::addBranch(Room room) { // try to add a random room to the input
     return false;
 }
 
-bool Dungeon::checkSquare(int x, int y, int width, int height, int value) {
-    // check to see if a rectangle contains only a given value
-    for(int _x = x; _x < x + width; _x++) {
-        if(_x >= grid.size()) {
-            return false;
-        }
-
-        for(int _y = y; _y < y + height; _y++) {
-            if(_y >= grid[0].size()) {
-                return false;
-            }
-
-            if(grid[_x][_y] != value) {
-                return false;
-            }
-        }
-    }
-    return true;
-}
-
-void Dungeon::carveSquare(int x, int y, int width, int height, int value) {
-    // set a rectangle to a given value
-	for(int _y=y; _y<y+height; _y++) {
-		if(_y>=grid[0].size()) {
-            break;
-		}
-		for(int _x=x; _x<x+width; _x++) {
-			if(_x>=grid.size()) {
-				break;
-			}
-            grid[_x][_y] = value;
-		}
-	}
-}
-
 void Dungeon::printLine(int y) {
     for(int i=0; i<grid.size(); i++) {
         if(grid[i][y]==0) {
@@ -225,13 +259,4 @@ void Dungeon::printGrid() {
         printLine(i);
         std::cout << std::endl;
     }
-}
-
-int Dungeon::randInt(int min, int max) {
-    return min + getRandomNumber() % (max - min);
-}
-
-int Dungeon::getRandomNumber() {
-    lastRandomNumber = (130021*lastRandomNumber+94291)%1543;
-    return lastRandomNumber;
 }
