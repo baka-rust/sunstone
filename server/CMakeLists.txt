@@ -16,7 +16,7 @@
 cmake_minimum_required (VERSION 2.6)
 
 # Configure project
-set(PROJECT_NAME "sunstone-client")
+set(PROJECT_NAME "sunstone-server")
 project (${PROJECT_NAME})
 
 # Build target
@@ -100,15 +100,6 @@ endif()
 
 # Detect and add SFML
 # <https://github.com/LaurentGomila/SFML/wiki/Tutorial%3A-Build-your-SFML-project-with-CMake>
-find_package(SFML 2 REQUIRED system window graphics network audio)
+find_package(SFML 2 REQUIRED system window network)
 include_directories(${SFML_INCLUDE_DIR})
 target_link_libraries(${EXECUTABLE_NAME} ${SFML_LIBRARIES})
-
-##
-# Add non-code resources
-##
-
-# Add /resources folder
-add_custom_command(TARGET ${EXECUTABLE_NAME} POST_BUILD
-					COMMAND ${CMAKE_COMMAND} -E copy_directory
-					${CMAKE_SOURCE_DIR}/resources $<TARGET_FILE_DIR:${EXECUTABLE_NAME}>/resources)
