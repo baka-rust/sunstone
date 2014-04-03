@@ -2,7 +2,7 @@
 
 Terrain::Terrain() {
 
-    tileMap.loadFromFile("resources/tileMap.png");
+    tileMap.loadFromFile("resources/tilemap.png");
 
     int xMax = tileMap.getSize().x / 16;
     int yMax = tileMap.getSize().y / 16;
