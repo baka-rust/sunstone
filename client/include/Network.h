@@ -20,7 +20,7 @@ class Network {
     public:
 
         sf::IpAddress serverAddress = "127.0.0.1";  // give place to change this in game options
-        unsigned short serverPort = 666;
+        unsigned short serverPort = 6666;
         int playerID;
 
         Terrain *terrain;
