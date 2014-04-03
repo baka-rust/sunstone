@@ -16,7 +16,7 @@
 cmake_minimum_required (VERSION 2.6)
 
 # Configure project
-set(PROJECT_NAME "sunstone")
+set(PROJECT_NAME "sunstone-client")
 project (${PROJECT_NAME})
 
 # Build target
@@ -44,7 +44,7 @@ if(APPLE)
 endif()
 
 # Add required modules
-set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
+set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/../cmake" ${CMAKE_MODULE_PATH})
 
 ##
 # Grab the files to compile
