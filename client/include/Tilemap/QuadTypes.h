@@ -1,7 +1,7 @@
-#ifndef TILES_H
-#define TILES_H
+#ifndef QUADTYPES_H
+#define QUADTYPES_H
 
-static const int QUADS_PER_ROW = 128;
+static const int QUADS_PER_ROW = 64;
 
 // Plaintext tilelist:
 // use tl_, tr_, bl_, br_ prefixes
@@ -23,7 +23,7 @@ static const int QUADS_PER_ROW = 128;
 // * floor_dec_semi_vert
 // * floor_dec_semi_horiz
 
-enum Quad {
+enum QuadType {
     // These groupings are horribly arbitrary.
     
     // First row
@@ -113,4 +113,4 @@ enum Quad {
     br_floor_dec_semi_horiz
 };
 
-#endif // TILES_H
+#endif // QUADTYPES_H

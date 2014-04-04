@@ -3,15 +3,17 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "Tilemap/Tiles.h"
 #include "Tilemap/Tile.h"
 
 class Tilemap : public sf::Drawable, public sf::Transformable {
     public:
         Tilemap(sf::Texture texture, sf::Vector2i quadSize, int height, int width);
     
+        // see http://www.sfml-dev.org/tutorials/2.1/graphics-vertex-array.php
         addTile(Tile tile);
-        getTile(int x, int y);
+        getTile(unsigned int x, unsigned int y);
+    
+        virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
     
     private:
         sf::Texture _texture;

@@ -3,7 +3,7 @@
 
 #include <SFML/graphics.hpp>
 
-#include "Tilemap/Tiles.h"
+#include "Tilemap/QuadTypes.h"
 
 class Tile {
     public:
@@ -11,7 +11,7 @@ class Tile {
         sf::vector2i pos;
     
         // quad ID of every quad.
-        Quad quads[4];
+        QuadType quads[4];
 };
 
 #endif // TILE_H
