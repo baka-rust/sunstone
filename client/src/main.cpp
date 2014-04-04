@@ -8,7 +8,7 @@
 #include "Player.h"
 #include "Terrain.h"
 #include "Network.h"
-
+#include "GUI.h"
 bool focused = true;
 
 int main() {
@@ -36,6 +36,9 @@ int main() {
     network.terrain = &terrain;
     network.player = &player;
 
+    GUI gui(width, height);
+
+
     while(app.isOpen()) {
 
         while(app.pollEvent(event)) {
@@ -58,6 +61,7 @@ int main() {
         elapsedTime = clock.restart().asSeconds();
         player.update(elapsedTime);
         network.update(elapsedTime);
+        gui.updateGUI(elapsedTime, sf::Mouse::getPosition(app));
 
         camera.setCenter(player.x, player.y);
         app.setView(camera);
@@ -67,6 +71,7 @@ int main() {
         terrain.draw(camera.getCenter().x - 128, camera.getCenter().y - 80, &app);
         network.draw(&app);
         player.draw(&app);
+        gui.draw(&app);
 
         app.display();
     }

@@ -2,27 +2,28 @@
 #define GUI_H
 
 #include <SFML/Graphics.hpp>
-#include <iostream>
+#include <sstream>
 
 
 
 const int HEALTHBAR_Y = 10;
 
 struct GUIBar{
-	sf::Vector2f position;
-	sf::Vector2f size;
-	sf::RectangleShape barHandle;
-	int max; 
-	float curentValue;
+	int posx=0;
+	int posy=0;
+	sf::Sprite barHandle;
+	float max = 10;
+	float curentValue = 10;
 };
 
 struct GUICrosshair{
-	sf::Vector2f position;
 	sf::Sprite crosshair;
+	bool isRecoiling;
+
 };
 
 struct GUITextArea{
-	
+
 	bool display;
 	sf::Vector2f position;
 	sf::String message;
@@ -30,24 +31,50 @@ struct GUITextArea{
 	sf::Font font;
 	sf::Text text;
 	sf::RectangleShape background;
+	int startDisplayIndex = 0; // Position on string where message beings displaying
+
 };
+
+struct GUIConsumableMonitor{//Ammo Monitor
+    sf::Sprite monitor;
+    int index; //texture Index
+    int currentValue;
+    int maxValue;
+
+};
+
 
 class GUI {
 
 public:
-	
+
+    sf::RenderWindow* app;
+
 	int height, width;
 
 	GUIBar healthBar;
 	GUICrosshair crosshair;
 	GUITextArea tooltip;
+	GUITextArea messageArea;
+	GUIConsumableMonitor ammoBox;
 
-	GUI(int, int);
+    sf::Time recoilTime;
+
+	GUI(int w, int h);
 
 	 //overlay creations
-	void createTextArea(float, float, sf::Vector2i, sf::String);
+	void createTextArea(float w, float h, sf::Vector2i poisition, sf::String message);
+	void setToolTipInfo(sf::String messages);
 	void displayToolTip(bool bDisplay);
-	void setHealth(float);
+	void setHealth(int health);
+	void mouseRecoil();
+	void updateGUI(float elapsedTime, sf::Vector2i mousePosition);
+	void draw(sf::RenderWindow* app);
 
+private:
+/**
+     std::map<std::string, AnimationSequence*>ammoAnimations;
+    typedef std::map<std::string, AnimationSequence*>::iterator i_ammoAnimations;
+**/
 };
 #endif
