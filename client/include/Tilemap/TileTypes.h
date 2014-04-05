@@ -4,7 +4,7 @@
 static const int TILES_PER_ROW = 32;
 
 enum TileType {
-    floor,
+    ground,
     wall,
     door
 };

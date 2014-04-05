@@ -20,8 +20,8 @@ static const int QUADS_PER_ROW = 64;
 // * floor
 // * floor_dec_full_vert
 // * floor_dec_full_horiz
-// * floor_dec_semi_vert
-// * floor_dec_semi_horiz
+// * floor_dec_semi_in
+// * floor_dec_semi_out
 
 enum QuadType {
     // These groupings are horribly arbitrary.
@@ -63,11 +63,11 @@ enum QuadType {
     tl_floor_dec_full_horiz,
     tr_floor_dec_full_horiz,
     
-    tl_floor_dec_semi_vert,
-    tr_floor_dec_semi_vert,
+    tl_floor_dec_semi_in,
+    tr_floor_dec_semi_in,
     
-    tl_floor_hec_semi_horiz,
-    tr_floor_dec_semi_horiz
+    tl_floor_hec_semi_out,
+    tr_floor_dec_semi_out,
     
     // Second row
     bl_blank = 0 + QUADS_PER_ROW,
@@ -106,11 +106,11 @@ enum QuadType {
     bl_floor_dec_full_horiz,
     br_floor_dec_full_horiz,
     
-    bl_floor_dec_semi_vert,
-    br_floor_dec_semi_vert,
+    bl_floor_dec_semi_in,
+    br_floor_dec_semi_in,
     
-    bl_floor_hec_semi_horiz,
-    br_floor_dec_semi_horiz
+    bl_floor_hec_semi_out,
+    br_floor_dec_semi_out
 };
 
 #endif // QUADTYPES_H
