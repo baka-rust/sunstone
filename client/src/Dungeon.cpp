@@ -83,7 +83,7 @@ int Dungeon::createAttempt() {
     return roomsLength;
 }
 
-int Dungeon::getMid(int x, int y) {
+int Dungeon::getTile(int x, int y) {
     return grid[x][y];
 }
 

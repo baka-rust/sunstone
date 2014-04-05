@@ -30,7 +30,7 @@ void Terrain::generateFromSeed(int seed) {
 
     for(int y = 0; y < 128; y++) {
         for(int x = 0; x < 128; x++) {
-            if(dungeon->getMid(x, y) == 1) {
+            if(dungeon->getTile(x, y) == 1) {
                 bottom[y][x] = 0;
             }
             else {
@@ -41,7 +41,7 @@ void Terrain::generateFromSeed(int seed) {
 
     for(int y = 0; y < 128; y++) {
         for(int x = 0; x < 128; x++) {
-            if(dungeon->getMid(x, y) == 0 || dungeon->getMid(x, y) == 2 || dungeon->getMid(x, y) == 3) {
+            if(dungeon->getTile(x, y) == 0 || dungeon->getTile(x, y) == 2 || dungeon->getTile(x, y) == 3) {
                 mid[y][x] = 0;
             }
             else {

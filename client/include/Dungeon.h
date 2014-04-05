@@ -21,7 +21,7 @@ class Dungeon {
 
         Dungeon(int width, int height, int minRoomSize, int maxRoomSize, int seed);
         void create();
-        int getMid(int x, int y);
+        int getTile(int x, int y);
         bool getFloor(int x, int y);
         bool getWall(int x, int y);
         int getRoom(int x, int y);
