@@ -29,8 +29,8 @@ class Dungeon {
         std::vector< std::vector<bool> > getWalls();
         std::vector< std::vector<bool> > getFloors();
         std::vector< std::vector<int> > getPathMap(int x, int y);
-        int width(){return grid.size();};
-        int height(){return grid[0].size();};
+        int width(){return (int)grid.size();};
+        int height(){return (int)grid[0].size();};
 
     private:
 
@@ -42,10 +42,11 @@ class Dungeon {
         int maxRoomSize;
         int lastRandomNumber;
 
-    
+        int createAttempt();
         void carveSquare(int x, int y, int width, int height, int value);
         bool checkSquare(int x, int y, int width, int height, int value);
         int getRandomNumber();
+        void decorateRoom(Room room);
         int randInt(int min, int max);
         bool addBranch(Room r);
         void printLine(int y);

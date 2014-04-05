@@ -26,13 +26,22 @@ int Dungeon::randInt(int min, int max) {
     return min + getRandomNumber() % (max - min);
 }
 
-void Dungeon::create() {
+void Dungeon::create(){
+    int n = 0;
+    while(n<3){
+        lastRandomNumber++;
+        n = createAttempt();
+    }
+}
+
+int Dungeon::createAttempt() {
     for(int x=0; x<grid.size(); x++) {   // set grid to all walls
         for(int y=0; y<grid[0].size(); y++) {
             grid[x][y] = 1;
         }
     }
     
+    roomsLength = 0;
     carveSquare((int)grid.size()/2, (int)grid[0].size()/2, 8, 8, 0);       // carve original room
     rooms[0] = Room((int)grid.size()/2, (int)grid[0].size()/2, 8, 8);         // and add it to list of rooms
     roomsLength++;
@@ -60,9 +69,15 @@ void Dungeon::create() {
             }
         }
     }
-
-    carveSquare((int)grid.size()/2, (int)grid[0].size()/2, 8, 8, 3);       // overwrite the starting and final rooms with "3"
-    carveSquare(rooms[finalRoom].x(), rooms[finalRoom].y(), rooms[finalRoom].width(), rooms[finalRoom].height(), 3);
+    
+    for(int i=0; i<roomsLength; i++){
+        decorateRoom(rooms[i]);
+    }
+    
+    carveSquare((int)grid.size()/2, (int)grid[0].size()/2, 8, 8, 0);       // overwrite the starting and final rooms with "3"
+    carveSquare(rooms[finalRoom].x(), rooms[finalRoom].y(), rooms[finalRoom].width(), rooms[finalRoom].height(), 0);
+    
+    return roomsLength;
 }
 
 int Dungeon::getMid(int x, int y) {
@@ -206,9 +221,53 @@ void Dungeon::carveSquare(int x, int y, int width, int height, int value) {
 	}
 }
 
+void Dungeon::decorateRoom(Room room){
+    int x;
+    int y;
+    if(randInt(0,3)==0){
+        x = randInt(room.x()+1, room.endX()-1);
+        y = randInt(room.y()+1, room.endY()-1);
+        grid[x][y] = 4;
+    }
+    
+    int j = 0;
+    int n = randInt(0,room.width()*room.height()/6);
+    x = randInt(room.x()+1, room.endX()-1);
+    y = randInt(room.y()+1, room.endY()-1);
+    for(int i=0; i<n; i++){
+        while(grid[x][y]!=0){
+            j++;
+            x = randInt(room.x()+1, room.endX()-1);
+            y = randInt(room.y()+1, room.endY()-1);
+            if(j>256){
+                return;
+            }
+        }
+        grid[x][y] = 1;
+    }
+    
+    n = randInt(3, 6);
+    x = randInt(room.x()+1, room.endX()-1);
+    y = randInt(room.y()+1, room.endY()-1);
+    j = 0;
+    for(int i=0; i<n; i++){
+        while(grid[x][y]!=0){
+            j++;
+            x = randInt(room.x()+1, room.endX()-1);
+            y = randInt(room.y()+1, room.endY()-1);
+            if(j>100){
+                return;
+            }
+        }
+        grid[x][y] = 5;
+    }
+
+}
+
 bool Dungeon::addBranch(Room room) { // try to add a random room to the input
     int width = minRoomSize + getRandomNumber() % (maxRoomSize - minRoomSize);
     int height = minRoomSize + getRandomNumber() % (maxRoomSize - minRoomSize);
+    int j = 0;
     if(getRandomNumber()%256 > 127) {
         if(getRandomNumber()%256>127) {
             // create square above 'room'
@@ -218,7 +277,11 @@ bool Dungeon::addBranch(Room room) { // try to add a random room to the input
             }
             int n = randInt(x, x + width - 1);  // door placement
             while(n < room.x() || n + 1 >= room.endX()) {
+                j++;
 				n = randInt(x,x+width-1);
+                if(j>256){
+                    return false;
+                }
             }
 
             carveSquare(x, room.y() - height - 2, width, height, 0);    // carve both
@@ -330,6 +393,12 @@ void Dungeon::printLine(int y) {
         else if(grid[i][y]==2) {
             std::cout << "[]";
             i++;
+        }
+        else if(grid[i][y]==4){
+            std::cout << "@";
+        }
+        else if(grid[i][y]==5){
+            std::cout << "^";
         }
         else {
             std::cout << "O";
