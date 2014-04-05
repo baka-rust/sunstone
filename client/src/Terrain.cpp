@@ -54,48 +54,78 @@ void Terrain::buildTilemaps() {
                 bool se = (y == 127 || x == 127 || dungeon->getMid(x + 1, y + 1) == 1);
                 bool sw = (y == 127 || x == 0   || dungeon->getMid(x - 1, y + 1) == 1);
                 
-                
-                
-               
                 // Top Left
-                if(n && w) {
-                    if(!sw && s) {
-                        quads.insert(quads.begin() + 0, tl_wall_right_horiz);
+                if(!s) {
+                    if(!w) {
+                        quads.insert(quads.begin() + 0, tl_wall_back_vert);
                     } else {
-                        if(!s) {
-                            quads.insert(quads.begin() + 0, tl_wall_back_horiz);
+                        quads.insert(quads.begin() + 0, tl_wall_back_horiz);
+                    }
+                } else {
+                    if(!n) {
+                        if(!w) {
+                            // TODO side to bottom
+                            quads.insert(quads.begin() + 0, tl_floor_dec_full_horiz);
                         } else {
-                            if(!nw) {
+                            quads.insert(quads.begin() + 0, tl_wall_bottom);
+                        }
+                    } else {
+                        if(!w) {
+                            quads.insert(quads.begin() + 0, tl_wall_right_vert);
+                        } else {
+                            if(!sw) {
+                                quads.insert(quads.begin() + 0, tl_wall_right_horiz);
+                            } else if(!nw) {
                                 // TODO bottom to side
-                                quads.insert(quads.begin() + 0, tl_floor_dec_full_vert);
+                                quads.insert(quads.begin() + 0, tl_floor_dec_full_horiz);
                             } else {
                                 quads.insert(quads.begin() + 0, tl_black);
                             }
                         }
                     }
-                } else {
-                    if(!s) {
-                        if(!w) {
-                            quads.insert(quads.begin() + 0, tl_wall_back_vert);
-                        } else {
-                            // !s && !w
-                            // TODO Duplicate/unused?
-                            quads.insert(quads.begin() + 0, tl_blank);
-//                            quads.insert(quads.begin() + 0, tl_wall_back_horiz);
-                        }
-                    } else {
-                        if(!n) {
-                            if(!w) {
-                                // TODO side to bottom
-                                quads.insert(quads.begin() + 0, tl_floor_dec_full_horiz);
-                            } else {
-                                quads.insert(quads.begin() + 0, tl_wall_bottom);
-                            }
-                        } else {
-                            quads.insert(quads.begin() + 0, tl_wall_right_vert);
-                        }
-                    }
                 }
+                
+                
+                // Old
+                // Top Left
+//                if(n && w) {
+//                    if(!sw && s) {
+//                        quads.insert(quads.begin() + 0, tl_wall_right_horiz);
+//                    } else {
+//                        if(!s) {
+//                            quads.insert(quads.begin() + 0, tl_wall_back_horiz);
+//                        } else {
+//                            if(!nw) {
+//                                // TODO bottom to side
+//                                quads.insert(quads.begin() + 0, tl_floor_dec_full_vert);
+//                            } else {
+//                                quads.insert(quads.begin() + 0, tl_black);
+//                            }
+//                        }
+//                    }
+//                } else {
+//                    if(!s) {
+//                        if(!w) {
+//                            quads.insert(quads.begin() + 0, tl_wall_back_vert);
+//                        } else {
+//                            // !s && !w
+//                            // TODO Duplicate/unused?
+//                            quads.insert(quads.begin() + 0, tl_blank);
+//                            // quads.insert(quads.begin() + 0, tl_wall_back_horiz);
+//                        }
+//                    } else {
+//                        if(!n) {
+//                            if(!w) {
+//                                // TODO side to bottom
+//                                quads.insert(quads.begin() + 0, tl_floor_dec_full_horiz);
+//                            } else {
+//                                quads.insert(quads.begin() + 0, tl_wall_bottom);
+//                            }
+//                        } else {
+//                            quads.insert(quads.begin() + 0, tl_wall_right_vert);
+//                        }
+//                    }
+//                }
                 
                 // Top right
                 if(n && e) {

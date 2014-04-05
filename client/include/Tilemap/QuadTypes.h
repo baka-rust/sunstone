@@ -109,7 +109,7 @@ enum QuadType {
     bl_floor_dec_semi_in,
     br_floor_dec_semi_in,
     
-    bl_floor_hec_semi_out,
+    bl_floor_dec_semi_out,
     br_floor_dec_semi_out
 };
 
