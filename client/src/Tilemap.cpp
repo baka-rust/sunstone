@@ -50,7 +50,6 @@ void Tilemap::setTile(Tile tile) {
         }
         
 		// UV map the tile
-        std::cout << (_texture.getSize().x / _quadSize) << std::endl;
 		unsigned int u = tile.quads[i] % (_texture.getSize().x / _quadSize);
 		unsigned int v = tile.quads[i] / (_texture.getSize().x / _quadSize);
         
@@ -58,7 +57,6 @@ void Tilemap::setTile(Tile tile) {
 		quad[i * 4 + 1].position = sf::Vector2f((fx + 1) * _quadSize, (fy + 0) * _quadSize);
 		quad[i * 4 + 2].position = sf::Vector2f((fx + 1) * _quadSize, (fy + 1) * _quadSize);
 		quad[i * 4 + 3].position = sf::Vector2f((fx + 0) * _quadSize, (fy + 1) * _quadSize);
-        
         
 		quad[i * 4 + 0].texCoords = sf::Vector2f((u + 0) * _quadSize, (v + 0) * _quadSize);
 		quad[i * 4 + 1].texCoords = sf::Vector2f((u + 1) * _quadSize, (v + 0) * _quadSize);

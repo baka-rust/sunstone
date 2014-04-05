@@ -30,10 +30,7 @@ void Terrain::generateFromSeed(int seed) {
     
     buildTilemaps();
     
-//    complex->setOrigin(64 * 16, 64 * 16);
     complex->setPosition(512, 512);
-//    complex->setScale(2, 2);
-    std::cout << complex->getPosition().x << std::endl;
     std::cout << "Built tilemaps!" << std::endl;
 }
 
@@ -44,15 +41,120 @@ void Terrain::buildTilemaps() {
             quads.reserve(4);
             
             if(dungeon->getMid(x, y) == 1) {
-                quads.insert(quads.begin() + 0, tl_wall_back_horiz);
-                quads.insert(quads.begin() + 1, tr_wall_back_horiz);
-                quads.insert(quads.begin() + 2, bl_wall_back_horiz);
-                quads.insert(quads.begin() + 3, br_wall_back_horiz);
+                // draw walls
+                
+                // check around wall to see what's wall and what's not.
+                bool n  = (y == 0 || dungeon->getMid(x, y - 1) == 1);
+                bool e  = (x == 127 || dungeon->getMid(x + 1, y) == 1);
+                bool s  = (y == 127 || dungeon->getMid(x, y + 1) == 1);
+                bool w  = (x == 0 || dungeon->getMid(x - 1, y) == 1);
+                
+                bool ne = (y == 0   || x == 127 || dungeon->getMid(x + 1, y - 1) == 1);
+                bool nw = (y == 0   || x == 0   || dungeon->getMid(x - 1, y - 1) == 1);
+                bool se = (y == 127 || x == 127 || dungeon->getMid(x + 1, y + 1) == 1);
+                bool sw = (y == 127 || x == 0   || dungeon->getMid(x - 1, y + 1) == 1);
+                
+                
+                
+               
+                // Top Left
+                if(n && w) {
+                    if(!sw && s) {
+                        quads.insert(quads.begin() + 0, tl_wall_right_horiz);
+                    } else {
+                        if(!s) {
+                            quads.insert(quads.begin() + 0, tl_wall_back_horiz);
+                        } else {
+                            if(!nw) {
+                                // TODO bottom to side
+                                quads.insert(quads.begin() + 0, tl_floor_dec_full_vert);
+                            } else {
+                                quads.insert(quads.begin() + 0, tl_black);
+                            }
+                        }
+                    }
+                } else {
+                    if(!s) {
+                        if(!w) {
+                            quads.insert(quads.begin() + 0, tl_wall_back_vert);
+                        } else {
+                            // !s && !w
+                            // TODO Duplicate/unused?
+                            quads.insert(quads.begin() + 0, tl_blank);
+//                            quads.insert(quads.begin() + 0, tl_wall_back_horiz);
+                        }
+                    } else {
+                        if(!n) {
+                            if(!w) {
+                                // TODO side to bottom
+                                quads.insert(quads.begin() + 0, tl_floor_dec_full_horiz);
+                            } else {
+                                quads.insert(quads.begin() + 0, tl_wall_bottom);
+                            }
+                        } else {
+                            quads.insert(quads.begin() + 0, tl_wall_right_vert);
+                        }
+                    }
+                }
+                
+                // Top right
+                if(n && e) {
+                    if(!se && s) {
+                        quads.insert(quads.begin() + 1, tr_wall_left_horiz);
+                    } else {
+                        quads.insert(quads.begin() + 1, tr_black);
+                    }
+                } else {
+                    if(!s) {
+                        if(!e) {
+                            quads.insert(quads.begin() + 1, tr_wall_back_vert);
+                        } else {
+                            quads.insert(quads.begin() + 1, tr_wall_back_horiz);
+                        }
+                    } else {
+                        if(!n) {
+                            quads.insert(quads.begin() + 1, tr_wall_bottom);
+                        } else {
+                            quads.insert(quads.begin() + 1, tr_wall_left_vert);
+                        }
+                    }
+                }
+                
+                // Bottom left
+                if(s && w) {
+                    if(!sw && n) {
+                        quads.insert(quads.begin() + 2, bl_wall_right_vert);
+                    } else {
+                        quads.insert(quads.begin() + 2, bl_black);
+                    }
+                } else {
+                    if(!s) {
+                        quads.insert(quads.begin() + 2, bl_wall_back_horiz);
+                    } else {
+                        quads.insert(quads.begin() + 2, bl_wall_right_vert);
+                    }
+                }
+                
+                if(s && e) {
+                    quads.insert(quads.begin() + 3, br_black);
+                } else {
+                    if(!s) {
+                        quads.insert(quads.begin() + 3, br_wall_back_horiz);
+                    } else {
+                        quads.insert(quads.begin() + 3, br_wall_left_vert);
+                    }
+                }
             } else if(dungeon->getMid(x, y) == 2){
-                quads.insert(quads.begin() + 0, tl_floor_dec_semi_in);
-                quads.insert(quads.begin() + 1, tr_floor_dec_semi_in);
-                quads.insert(quads.begin() + 2, bl_floor_dec_semi_in);
-                quads.insert(quads.begin() + 3, br_floor_dec_semi_in);
+                // TODO doors
+                quads.insert(quads.begin() + 0, tl_floor);
+                quads.insert(quads.begin() + 1, tr_floor);
+                quads.insert(quads.begin() + 2, bl_floor);
+                quads.insert(quads.begin() + 3, br_floor);
+                
+//                quads.insert(quads.begin() + 0, tl_floor_dec_semi_in);
+//                quads.insert(quads.begin() + 1, tr_floor_dec_semi_in);
+//                quads.insert(quads.begin() + 2, bl_floor_dec_semi_in);
+//                quads.insert(quads.begin() + 3, br_floor_dec_semi_in);
             } else {
                 quads.insert(quads.begin() + 0, tl_floor);
                 quads.insert(quads.begin() + 1, tr_floor);

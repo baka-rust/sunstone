@@ -27,7 +27,7 @@ int main() {
     app.setVerticalSyncEnabled(true);
     app.setView(camera);
 
-    Player player(64, 64, "down");
+    Player player(75, 57, "down");
     Terrain terrain;
     Network network;
 
@@ -62,7 +62,7 @@ int main() {
         camera.setCenter(player.x, player.y);
         app.setView(camera);
 
-        app.clear(sf::Color::Black);
+        app.clear(sf::Color::Cyan);
 
         terrain.draw(camera.getCenter().x - 128, camera.getCenter().y - 80, &app);
         network.draw(&app);
