@@ -1,4 +1,5 @@
 #include "Dungeon.h"
+#include <queue>
 
 Dungeon::Dungeon(int width, int height, int minRoom, int maxRoom, int seed) {
     minRoomSize = minRoom;
@@ -31,7 +32,7 @@ void Dungeon::create() {
             grid[x][y] = 1;
         }
     }
-
+    
     carveSquare((int)grid.size()/2, (int)grid[0].size()/2, 8, 8, 0);       // carve original room
     rooms[0] = Room((int)grid.size()/2, (int)grid[0].size()/2, 8, 8);         // and add it to list of rooms
     roomsLength++;
@@ -43,7 +44,7 @@ void Dungeon::create() {
             if(j > 100) {
                 break;
             }
-        }
+        } 
     }
 
     int finalRoom = roomsLength - 1;
@@ -74,6 +75,79 @@ bool Dungeon::getFloor(int x, int y) {
 
 bool Dungeon::getWall(int x, int y) {
     return grid[x][y] == 1;
+}
+
+int Dungeon::getRoom(int x, int y){
+    int i;
+    for(i=0; i<rooms.size(); i++){
+        if(rooms[i].inRoom(x, y)){
+            return i;
+        }
+    }
+    std::cout << "nope, not in a room";
+    return -1;
+}
+
+std::vector< std::vector<int> > Dungeon::getPathMap(int x, int y){
+    int rm = getRoom(x,y);
+    if(rm == -1){
+        throw "Error!  Trying to pathfind outside of the dungeon";
+        return std::vector< std::vector<int> > (0);
+    }
+    Room room = rooms[rm];
+    std::vector< std::vector<int> > r(room.width()+2);
+    r[0] = std::vector<int>(room.height()+2);
+    for(int i=0; i<r[0].size(); i++){
+        r[0][i] = 999; // wall;
+    }
+    for(int i=1; i<r.size()-1; i++){
+        r[i] = std::vector<int>(room.height()+2);
+        r[i][0] = 999; // wall
+        r[i][r[0].size()-1] = 999; // wall
+        for(int j=1; j<r[0].size()-1; j++){
+            r[i][j] = -1;
+        }
+    }
+    r[r.size()-1] = std::vector<int>(room.height()+2);
+    for(int i=0; i<r[r.size()-1].size(); i++){
+        r[0][i] = 999; // wall;
+    }
+    
+    // TODO: add doors HERE
+    
+    std::queue<int> queue;
+    queue.push(x);
+    queue.push(y);
+
+    int nx;
+    int ny;
+    while(queue.size() != 0){
+        nx = queue.front();
+        queue.pop();
+        ny = queue.front();
+        queue.pop();
+        if(nx>0 && r[nx-1][ny]==-1){
+            r[nx-1][ny] = r[nx][ny]+1;
+            queue.push(nx-1);
+            queue.push(ny);
+        }
+        if(nx<room.width()-1 && r[nx+1][ny]==-1){
+            r[nx-1][ny] = r[nx][ny]+1;
+            queue.push(nx+1);
+            queue.push(ny);
+        }
+        if(ny>0 && r[nx][ny-1]==-1){
+            r[nx][ny-1] = r[nx][ny]+1;
+            queue.push(nx);
+            queue.push(ny-1);
+        }
+        if(ny>room.height()-1 && r[nx][ny+1]==-1){
+            r[nx][ny+1] = r[nx][ny]+1;
+            queue.push(nx);
+            queue.push(ny+1);
+        }
+    }
+    return r;
 }
 
 std::vector< std::vector<bool> > Dungeon::getBitmap(int value) {
@@ -234,6 +308,15 @@ bool Dungeon::addBranch(Room room) { // try to add a random room to the input
         }
     }
     return false;
+}
+
+void printDoubleIntVector(std::vector< std::vector<int> >r){
+    for(int i=0; i<r[0].size(); i++){
+        for(int j=0; j<r.size(); j++){
+            std::cout << r[j][i];
+        }
+        std::cout << "\n";
+    }
 }
 
 void Dungeon::printLine(int y) {

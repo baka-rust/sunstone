@@ -12,7 +12,7 @@
 bool focused = true;
 
 int main() {
-
+    
     int scale = 4;
     int width = 256;
     int height = 160;
