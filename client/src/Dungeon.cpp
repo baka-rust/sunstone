@@ -32,6 +32,7 @@ void Dungeon::create(){
         lastRandomNumber++;
         n = createAttempt();
     }
+    printGrid();
 }
 
 int Dungeon::createAttempt() {
@@ -74,7 +75,9 @@ int Dungeon::createAttempt() {
         decorateRoom(rooms[i]);
     }
     
-    carveSquare((int)grid.size()/2, (int)grid[0].size()/2, 8, 8, 0);       // overwrite the starting and final rooms with "3"
+
+    
+    carveSquare((int)grid.size()/2, (int)grid[0].size()/2, 8, 8, 0);       // overwrite the starting and final rooms
     carveSquare(rooms[finalRoom].x(), rooms[finalRoom].y(), rooms[finalRoom].width(), rooms[finalRoom].height(), 0);
     
     return roomsLength;
@@ -94,12 +97,11 @@ bool Dungeon::getWall(int x, int y) {
 
 int Dungeon::getRoom(int x, int y){
     int i;
-    for(i=0; i<rooms.size(); i++){
+    for(i=0; i<roomsLength; i++){
         if(rooms[i].inRoom(x, y)){
             return i;
         }
     }
-    std::cout << "nope, not in a room";
     return -1;
 }
 
@@ -110,29 +112,24 @@ std::vector< std::vector<int> > Dungeon::getPathMap(int x, int y){
         return std::vector< std::vector<int> > (0);
     }
     Room room = rooms[rm];
-    std::vector< std::vector<int> > r(room.width()+2);
-    r[0] = std::vector<int>(room.height()+2);
-    for(int i=0; i<r[0].size(); i++){
-        r[0][i] = 999; // wall;
-    }
-    for(int i=1; i<r.size()-1; i++){
-        r[i] = std::vector<int>(room.height()+2);
-        r[i][0] = 999; // wall
-        r[i][r[0].size()-1] = 999; // wall
-        for(int j=1; j<r[0].size()-1; j++){
+    
+    int width = room.width()+2;
+    int height = room.height()+2;
+    std::vector< std::vector<int> > r(width);
+
+    for(int i=0; i<width-1; i++){
+        r[i] = std::vector<int>(height);
+        for(int j=0; j<width; j++){
             r[i][j] = -1;
         }
-    }
-    r[r.size()-1] = std::vector<int>(room.height()+2);
-    for(int i=0; i<r[r.size()-1].size(); i++){
-        r[0][i] = 999; // wall;
     }
     
     // TODO: add doors HERE
     
     std::queue<int> queue;
-    queue.push(x);
-    queue.push(y);
+    r[x-room.x()][y-room.y()] = 0;
+    queue.push(x-room.x());
+    queue.push(y-room.y());
 
     int nx;
     int ny;
@@ -141,25 +138,33 @@ std::vector< std::vector<int> > Dungeon::getPathMap(int x, int y){
         queue.pop();
         ny = queue.front();
         queue.pop();
-        if(nx>0 && r[nx-1][ny]==-1){
-            r[nx-1][ny] = r[nx][ny]+1;
-            queue.push(nx-1);
-            queue.push(ny);
+        if(nx>0){
+            if(r[nx-1][ny]==-1){
+                r[nx-1][ny] = r[nx][ny]+1;
+                queue.push(nx-1);
+                queue.push(ny);
+            }
         }
-        if(nx<room.width()-1 && r[nx+1][ny]==-1){
-            r[nx-1][ny] = r[nx][ny]+1;
-            queue.push(nx+1);
-            queue.push(ny);
+        if(nx<room.width()-1){
+            if(r[nx+1][ny]==-1){
+                r[nx+1][ny] = r[nx][ny]+1;
+                queue.push(nx+1);
+                queue.push(ny);
+            }
         }
-        if(ny>0 && r[nx][ny-1]==-1){
-            r[nx][ny-1] = r[nx][ny]+1;
-            queue.push(nx);
-            queue.push(ny-1);
+        if(ny>0){
+            if(r[nx][ny-1]==-1){
+                r[nx][ny-1] = r[nx][ny]+1;
+                queue.push(nx);
+                queue.push(ny-1);
+            }
         }
-        if(ny>room.height()-1 && r[nx][ny+1]==-1){
-            r[nx][ny+1] = r[nx][ny]+1;
-            queue.push(nx);
-            queue.push(ny+1);
+        if(ny<room.height()-1){
+            if(r[nx][ny+1]==-1){
+                r[nx][ny+1] = r[nx][ny]+1;
+                queue.push(nx);
+                queue.push(ny+1);
+            }
         }
     }
     return r;
@@ -400,7 +405,10 @@ void Dungeon::printLine(int y) {
         else if(grid[i][y]==5){
             std::cout << "^";
         }
-        else {
+        else if(grid[i][y]>100){
+            std::cout << (grid[i][y]-100)%10;
+        }
+        else{
             std::cout << "O";
         }
     }
