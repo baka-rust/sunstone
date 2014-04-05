@@ -21,34 +21,54 @@ class Dungeon {
 
         Dungeon(int width, int height, int minRoomSize, int maxRoomSize, int seed);
         void create();
-        int getTile(int x, int y);
-        bool getFloor(int x, int y);
-        bool getWall(int x, int y);
+    
+        // what room is (x,y) in?  returns -1 if not in any rooms
         int getRoom(int x, int y);
+
+        // get bitmap of whether tile[i]==value
         std::vector< std::vector<bool> > getBitmap(int value);
+    
+        // get a bitmap of features
         std::vector< std::vector<bool> > getWalls();
         std::vector< std::vector<bool> > getFloors();
+    
+        // returns a 2D int-grid of distances from (x,y) in the room (x,y) is in
         std::vector< std::vector<int> > getPathMap(int x, int y);
-        int width(){return (int)grid.size();};
-        int height(){return (int)grid[0].size();};
+    
+        // accessors
+        int width() { return (int) grid.size(); };
+        int height() { return (int) grid[0].size(); };
+        int getTile(int x, int y);
+        bool isFloor(int x, int y);
+        bool isWall(int x, int y);
 
+    
     private:
 
         std::vector< std::vector<int> > grid;
         std::vector<Room> rooms;
         std::vector<Door> doors;
-        int roomsLength;
+    
+        int roomCount;
         int minRoomSize;
         int maxRoomSize;
+    
+        // used as seed for next random number
         int lastRandomNumber;
 
+    
+        // dungeon creation methods
         int createAttempt();
+        bool addBranch(Room r);
         void carveSquare(int x, int y, int width, int height, int value);
         bool checkSquare(int x, int y, int width, int height, int value);
-        int getRandomNumber();
         void decorateRoom(Room room);
+    
+        // random numbers
+        int getRandomNumber();
         int randInt(int min, int max);
-        bool addBranch(Room r);
+    
+        // printing (for debugging)
         void printLine(int y);
         void printGrid();
     
