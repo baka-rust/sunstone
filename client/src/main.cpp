@@ -13,9 +13,9 @@ bool focused = true;
 
 int main() {
 
-    int scale = 4;
-    int width = 256;
-    int height = 160;
+    int scale = 1;
+    int width = 256 * 4 / scale;
+    int height = 160 * 4 / scale;
 
     sf::Event event;
     sf::Clock clock;
@@ -27,7 +27,7 @@ int main() {
     app.setVerticalSyncEnabled(true);
     app.setView(camera);
 
-    Player player(75, 57, "down");
+    Player player(64, 64, "down");
     Terrain terrain;
     Network network;
 
@@ -56,6 +56,8 @@ int main() {
         }
 
         elapsedTime = clock.restart().asSeconds();
+        
+        terrain.update(elapsedTime);
         player.update(elapsedTime);
         network.update(elapsedTime);
 

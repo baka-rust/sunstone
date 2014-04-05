@@ -51,8 +51,14 @@ enum QuadType {
     tl_wall_right_horiz,
     tr_wall_right_horiz,
     
-    tl_wall_bottom,
-    tr_wall_bottom,
+    tl_wall_bottom_horiz,
+    tr_wall_bottom_horiz,
+    
+    tl_wall_bottom_down,
+    tr_wall_bottom_down,
+    
+    tl_wall_bottom_up,
+    tr_wall_bottom_up,
     
     tl_floor,
     tr_floor,
@@ -94,8 +100,14 @@ enum QuadType {
     bl_wall_right_horiz,
     br_wall_right_horiz,
     
-    bl_wall_bottom,
-    br_wall_bottom,
+    bl_wall_bottom_horiz,
+    br_wall_bottom_horiz,
+    
+    bl_wall_bottom_down,
+    br_wall_bottom_down,
+    
+    bl_wall_bottom_up,
+    br_wall_bottom_up,
     
     bl_floor,
     br_floor,

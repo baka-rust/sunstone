@@ -22,14 +22,12 @@ class Terrain {
         void generateFromSeed(int seed);
         void buildTilemaps();
     
-//        void update(float elapsedTime);
+        void update(float elapsedTime);
     
 //        virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
         void draw(float cameraX, float cameraY, sf::RenderWindow *app);
     
         TileType getTile(int tileX, int tileY, std::string layer);
-    
-        Tilemap *complex;
 
     private:
 
@@ -37,6 +35,7 @@ class Terrain {
     
         sf::Texture tiletex;
     
+        Tilemap *complex;
         Tilemap *decoration;
         Tilemap *objects;
     
