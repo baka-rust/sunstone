@@ -3,12 +3,12 @@
 
 Terrain::Terrain() {
 
-    tilemap.loadFromFile("resources/tilemap.png");
+    tiletex.loadFromFile("resources/tilemap.png");
 
 //    int xMax = tileMap.getSize().x / 16;
 //    int yMax = tileMap.getSize().y / 16;
     
-    complex = new Tilemap(tilemap, quadSize, height, width);
+    complex = new Tilemap(tiletex, quadSize, height, width);
 
 //    for(int y = 0; y < 128; y++) {
 //        for(int x = 0; x < 128; x++) {
@@ -29,6 +29,12 @@ void Terrain::generateFromSeed(int seed) {
     dungeon->create();
     
     buildTilemaps();
+    
+//    complex->setOrigin(64 * 16, 64 * 16);
+    complex->setPosition(512, 512);
+//    complex->setScale(2, 2);
+    std::cout << complex->getPosition().x << std::endl;
+    std::cout << "Built tilemaps!" << std::endl;
 }
 
 void Terrain::buildTilemaps() {
@@ -40,19 +46,26 @@ void Terrain::buildTilemaps() {
             if(dungeon->getMid(x, y) == 1) {
                 quads.insert(quads.begin() + 0, tl_wall_back_horiz);
                 quads.insert(quads.begin() + 1, tr_wall_back_horiz);
-                quads.insert(quads.begin() + 2, tl_wall_back_horiz);
-                quads.insert(quads.begin() + 3, tr_wall_back_horiz);
+                quads.insert(quads.begin() + 2, bl_wall_back_horiz);
+                quads.insert(quads.begin() + 3, br_wall_back_horiz);
+            } else if(dungeon->getMid(x, y) == 2){
+                quads.insert(quads.begin() + 0, tl_floor_dec_semi_in);
+                quads.insert(quads.begin() + 1, tr_floor_dec_semi_in);
+                quads.insert(quads.begin() + 2, bl_floor_dec_semi_in);
+                quads.insert(quads.begin() + 3, br_floor_dec_semi_in);
             } else {
                 quads.insert(quads.begin() + 0, tl_floor);
                 quads.insert(quads.begin() + 1, tr_floor);
-                quads.insert(quads.begin() + 2, tl_floor);
-                quads.insert(quads.begin() + 3, tr_floor);
+                quads.insert(quads.begin() + 2, bl_floor);
+                quads.insert(quads.begin() + 3, br_floor);
             }
             
             Tile tile = Tile(x, y, quads);
             complex->setTile(tile);
         }
     }
+    
+//    complex->setScale(1, 1);
     
 //    for(int y = 0; y < 128; y++) {
 //        for(int x = 0; x < 128; x++) {
@@ -80,7 +93,6 @@ void Terrain::buildTilemaps() {
 
 void Terrain::draw(float cameraX, float cameraY, sf::RenderWindow *app) {
     app->draw(*complex);
-    
 //
 //    // camera tile culling
 //    int camXStart = (cameraX / 16) - 1;

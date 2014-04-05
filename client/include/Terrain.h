@@ -15,9 +15,6 @@
 class Terrain {
 
     public:
-
-        sf::Texture tilemap;
-
         TileType physics[128][128];
 
         Terrain();
@@ -31,18 +28,21 @@ class Terrain {
         void draw(float cameraX, float cameraY, sf::RenderWindow *app);
     
         TileType getTile(int tileX, int tileY, std::string layer);
+    
+        Tilemap *complex;
 
     private:
 
         Dungeon *dungeon;
     
-        Tilemap *complex;
+        sf::Texture tiletex;
+    
         Tilemap *decoration;
         Tilemap *objects;
     
-        sf::Vector2u quadSize = sf::Vector2u(4, 4);
-        int height = 512;
-        int width = 512;
+        int quadSize = 8;
+        int height = 128;
+        int width = 128;
 
 
 };

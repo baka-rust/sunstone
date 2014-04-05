@@ -58,7 +58,7 @@ void Dungeon::create() {
     carveSquare((int)grid.size()/2, (int)grid[0].size()/2, 8, 8, 3);       // overwrite the starting and final rooms with "3"
     carveSquare(rooms[finalRoom].x(), rooms[finalRoom].y(), rooms[finalRoom].width(), rooms[finalRoom].height(), 3);
 
-    //printGrid();
+    printGrid();
 }
 
 
