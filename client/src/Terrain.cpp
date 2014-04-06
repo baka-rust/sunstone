@@ -7,7 +7,7 @@ Terrain::Terrain() {
 
     complex = new Tilemap(tiletex, quadSize, height, width);
 
-//    generateFromSeed(12); // TODO make sample menu dungeon
+    generateFromSeed(12); // TODO make sample menu dungeon
     // buildTilemaps();
 
 }
@@ -31,6 +31,9 @@ void Terrain::buildTilemaps() {
             
             if(dungeon->getMid(x, y) == 1) {
                 // draw walls
+                
+                // TODO morgan's new code should fix
+                physics[x][y] = wall;
                 
                 // check around wall to see what's wall and what's not.
                 bool n  = (y == 0 || dungeon->getMid(x, y - 1) == 1);
@@ -132,6 +135,9 @@ void Terrain::buildTilemaps() {
                 }
                 
             } else if(dungeon->getMid(x, y) == 2){
+                // TODO pass through doors
+                physics[x][y] = ground;
+                
                 // TODO doors
                 quads.insert(quads.begin() + 0, tl_floor);
                 quads.insert(quads.begin() + 1, tr_floor);
@@ -139,6 +145,8 @@ void Terrain::buildTilemaps() {
                 quads.insert(quads.begin() + 3, br_floor);
                 
             } else {
+                physics[x][y] = ground;
+                
                 quads.insert(quads.begin() + 0, tl_floor);
                 quads.insert(quads.begin() + 1, tr_floor);
                 quads.insert(quads.begin() + 2, bl_floor);
