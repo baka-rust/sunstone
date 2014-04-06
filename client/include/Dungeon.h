@@ -8,6 +8,7 @@
 #include <stdlib.h>
 
 #include "Room.h"
+#include "Tilemap/TileTypes.h"
 
 /*
  0 = empty
@@ -38,14 +39,14 @@ class Dungeon {
         // accessors
         int width() { return (int) grid.size(); };
         int height() { return (int) grid[0].size(); };
-        int getTile(int x, int y);
+        TileType getTile(int x, int y);
         bool isFloor(int x, int y);
         bool isWall(int x, int y);
 
     
     private:
 
-        std::vector< std::vector<int> > grid;
+        std::vector< std::vector<TileType> > grid;
         std::vector<Room> rooms;
         std::vector<Door> doors;
     
@@ -60,8 +61,8 @@ class Dungeon {
         // dungeon creation methods
         int createAttempt();
         bool addBranch(Room r);
-        void carveSquare(int x, int y, int width, int height, int value);
-        bool checkSquare(int x, int y, int width, int height, int value);
+        void carveSquare(int x, int y, int width, int height, TileType value);
+        bool checkSquare(int x, int y, int width, int height, TileType value);
         void decorateRoom(Room room);
     
         // random numbers

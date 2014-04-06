@@ -6,7 +6,9 @@ static const int TILES_PER_ROW = 32;
 enum TileType {
     ground,
     wall,
-    door
+    door,
+    healthpack,
+    spawner
 };
 
 #endif // TILETYPES_H

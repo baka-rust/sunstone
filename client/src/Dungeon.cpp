@@ -1,5 +1,8 @@
 #include "Dungeon.h"
+
 #include <queue>
+
+#include "Tilemap/TileTypes.h"
 
 Dungeon::Dungeon(int width, int height, int minRoom, int maxRoom, int seed) {
     minRoomSize = minRoom;
@@ -11,9 +14,9 @@ Dungeon::Dungeon(int width, int height, int minRoom, int maxRoom, int seed) {
     doors.reserve(128);
     roomCount = 0;
 
-    grid = std::vector< std::vector<int> >(width);
+    grid = std::vector< std::vector<TileType> >(width);
     for(int i = 0; i < width; i++) {
-        grid[i] = std::vector<int>(height);
+        grid[i] = std::vector<TileType>(height);
     }
 }
 
@@ -38,12 +41,12 @@ void Dungeon::create(){
 int Dungeon::createAttempt() {
     for(int x = 0; x < grid.size(); x++) {   // set grid to all walls
         for(int y = 0; y < grid[0].size(); y++) {
-            grid[x][y] = 1;
+            grid[x][y] = wall;
         }
     }
     
     roomCount = 0;
-    carveSquare((int) grid.size() / 2, (int) grid[0].size() / 2, 8, 8, 0);       // carve original room
+    carveSquare((int) grid.size() / 2, (int) grid[0].size() / 2, 8, 8, ground);       // carve original room
     rooms[0] = Room((int) grid.size() / 2, (int) grid[0].size() / 2, 8, 8);         // and add it to list of rooms
     roomCount++;
 
@@ -74,13 +77,13 @@ int Dungeon::createAttempt() {
         decorateRoom(rooms[i]);
     }
     
-    carveSquare((int) grid.size() / 2, (int)grid[0].size() / 2, 8, 8, 0);       // overwrite the starting and final rooms
-    carveSquare(rooms[finalRoom].x(), rooms[finalRoom].y(), rooms[finalRoom].width(), rooms[finalRoom].height(), 0);
+    carveSquare((int) grid.size() / 2, (int)grid[0].size() / 2, 8, 8, ground);       // overwrite the starting and final rooms
+    carveSquare(rooms[finalRoom].x(), rooms[finalRoom].y(), rooms[finalRoom].width(), rooms[finalRoom].height(), ground);
     
     return roomCount;
 }
 
-int Dungeon::getTile(int x, int y) {
+TileType Dungeon::getTile(int x, int y) {
     return grid[x][y];
 }
 
@@ -189,7 +192,7 @@ std::vector< std::vector<bool> > Dungeon::getFloors() {
     return getBitmap(0);
 }
 
-bool Dungeon::checkSquare(int x, int y, int width, int height, int value) {
+bool Dungeon::checkSquare(int x, int y, int width, int height, TileType value) {
     // check to see if a rectangle contains only a given value
     for(int _x = x; _x < x + width; _x++) {
         if(_x >= grid.size()) {
@@ -209,7 +212,7 @@ bool Dungeon::checkSquare(int x, int y, int width, int height, int value) {
     return true;
 }
 
-void Dungeon::carveSquare(int x, int y, int width, int height, int value) {
+void Dungeon::carveSquare(int x, int y, int width, int height, TileType value) {
     // set a rectangle to a given value
 	for(int _y = y; _y < y+height; _y++) {
 		if(_y>=grid[0].size()) {
@@ -230,7 +233,7 @@ void Dungeon::decorateRoom(Room room) {
     if(randInt(0,3) == 0) {
         x = randInt(room.x() + 1, room.endX() - 1);
         y = randInt(room.y() + 1, room.endY() - 1);
-        grid[x][y] = 4;
+        grid[x][y] = healthpack; // TODO somethignrater
     }
     
     int j = 0;
@@ -246,7 +249,7 @@ void Dungeon::decorateRoom(Room room) {
                 return;
             }
         }
-        grid[x][y] = 1;
+        grid[x][y] = wall;
     }
     
     n = randInt(3, 6);
@@ -262,7 +265,7 @@ void Dungeon::decorateRoom(Room room) {
                 return;
             }
         }
-        grid[x][y] = 5;
+        grid[x][y] = spawner;
     }
 
 }
@@ -275,7 +278,7 @@ bool Dungeon::addBranch(Room room) { // try to add a random room to the input
         if(getRandomNumber()%256>127) {
             // create square above 'room'
             int x = randInt(room.x() - width + 3, room.x() + room.width() - 2); // room placement
-            if(!checkSquare(x - 2, room.y() - height - 4, width + 4, height + 4, 1)) {
+            if(!checkSquare(x - 2, room.y() - height - 4, width + 4, height + 4, wall)) {
                 return false;
             }
             
@@ -288,8 +291,8 @@ bool Dungeon::addBranch(Room room) { // try to add a random room to the input
                 }
             }
 
-            carveSquare(x, room.y() - height - 2, width, height, 0);    // carve both
-			carveSquare(n, room.y() - 2, 2, 2, 2);
+            carveSquare(x, room.y() - height - 2, width, height, ground);    // carve both
+			carveSquare(n, room.y() - 2, 2, 2, door);
 
             doors[roomCount-1].x = n;
             doors[roomCount-1].y = room.y() - 2;
@@ -304,7 +307,7 @@ bool Dungeon::addBranch(Room room) { // try to add a random room to the input
         else {
             // create square to the right of 'room'
             int y = randInt(room.y() - height + 3, room.y() + room.height() - 2); // room placement
-            if(!checkSquare(room.x() + room.width(), y - 2, width + 4, height + 4, 1)) {
+            if(!checkSquare(room.x() + room.width(), y - 2, width + 4, height + 4, wall)) {
                 return false;
             }
             
@@ -313,8 +316,8 @@ bool Dungeon::addBranch(Room room) { // try to add a random room to the input
                 n = randInt(y, y + height - 1);
             }
 
-            carveSquare(room.x() + room.width() + 2, y, width, height, 0);  // carve both
-            carveSquare(room.x() + room.width(), n, 2, 2, 2);
+            carveSquare(room.x() + room.width() + 2, y, width, height, ground);  // carve both
+            carveSquare(room.x() + room.width(), n, 2, 2, ground);
 
             doors[roomCount-1].x = room.x() + room.width();
             doors[roomCount-1].y = n;
@@ -331,7 +334,7 @@ bool Dungeon::addBranch(Room room) { // try to add a random room to the input
         if(getRandomNumber() % 256 > 127) {
             // create square beneath 'room'
             int x = randInt(room.x() - width + 3, room.x() + room.width() - 2); // room placement
-            if(!checkSquare(x - 2, room.y() + room.height(), width + 4, height + 4, 1)) {
+            if(!checkSquare(x - 2, room.y() + room.height(), width + 4, height + 4, wall)) {
                 return false;
             }
             
@@ -339,8 +342,8 @@ bool Dungeon::addBranch(Room room) { // try to add a random room to the input
             while(n < room.x() || n + 1 >= room.endX()) {
                 n = randInt(x, x + width - 1);
             }
-            carveSquare(x, room.y() + room.height() + 2, width, height, 0); // carve both
-            carveSquare(n, room.y() + room.height(), 2, 2, 2);
+            carveSquare(x, room.y() + room.height() + 2, width, height, ground); // carve both
+            carveSquare(n, room.y() + room.height(), 2, 2, door);
 
             doors[roomCount-1].x = n;
             doors[roomCount-1].y = room.y() + room.height();
@@ -355,7 +358,7 @@ bool Dungeon::addBranch(Room room) { // try to add a random room to the input
         else {
             // create square to the left of 'room'
             int y = randInt(room.y() - height + 3, room.y() + room.height() - 2);   // room placement
-            if(!checkSquare(room.x() - width - 4, y - 2, width + 4, height + 4, 1)) {
+            if(!checkSquare(room.x() - width - 4, y - 2, width + 4, height + 4, wall)) {
                 return false;
             }
             
@@ -363,8 +366,8 @@ bool Dungeon::addBranch(Room room) { // try to add a random room to the input
             while(n < room.y() || n + 1 >= room.endY()) {
                 n = randInt(y, y + height - 1);
             }
-            carveSquare(room.x() - width - 2, y, width, height, 0); // carve both
-            carveSquare(room.x() - 2, n, 2, 2, 2);
+            carveSquare(room.x() - width - 2, y, width, height, ground); // carve both
+            carveSquare(room.x() - 2, n, 2, 2, door);
 
             doors[roomCount-1].x = room.x() - 2;
             doors[roomCount-1].y = n;
@@ -391,24 +394,21 @@ void printDoubleIntVector(std::vector< std::vector<int> >r) {
 
 void Dungeon::printLine(int y) {
     for(int i = 0; i < grid.size(); i++) {
-        if(grid[i][y] == 0) {
+        if(grid[i][y] == ground) {
             std::cout << " ";
         }
-        else if(grid[i][y] == 1) {
+        else if(grid[i][y] == wall) {
             std::cout << "X";
         }
-        else if(grid[i][y] == 2) {
+        else if(grid[i][y] == door) {
             std::cout << "[]";
             i++;
         }
-        else if(grid[i][y] == 4) {
-            std::cout << "@";
+        else if(grid[i][y] == healthpack) {
+            std::cout << "+";
         }
-        else if(grid[i][y] == 5) {
+        else if(grid[i][y] == spawner) {
             std::cout << "^";
-        }
-        else if(grid[i][y] > 100) {
-            std::cout << (grid[i][y] - 100) % 10;
         }
         else {
             std::cout << "O";

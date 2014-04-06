@@ -29,22 +29,24 @@ void Terrain::buildTilemaps() {
             std::vector<QuadType> quads;
             quads.reserve(4);
             
-            if(dungeon->getMid(x, y) == 1) {
+            TileType ttype = dungeon->getTile(x, y);
+            physics[x][y] = ttype;
+        
+            if(ttype == wall) {
                 // draw walls
                 
                 // TODO morgan's new code should fix
-                physics[x][y] = wall;
                 
                 // check around wall to see what's wall and what's not.
-                bool n  = (y == 0 || dungeon->getMid(x, y - 1) == 1);
-                bool e  = (x == 127 || dungeon->getMid(x + 1, y) == 1);
-                bool s  = (y == 127 || dungeon->getMid(x, y + 1) == 1);
-                bool w  = (x == 0 || dungeon->getMid(x - 1, y) == 1);
+                bool n  = (y == 0   || dungeon->getTile(x, y - 1) == 1);
+                bool e  = (x == 127 || dungeon->getTile(x + 1, y) == 1);
+                bool s  = (y == 127 || dungeon->getTile(x, y + 1) == 1);
+                bool w  = (x == 0   || dungeon->getTile(x - 1, y) == 1);
                 
-                bool ne = (y == 0   || x == 127 || dungeon->getMid(x + 1, y - 1) == 1);
-                bool nw = (y == 0   || x == 0   || dungeon->getMid(x - 1, y - 1) == 1);
-                bool se = (y == 127 || x == 127 || dungeon->getMid(x + 1, y + 1) == 1);
-                bool sw = (y == 127 || x == 0   || dungeon->getMid(x - 1, y + 1) == 1);
+                bool ne = (y == 0   || x == 127 || dungeon->getTile(x + 1, y - 1) == 1);
+                bool nw = (y == 0   || x == 0   || dungeon->getTile(x - 1, y - 1) == 1);
+                bool se = (y == 127 || x == 127 || dungeon->getTile(x + 1, y + 1) == 1);
+                bool sw = (y == 127 || x == 0   || dungeon->getTile(x - 1, y + 1) == 1);
                 
                 // Top Left
                 if(!s) {
@@ -134,7 +136,7 @@ void Terrain::buildTilemaps() {
                     }
                 }
                 
-            } else if(dungeon->getMid(x, y) == 2){
+            } else if(ttype == door){
                 // TODO pass through doors
                 physics[x][y] = ground;
                 
@@ -145,7 +147,6 @@ void Terrain::buildTilemaps() {
                 quads.insert(quads.begin() + 3, br_floor);
                 
             } else {
-                physics[x][y] = ground;
                 
                 quads.insert(quads.begin() + 0, tl_floor);
                 quads.insert(quads.begin() + 1, tr_floor);
