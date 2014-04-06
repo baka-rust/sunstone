@@ -14,7 +14,7 @@ class Network {
 
     public:
 
-        unsigned short port = 666;
+        unsigned short port = 6666;
         int serverSeed;
 
         Network();
