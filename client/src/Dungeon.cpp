@@ -74,7 +74,7 @@ int Dungeon::createAttempt() {
     }
     
     for(int i = 0; i < roomCount; i++){
-        decorateRoom(rooms[i]);
+//        decorateRoom(rooms[i]);
     }
     
     carveSquare((int) grid.size() / 2, (int)grid[0].size() / 2, 8, 8, ground);       // overwrite the starting and final rooms

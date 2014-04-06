@@ -7,7 +7,7 @@ Terrain::Terrain() {
 
     complex = new Tilemap(tiletex, quadSize, height, width);
 
-    generateFromSeed(12); // TODO make sample menu dungeon
+    generateFromSeed(120); // TODO make sample menu dungeon
     // buildTilemaps();
 
 }
@@ -18,7 +18,7 @@ void Terrain::generateFromSeed(int seed) {
     
     buildTilemaps();
     
-    complex->setPosition(0, 0);
+//    complex->setPosition(0, 0);
 //    complex->setOrigin(-height * 16 / 2, -512);
     std::cout << "Built tilemaps!" << std::endl;
 }
@@ -30,7 +30,7 @@ void Terrain::buildTilemaps() {
             quads.reserve(4);
             
             TileType ttype = dungeon->getTile(x, y);
-            physics[x][y] = ttype;
+            physics[y][x] = ttype;
         
             if(ttype == wall) {
                 // draw walls
@@ -138,7 +138,7 @@ void Terrain::buildTilemaps() {
                 
             } else if(ttype == door){
                 // TODO pass through doors
-                physics[x][y] = ground;
+                physics[y][x] = ground;
                 
                 // TODO doors
                 quads.insert(quads.begin() + 0, tl_floor);

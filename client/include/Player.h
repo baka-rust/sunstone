@@ -23,7 +23,7 @@ class Player {
 
         float x, y;
         int tileX, tileY;
-        int speed = 200; // rely on stats later
+        int speed = 40; // rely on stats later
         std::string direction;
         bool onTile = true;
 
