@@ -26,6 +26,9 @@ class Network {
 
         std::map<std::string, Client*> clients;
         typedef std::map<std::string, Client*>::iterator i_clients;
+		
+		std::map<int, NetworkedMonster*> monsters;
+		typedef std::map<int, NetworkedMonster*>::iterator i_monsters;
 
         sf::UdpSocket socket;
 

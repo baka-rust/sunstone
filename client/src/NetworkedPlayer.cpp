@@ -21,7 +21,7 @@ NetworkedPlayer::NetworkedPlayer(int xPos, int yPos, std::string dir) {
 
 void NetworkedPlayer::update(float elapsedTime) {
 
-bool moving = false;
+	bool moving = false;
 
     if(direction == "up") {
         if(y <= (tileY * 16)) {
