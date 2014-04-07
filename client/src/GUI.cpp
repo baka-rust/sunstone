@@ -1,13 +1,46 @@
 #include "GUI.h"
 
-GUITextArea::GUITextArea(int x, int y, int w, int h){
+GUITextArea::GUITextArea(int x, int y, int w, int h) {
+
+    inputMessage = std::vector<sf::String>(10,"");
+    if (!font.loadFromFile("resources/arial.ttf"))
+    {
+    // error...
+    }
+    addMessage("text");
+    text.setFont(font);
+    text.setString(inputMessage.back());
+    text.setCharacterSize(24);
+    text.setColor(sf::Color::Red);
+
+    background.setPosition(x, y);
+    background.setSize(sf::Vector2f(w,h));
+    background.setFillColor(sf::Color::White);
 
 
 }
 
+void GUITextArea::addMessage(sf::String s){
+    inputMessage.erase(inputMessage.begin());
+    inputMessage.push_back(s);
+}
+
+void GUITextArea::toggleDisplay(bool d){
+    display = d;
+}
+
+void GUITextArea::draw(sf::RenderWindow* app){
+
+    app->draw(background);
+    text.setPosition(background.getPosition());
+    text.setString(inputMessage.back());
+    app->draw(text);
+}
 
 
-GUI::GUI(int h, int w){
+
+
+GUI::GUI(int h, int w): textArea(0,h/2,w/2,h/2){
 
 
 	healthBar.curentValue = 1.f;
@@ -30,39 +63,37 @@ GUI::GUI(int h, int w){
     ammoBox.maxValue = 9;
     ammoBox.currentValue = 0;
 
+
+
 }
 
-void GUI::createTextArea(float w, float h, sf::Vector2i position, sf::String message){
+void GUI::createToolTipArea(int x, int y, int w, int h, sf::String message){
 
-	tooltip.position.x = position.x;
-	tooltip.position.y = position.y;
-	tooltip.size = sf::Vector2f(w,h);
-	tooltip.background = sf::RectangleShape(tooltip.size);
-	tooltip.background.setPosition(tooltip.position);
+
+	tooltip.background.setSize(sf::Vector2f(w,h));
+	tooltip.background.setPosition(x, y);
 	tooltip.background.setFillColor(sf::Color::White);
 	displayToolTip(true);
-	tooltip.message = message;
 
-	/**
-	sf::Font font;
+    if(!tooltip.font.loadFromFile("resources/arial.ttf")){
+    //error
+    }
+
+    tooltip.text.setFont(tooltip.font);
+    tooltip.text.setCharacterSize(14);
+    tooltip.text.setColor(sf::Color::Red);
+    tooltip.text.setString(message);
 
 
-		text.setCharacterSize(30);
-		text.setStyle(sf::Text::Bold);
-		text.setColor(sf::Color::Red);
-
-	tooltip.font.loadFromFile("Resource/sansation.ttf");
-	//tooltip.text = sf::Text(tooltip.message, tooltip.font);
-	*/
 }
 
 void GUI::setToolTipInfo(sf::String message){
-    tooltip.message = message;
+    tooltip.text.setString(message);
 }
 
 void GUI::displayToolTip(bool bDisplay){
 	if(bDisplay == false){
-        tooltip.message.clear();
+        tooltip.text.setString("");
 	}
 	tooltip.display = bDisplay;
 }
@@ -97,6 +128,30 @@ void GUI::draw(sf::RenderWindow *app){
 
      app->draw(healthBar.barHandle);
     app->draw(crosshair.crosshair);
-    //app->draw(ammoBox.monitor);
+    app->draw(ammoBox.monitor);
+    textArea.draw(app);
 
+}
+
+void GUI::processCommand(sf::String command){
+    switch(lastCommand){
+        case ' ':
+            lastCommand = command[0];
+            break;
+        case '/':
+            currentCommand += command;
+            std::cout<<currentCommand.toAnsiString();
+            lastCommand = ' ';
+            break;
+    }
+
+}
+
+void GUI::clearLastCommand(){
+    switch(lastCommand){
+        case '/':
+            textArea.addMessage(currentCommand);
+            lastCommand = ' ';
+            break;
+    }
 }

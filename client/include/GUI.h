@@ -27,9 +27,6 @@ struct GUIToolTip{
 
 
 	bool display;
-	sf::Vector2f position;
-	sf::String message;
-	sf::Vector2f size;
 	sf::Font font;
 	sf::Text text;
 	sf::RectangleShape background;
@@ -50,16 +47,24 @@ class GUITextArea{
 
 public:
 
-	bool display;
+
+
 	std::vector<sf::String> inputMessage;
 
-	sf::Vector2f size;
+
 	sf::Font font;
 	sf::Text text;
 	sf::RectangleShape background;
 	int startDisplayIndex = 0; // Position on string where message beings displaying
 
 	GUITextArea(int x, int y, int w, int h);
+	void toggleDisplay(bool d);
+	void addMessage(sf::String s);
+	void draw(sf::RenderWindow* app);
+
+private:
+
+    bool display = true;
 };
 
 class GUI {
@@ -67,20 +72,20 @@ class GUI {
 public:
 
 
-	int height, width;
 
 	GUIBar healthBar;
 	GUICrosshair crosshair;
 	GUIToolTip tooltip;
 	GUIToolTip messageArea;
 	GUIConsumableMonitor ammoBox;
+	GUITextArea textArea;
 
     sf::Time recoilTime;
 
 	GUI(int w, int h);
 
 	 //overlay creations
-	void createTextArea(float w, float h, sf::Vector2i poisition, sf::String message);
+    void createToolTipArea(int x, int y, int w, int h, sf::String s);
 	void setToolTipInfo(sf::String messages);
 	void displayToolTip(bool bDisplay);
 	void setHealth(float health);
@@ -88,8 +93,15 @@ public:
 	void updateGUI(float elapsedTime, sf::Vector2i pos);
 	void draw(sf::RenderWindow* app);
 
+	//Commands
+	void processCommand(sf::String command);
+	void clearLastCommand();
+
 private:
     void mouseRecoil();
+	int height, width;
+	char lastCommand = ' ';
+	sf::String currentCommand = "";
 
 /**
      std::map<std::string, AnimationSequence*>ammoAnimations;
