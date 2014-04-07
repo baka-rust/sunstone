@@ -1,24 +1,31 @@
 #include "GUI.h"
 
+GUITextArea::GUITextArea(int x, int y, int w, int h){
+
+
+}
+
+
+
 GUI::GUI(int h, int w){
 
-    std::stringstream imagePath;
 
 	healthBar.curentValue = 1.f;
-    sf::Texture healthBarText;
-	healthBarText.loadFromFile("resources/health.jpg");
-	healthBar.barHandle = sf::Sprite(healthBarText);
-	healthBar.max = healthBar.barHandle.getScale().x;
+   healthBar.texture.loadFromFile("resources/health.jpg");
+	healthBar.barHandle.setTexture(healthBar.texture);
 	healthBar.barHandle.setPosition(healthBar.posx, healthBar.posy);
+	healthBar.barHandle.setScale(healthBar.max,1);
 
-    sf::Texture crosshairText;
-	crosshairText.loadFromFile("resources/crosshairs.jpg");
-	crosshair.crosshair = sf::Sprite(crosshairText);
+   crosshair.texture.loadFromFile("resources/crosshairs.jpg");
+	crosshair.crosshair.setTexture(crosshair.texture);
     crosshair.crosshair.setPosition(sf::Vector2f(w/2,h/2));
+    int orgx = crosshair.texture.getSize().x;
+	int orgy = crosshair.texture.getSize().y;
+    crosshair.crosshair.setOrigin(sf::Vector2f(orgx/2, orgy/2));
 
-    sf::Texture ammoBoxText;
-    ammoBoxText.loadFromFile("resources/ammo.jpg");
-    ammoBox.monitor = sf::Sprite(ammoBoxText);
+    ammoBox.texture.loadFromFile("resources/ammo.jpg");
+    ammoBox.monitor.setTexture(ammoBox.texture);
+   // ammoBox.monitor.setPosition(w-ammoBox.texture.getSize().x, 0);
     ammoBox.index = 0;
     ammoBox.maxValue = 9;
     ammoBox.currentValue = 0;
@@ -60,36 +67,36 @@ void GUI::displayToolTip(bool bDisplay){
 	tooltip.display = bDisplay;
 }
 
-void GUI::setHealth(int health){
-    if(health > healthBar.max)
-        health = healthBar.max;
+void GUI::setHealth(float health){
+    if(health*healthBar.max > healthBar.max)
+        health = 1.f;
     healthBar.curentValue = health;
-    healthBar.barHandle.setScale((healthBar.curentValue/healthBar.max), 1);
+    healthBar.barHandle.setScale((health*healthBar.max), 1);
 }
 
 void GUI::mouseRecoil(){
-    if(crosshair.isRecoiling){
+    if(sf::Mouse::isButtonPressed(sf::Mouse::Left)){
+
         float r = .5 + static_cast<float>(rand())/ static_cast<float>(RAND_MAX);
         crosshair.crosshair.setScale(r,r);
     }else
         crosshair.crosshair.setScale(1.f,1.f);
 }
 
-void GUI::updateGUI(float elapsedTime, sf::Vector2i mousePosition){
 
-    crosshair.crosshair.setPosition(mousePosition.x * 1.0, mousePosition.y * 1.0);
-
+void GUI::updateGUI(float elapsedTime, sf::Vector2i pos){
+    float r = .5 + static_cast<float>(rand())/ static_cast<float>(RAND_MAX);
+    setHealth(r);
+    crosshair.crosshair.setPosition(pos.x,pos.y);
+    mouseRecoil();
 }
 
 void GUI::draw(sf::RenderWindow *app){
-    healthBar.barHandle.setPosition(0,0);
-    sf::RectangleShape shape(sf::Vector2f(10,10));
-    shape.setFillColor(sf::Color::White);
-    shape.setPosition(0,0);
-    app->draw(shape);
-    /**
-     app.draw(healthBar.barHandle);
-    app.draw(crosshair.crosshair);
-    app.draw(ammoBox.monitor);
-    */
+
+
+
+     app->draw(healthBar.barHandle);
+    app->draw(crosshair.crosshair);
+    //app->draw(ammoBox.monitor);
+
 }
