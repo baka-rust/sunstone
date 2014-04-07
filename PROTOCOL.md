@@ -7,8 +7,8 @@ Mobs are treated by the client as differet "types" of players,
 types are also classes and the like (for drawing)
 
 Join:
-	Client:	1,{username},{type},
-	Server:	1,{username},{type},{x},{y},
+	Client:	1,{username},{x},{y},{direction},
+	Server:	1,{username},{x},{y},{direction},{type},
 
 Movement Update:
 	Client: 2,{username},{x},{y},

@@ -61,17 +61,23 @@ void Network::update(float elapsedTime) {
 
             if(receivedArray[0] == "1") {
                 // join
-                // 1,{name},{x},{y},{direction},
+                // 1,{name},{x},{y},{direction},{type},
                 std::istringstream convertX(receivedArray[2]);
                 std::stringstream convertY(receivedArray[3]);
                 int x;
                 int y;
                 convertX >> x;
                 convertY >> y;
-                if(networkPlayers.find(receivedArray[1]) == networkPlayers.end()) {
-                    networkPlayers[receivedArray[1]] = new NetworkedPlayer(x, y, receivedArray[4]);
-                    std::cout << "added new player " << receivedArray[1] << " at " << x << ", " << y << " facing " << receivedArray[4] << std::endl;
-                }
+				if(receivedArray[5] == "0") {
+					// player
+					if(networkPlayers.find(receivedArray[1]) == networkPlayers.end()) {
+						networkPlayers[receivedArray[1]] = new NetworkedPlayer(x, y, receivedArray[4]);
+						std::cout << "added new player " << receivedArray[1] << " at " << x << ", " << y << " facing " << receivedArray[4] << std::endl;
+					}
+				}
+				else if(receivedArray[5] == "1") {
+					// monster
+				}
             }
 
             else if(receivedArray[0] == "2") {

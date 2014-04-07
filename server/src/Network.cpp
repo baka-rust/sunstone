@@ -50,7 +50,7 @@ void Network::run() {
 
                         // tell other players about new one
                         sendData.str(std::string()); // clear it
-                        sendData << "1," << receivedArray[1] << "," << x << "," << y << "," << receivedArray[4] << ",";
+                        sendData << "1," << receivedArray[1] << "," << x << "," << y << "," << receivedArray[4] << "," << "0" << ",";
                         for(i_clients iterator = clients.begin(); iterator != clients.end(); iterator++) {
                             Client *client = iterator->second;
                             if(client->name != receivedArray[1]) {
@@ -63,7 +63,7 @@ void Network::run() {
                             Client *client = iterator->second;
                             if(client->name != receivedArray[1]) {
                                 sendData.str(std::string()); // clear it
-                                sendData << "1," << client->name << "," << client->x << "," << client->y << "," << client->direction << ",";
+                                sendData << "1," << client->name << "," << client->x << "," << client->y << "," << client->direction << "," << "0" << ",";
                                 socket.send(sendData.str().c_str(), sendData.str().length(), recvAddress, recvPort);
                             }
                         }
