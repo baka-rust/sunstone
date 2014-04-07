@@ -1,91 +1,173 @@
 #include "Terrain.h"
+#include "Tilemap.h"
 
 Terrain::Terrain() {
 
-    tileMap.loadFromFile("resources/tileMap.png");
+    tiletex.loadFromFile("resources/tilemap.png");
 
-    int xMax = tileMap.getSize().x / 16;
-    int yMax = tileMap.getSize().y / 16;
+    complex = new Tilemap(tiletex, quadSize, height, width);
 
-    for(int y = 0; y < tileMap.getSize().y; y += 16) {
-        for(int x = 0; x < tileMap.getSize().x; x += 16) {
-            tiles.push_back(new sf::Sprite(tileMap, sf::IntRect(x, y, 16, 16)));
-        }
-    }
-
-    for(int y = 0; y < 128; y++) {
-        for(int x = 0; x < 128; x++) {
-            bottom[y][x] = 0;
-            mid[y][x] = 0;
-            top[y][x] = 0;
-        }
-    }
+    generateFromSeed(120); // TODO make sample menu dungeon
+    // buildTilemaps();
 
 }
 
 void Terrain::generateFromSeed(int seed) {
-
-    dungeon = new Dungeon(128, 128, 10, 30, seed);
+    dungeon = new Dungeon(height, width, 6, 10, seed);
     dungeon->create();
+    
+    buildTilemaps();
+    
+//    complex->setPosition(0, 0);
+//    complex->setOrigin(-height * 16 / 2, -512);
+    std::cout << "Built tilemaps!" << std::endl;
+}
 
-    for(int y = 0; y < 128; y++) {
-        for(int x = 0; x < 128; x++) {
-            if(dungeon->getMid(x, y) == 1) {
-                bottom[y][x] = 0;
+void Terrain::buildTilemaps() {
+    for (int y = 0; y < height; y++) {
+        for(int x = 0; x < width; x++) {
+            std::vector<QuadType> quads;
+            quads.reserve(4);
+            
+            TileType ttype = dungeon->getTile(x, y);
+            physics[y][x] = ttype;
+        
+            if(ttype == wall) {
+                // draw walls
+                
+                // TODO morgan's new code should fix
+                
+                // check around wall to see what's wall and what's not.
+                bool n  = (y == 0   || dungeon->getTile(x, y - 1) == 1);
+                bool e  = (x == 127 || dungeon->getTile(x + 1, y) == 1);
+                bool s  = (y == 127 || dungeon->getTile(x, y + 1) == 1);
+                bool w  = (x == 0   || dungeon->getTile(x - 1, y) == 1);
+                
+                bool ne = (y == 0   || x == 127 || dungeon->getTile(x + 1, y - 1) == 1);
+                bool nw = (y == 0   || x == 0   || dungeon->getTile(x - 1, y - 1) == 1);
+                bool se = (y == 127 || x == 127 || dungeon->getTile(x + 1, y + 1) == 1);
+                bool sw = (y == 127 || x == 0   || dungeon->getTile(x - 1, y + 1) == 1);
+                
+                // Top Left
+                if(!s) {
+                    if(!w) {
+                        quads.insert(quads.begin() + 0, tl_wall_back_vert);
+                    } else {
+                        quads.insert(quads.begin() + 0, tl_wall_back_horiz);
+                    }
+                } else {
+                    if(!n) {
+                        if(!w) {
+                            quads.insert(quads.begin() + 0, tl_wall_bottom_down);
+                        } else {
+                            quads.insert(quads.begin() + 0, tl_wall_bottom_horiz);
+                        }
+                    } else {
+                        if(!w) {
+                            quads.insert(quads.begin() + 0, tl_wall_right_vert);
+                        } else {
+                            if(!sw) {
+                                quads.insert(quads.begin() + 0, tl_wall_right_horiz);
+                            } else if(!nw) {
+                                quads.insert(quads.begin() + 0, tl_wall_bottom_up);
+                            } else {
+                                quads.insert(quads.begin() + 0, tl_black);
+                            }
+                        }
+                    }
+                }
+                
+                // Top Right
+                if(!s) {
+                    if(!e) {
+                        quads.insert(quads.begin() + 1, tr_wall_back_vert);
+                    } else {
+                        quads.insert(quads.begin() + 1, tr_wall_back_horiz);
+                    }
+                } else {
+                    if(!n) {
+                        if(!e) {
+                            quads.insert(quads.begin() + 1, tr_wall_bottom_down);
+                        } else {
+                            quads.insert(quads.begin() + 1, tr_wall_bottom_horiz);
+                        }
+                    } else {
+                        if(!e) {
+                            quads.insert(quads.begin() + 1, tr_wall_left_vert);
+                        } else {
+                            if(!se) {
+                                quads.insert(quads.begin() + 1, tr_wall_left_horiz);
+                            } else if(!ne) {
+                                quads.insert(quads.begin() + 1, tr_wall_bottom_up);
+                            } else {
+                                quads.insert(quads.begin() + 1, tr_black);
+                            }
+                        }
+                    }
+                }
+                
+                // Bottom left
+                if(!s) {
+                    if(!w) {
+                        quads.insert(quads.begin() + 2, bl_wall_back_vert);
+                    } else {
+                        quads.insert(quads.begin() + 2, bl_wall_back_horiz);
+                    }
+                } else {
+                    if(!w || !sw) {
+                        quads.insert(quads.begin() + 2, bl_wall_right_vert);
+                    } else {
+                        quads.insert(quads.begin() + 2, bl_black);
+                    }
+                }
+            
+                // Bottom right
+                if(!s) {
+                    if(!e) {
+                        quads.insert(quads.begin() + 3, br_wall_back_vert);
+                    } else {
+                        quads.insert(quads.begin() + 3, br_wall_back_horiz);
+                    }
+                } else {
+                    if(!e || !se) {
+                        quads.insert(quads.begin() + 3, br_wall_left_vert);
+                    } else {
+                        quads.insert(quads.begin() + 3, br_black);
+                    }
+                }
+                
+            } else if(ttype == door){
+                // TODO pass through doors
+                physics[y][x] = ground;
+                
+                // TODO doors
+                quads.insert(quads.begin() + 0, tl_floor);
+                quads.insert(quads.begin() + 1, tr_floor);
+                quads.insert(quads.begin() + 2, bl_floor);
+                quads.insert(quads.begin() + 3, br_floor);
+                
+            } else {
+                
+                quads.insert(quads.begin() + 0, tl_floor);
+                quads.insert(quads.begin() + 1, tr_floor);
+                quads.insert(quads.begin() + 2, bl_floor);
+                quads.insert(quads.begin() + 3, br_floor);
             }
-            else {
-                bottom[y][x] = 1;
-            }
+            
+            Tile tile = Tile(x, y, quads);
+            complex->setTile(tile);
         }
     }
+}
 
-    for(int y = 0; y < 128; y++) {
-        for(int x = 0; x < 128; x++) {
-            if(dungeon->getMid(x, y) == 0 || dungeon->getMid(x, y) == 2 || dungeon->getMid(x, y) == 3) {
-                mid[y][x] = 0;
-            }
-            else {
-                mid[y][x] = 2; // 2
-            }
-        }
-    }
-
+void Terrain::update(float elapsedTime) {
+    // TODO
 }
 
 void Terrain::draw(float cameraX, float cameraY, sf::RenderWindow *app) {
-
-    // camera tile culling
-    int camXStart = (cameraX / 16) - 1;
-    int camYStart = (cameraY / 16) - 1;
-
-    int camXFinish = camXStart + 18;
-    int camYFinish = camYStart + 18;
-
-    if(camXStart < 0)
-        camXStart = 0;
-    if(camYStart < 0)
-        camYStart = 0;
-
-    if(camXFinish > 128)
-        camXFinish = 128;
-    if(camYFinish > 128)
-        camYFinish = 128;
-
-    for(int y = camYStart; y < camYFinish; y++) {
-        for(int x = camXStart; x < camXFinish; x++) {
-            tiles[bottom[y][x]]->setPosition(x*16, y*16); // kinda messy but what can you do (draw calls are saved because a singular sprite is drawn as a batch when moved)
-            app->draw(*tiles[bottom[y][x]]);
-        }
-    }
-    for(int y = camYStart; y < camYFinish; y++) {
-        for(int x = camXStart; x < camXFinish; x++) {
-            tiles[mid[y][x]]->setPosition(x*16, y*16);
-            app->draw(*tiles[mid[y][x]]);
-        }
-    }
-
+    app->draw(*complex);
 }
 
-int Terrain::getTile(int tileX, int tileY, std::string layer) {
-    return mid[tileY][tileX];
+TileType Terrain::getTile(int tileX, int tileY, std::string layer) {
+    return physics[tileY][tileX];
 }
