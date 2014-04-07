@@ -14,8 +14,8 @@ bool focused = true;
 int main() {
 
     int scale = 4;
-    int width = 256 * 4 / scale;
-    int height = 160 * 4 / scale;
+    int width = 256;
+    int height = 160;
 
     sf::Event event;
     sf::Clock clock;
@@ -56,7 +56,7 @@ int main() {
         }
 
         elapsedTime = clock.restart().asSeconds();
-        
+
         terrain.update(elapsedTime);
         player.update(elapsedTime);
         network.update(elapsedTime);
