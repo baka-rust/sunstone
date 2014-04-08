@@ -18,6 +18,8 @@ struct GUIBar{
 };
 
 struct GUICrosshair{
+    int x, y;
+    int speed = 2; //bigger the number, the slower the mouse, but the more jagged the movements
     sf::Texture texture;
 	sf::Sprite crosshair;
 
@@ -25,7 +27,7 @@ struct GUICrosshair{
 
 struct GUIToolTip{
 
-
+    int x, y;
 	bool display;
 	sf::Font font;
 	sf::Text text;
@@ -35,6 +37,7 @@ struct GUIToolTip{
 };
 
 struct GUIConsumableMonitor{//Ammo Monitor
+    int x,y;
     sf::Texture texture;
     sf::Sprite monitor;
     int index; //texture Index
@@ -50,7 +53,8 @@ public:
 
 
 	std::vector<sf::String> inputMessage;
-
+    float shiftx, shifty;
+    int x, y;
 
 	sf::Font font;
 	sf::Text text;
@@ -61,7 +65,7 @@ public:
 	void toggleDisplay(bool d);
 	void addMessage(sf::String s);
 	void draw(sf::RenderWindow* app);
-
+	void setShift(float x, float y);
 private:
 
     bool display = true;
@@ -80,7 +84,7 @@ public:
 	GUIConsumableMonitor ammoBox;
 	GUITextArea textArea;
 
-    sf::Time recoilTime;
+
 
 	GUI(int w, int h);
 
@@ -90,16 +94,19 @@ public:
 	void displayToolTip(bool bDisplay);
 	void setHealth(float health);
 	void toggleRecoil(bool recoil);
-	void updateGUI(float elapsedTime, sf::Vector2i pos);
+	void update(float elapsedTime, sf::Vector2i pos);
 	void draw(sf::RenderWindow* app);
-
+    void setCenter(float x, float y);
 	//Commands
 	void processCommand(sf::String command);
 	void clearLastCommand();
 
+
 private:
+    void updateCrosshair(sf::Vector2i pos);
     void mouseRecoil();
 	int height, width;
+	float shiftx, shifty;
 	char lastCommand = ' ';
 	sf::String currentCommand = "";
 
