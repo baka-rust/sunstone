@@ -22,10 +22,10 @@ Player::Player(int xPos, int yPos, std::string dir) {
     //animations["left"] = new AnimationSequence("resources/player/left", 2, .25);
     //animations["right"] = new AnimationSequence("resources/player/right", 2, .25);
 
-    animations["up"] = new AnimationSequence("resources/player/playerTest", 2, .25);
-    animations["down"] = new AnimationSequence("resources/player/playerTest", 2, .25);
-    animations["left"] = new AnimationSequence("resources/player/playerTest", 2, .25);
-    animations["right"] = new AnimationSequence("resources/player/playerTest", 2, .25);
+    animations["up"] = new AnimationSequence("resources/player/walk", 8, .02);
+    animations["down"] = new AnimationSequence("resources/player/walk", 8, .02);
+    animations["left"] = new AnimationSequence("resources/player/walk", 8, .02);
+    animations["right"] = new AnimationSequence("resources/player/walk", 8, .02);
 
 }
 
