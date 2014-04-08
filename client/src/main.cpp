@@ -27,11 +27,12 @@ int main() {
 
     app.setVerticalSyncEnabled(true);
     app.setView(camera);
+    app.setMouseCursorVisible(false);
 
     Player player(64, 64, "down");
     Terrain terrain;
     Network network;
-    GUI gui(width, height);
+    GUI gui(width, height, &terrain);
 
     player.terrain = &terrain;
     player.network = &network;

@@ -32,7 +32,7 @@ class Terrain {
 
     private:
 
-        Dungeon *dungeon;
+        Dungeon* dungeon;
 
         sf::Texture tiletex;
 

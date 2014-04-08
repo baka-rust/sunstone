@@ -2,7 +2,7 @@
 #define GUI_H
 #include <iostream>
 #include <SFML/Graphics.hpp>
-#include <sstream>
+#include <Terrain.h>
 
 
 
@@ -20,6 +20,7 @@ struct GUIBar{
 struct GUICrosshair{
     int x, y;
     int speed = 2; //bigger the number, the slower the mouse, but the more jagged the movements
+    int tileType = 0;
     sf::Texture texture;
 	sf::Sprite crosshair;
 
@@ -86,7 +87,7 @@ public:
 
 
 
-	GUI(int w, int h);
+	GUI(int w, int h, Terrain* d);
 
 	 //overlay creations
     void createToolTipArea(int x, int y, int w, int h, sf::String s);
@@ -103,12 +104,16 @@ public:
 
 
 private:
-    void updateCrosshair(sf::Vector2i pos);
-    void mouseRecoil();
-	int height, width;
+
+    int height, width;
 	float shiftx, shifty;
 	char lastCommand = ' ';
 	sf::String currentCommand = "";
+	Terrain* dungeon;
+
+    void updateCrosshair(sf::Vector2i pos);
+    void mouseClick();
+
 
 /**
      std::map<std::string, AnimationSequence*>ammoAnimations;
