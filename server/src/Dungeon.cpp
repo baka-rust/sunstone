@@ -35,7 +35,6 @@ void Dungeon::create(){
         lastRandomNumber++;
         n = createAttempt();
     }
-    printGrid();
 }
 
 int Dungeon::createAttempt() {
@@ -401,8 +400,7 @@ void Dungeon::printLine(int y) {
             std::cout << "X";
         }
         else if(grid[i][y] == door) {
-            std::cout << "[]";
-            i++;
+            std::cout << " ";
         }
         else if(grid[i][y] == healthpack) {
             std::cout << "+";
