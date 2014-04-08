@@ -27,7 +27,7 @@ public:
     int getRoom(int x, int y);
     
     // get bitmap of whether tile[i]==value
-    std::vector< std::vector<bool> > getBitmap(int value);
+    std::vector< std::vector<bool> > getBitmap(TileType t);
     
     // get a bitmap of features
     std::vector< std::vector<bool> > getWalls();

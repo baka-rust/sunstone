@@ -169,7 +169,7 @@ std::vector< std::vector<int> > Dungeon::getPathMap(int x, int y) {
     return r;
 }
 
-std::vector< std::vector<bool> > Dungeon::getBitmap(int value) {
+std::vector< std::vector<bool> > Dungeon::getBitmap(TileType value) {
     std::vector< std::vector<bool> > r = std::vector< std::vector<bool> >(grid.size());
     for(int i = 0; i < r.size(); i++) {
         r[i] = std::vector<bool>(grid[0].size());
@@ -184,11 +184,11 @@ std::vector< std::vector<bool> > Dungeon::getBitmap(int value) {
 }
 
 std::vector< std::vector<bool> > Dungeon::getWalls() {
-    return getBitmap(1);
+    return getBitmap(wall);
 }
 
 std::vector< std::vector<bool> > Dungeon::getFloors() {
-    return getBitmap(0);
+    return getBitmap(ground);
 }
 
 bool Dungeon::checkSquare(int x, int y, int width, int height, TileType value) {
