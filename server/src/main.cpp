@@ -6,16 +6,9 @@
 
 int main() {
 
-    Dungeon d(20,20,6,8,5);
-    d.create();
-    
-    PathMapper p(&d);
-    p.createMap(0, 12, 4);
-    
-    
-//    Network network;
-//
-//    network.run();
+    Network network;
+
+    network.run();
 
     return 0;
 }
