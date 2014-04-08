@@ -21,12 +21,12 @@ std::vector<int> PathMapper::getLocalPath(int ID, int x, int y) {
 }
 
 void PathMapper::createMap(int ID, int x, int y) {
-    if(wallBitmap[x][y]){
+    if(wallBitmap[x][y]) {
         return;
     }
     
     pathMap[ID].resize(dungeon->width());
-    for(int x=0; x<dungeon->width(); x++) {
+    for(int x = 0; x< dungeon->width(); x++) {
         pathMap[ID][x].resize(dungeon->height());
         for(int y=0; y<dungeon->height(); y++) {
             if(wallBitmap[x][y]) {
@@ -48,37 +48,37 @@ void PathMapper::createMap(int ID, int x, int y) {
     
     int currentX;
     int currentY;
-    while(q.size()!=0) {
+    while(q.size() != 0) {
         currentX = q.front();
         q.pop();
         currentY = q.front();
         q.pop();
-        if(currentX>0) {
+        if(currentX > 0) {
             if(pathMap[ID][currentX-1][currentY] < 0) {
                 pathMap[ID][currentX-1][currentY] = pathMap[ID][currentX][currentY] + 1;
-                q.push(currentX-1);
+                q.push(currentX - 1);
                 q.push(currentY);
             }
         }
-        if(currentX < dungeon->width()-1) {
-            if(pathMap[ID][currentX+1][currentY] < 0) {
-                pathMap[ID][currentX+1][currentY] = pathMap[ID][currentX][currentY] + 1;
+        if(currentX < dungeon->width() - 1) {
+            if(pathMap[ID][currentX + 1][currentY] < 0) {
+                pathMap[ID][currentX + 1][currentY] = pathMap[ID][currentX][currentY] + 1;
                 q.push(currentX+1);
                 q.push(currentY);
             }
         }
-        if(currentY>0) {
-            if(pathMap[ID][currentX][currentY-1] < 0) {
-                pathMap[ID][currentX][currentY-1] = pathMap[ID][currentX][currentY] + 1;
+        if(currentY > 0) {
+            if(pathMap[ID][currentX][currentY - 1] < 0) {
+                pathMap[ID][currentX][currentY - 1] = pathMap[ID][currentX][currentY] + 1;
                 q.push(currentX);
                 q.push(currentY-1);
             }
         }
-        if(currentY < dungeon->height()-1) {
-            if(pathMap[ID][currentX][currentY+1] < 0) {
-                pathMap[ID][currentX][currentY+1] = pathMap[ID][currentX][currentY] + 1;
+        if(currentY < dungeon->height() - 1) {
+            if(pathMap[ID][currentX][currentY + 1] < 0) {
+                pathMap[ID][currentX][currentY + 1] = pathMap[ID][currentX][currentY] + 1;
                 q.push(currentX);
-                q.push(currentY+1);
+                q.push(currentY + 1);
             }
         }
     }
