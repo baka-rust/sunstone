@@ -32,10 +32,7 @@ public:
     // get a bitmap of features
     std::vector< std::vector<bool> > getWalls();
     std::vector< std::vector<bool> > getFloors();
-    
-    // returns a 2D int-grid of distances from (x,y) in the room (x,y) is in
-    std::vector< std::vector<int> > getPathMap(int x, int y);
-    
+        
     // accessors
     int width() { return (int) grid.size(); };
     int height() { return (int) grid[0].size(); };

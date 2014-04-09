@@ -13,9 +13,9 @@ bool focused = true;
 
 int main() {
 
-    int scale = 4;
-    int width = 256;
-    int height = 160;
+    int scale = 2;
+    int width = 256 * 4 / scale;
+    int height = 160 * 4 / scale;
 
     sf::Event event;
     sf::Clock clock;
@@ -61,7 +61,7 @@ int main() {
         player.update(elapsedTime);
         network.update(elapsedTime);
 
-        camera.setCenter(player.x, player.y);
+        camera.setCenter(floor(player.x*10)/10, floor(player.y*10)/10);
         app.setView(camera);
 
         app.clear(sf::Color::Cyan);
