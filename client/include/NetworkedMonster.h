@@ -26,8 +26,8 @@ class NetworkedMonster {
 		
 	private:
 
-        std::map<std::string, AnimationSequence*> animations;
-        typedef std::map<std::string, AnimationSequence*>::iterator i_animations;
+        	std::map<std::string, AnimationSequence*> animations;
+        	typedef std::map<std::string, AnimationSequence*>::iterator i_animations;
 
 };
 
