@@ -174,10 +174,10 @@ void Terrain::buildTilemaps(std::vector<std::vector<TileType> > tileList) {
                         decorationQuads.insert(decorationQuads.begin() + 0, tl_floor_dec_full_horiz);
                     }
                 } else {
-                    if(w) {
-                        decorationQuads.insert(decorationQuads.begin() + 0, tl_floor_dec_full_vert);
-                    } else {
-                        if(nw) {
+                    if(nw) {
+                        if(w) {
+                            decorationQuads.insert(decorationQuads.begin() + 0, tl_floor_dec_full_vert);
+                        } else {
                             decorationQuads.insert(decorationQuads.begin() + 0, tl_floor_dec_semi_out);
                         }
                     }
@@ -191,10 +191,10 @@ void Terrain::buildTilemaps(std::vector<std::vector<TileType> > tileList) {
                         decorationQuads.insert(decorationQuads.begin() + 1, tr_floor_dec_full_horiz);
                     }
                 } else {
-                    if(e) {
-                        decorationQuads.insert(decorationQuads.begin() + 1, tr_floor_dec_full_vert);
-                    } else {
-                        if(ne) {
+                    if(ne) {
+                        if(e) {
+                            decorationQuads.insert(decorationQuads.begin() + 1, tr_floor_dec_full_vert);
+                        } else {
                             decorationQuads.insert(decorationQuads.begin() + 1, tr_floor_dec_semi_out);
                         }
                     }
@@ -205,13 +205,13 @@ void Terrain::buildTilemaps(std::vector<std::vector<TileType> > tileList) {
                     if(w) {
                         decorationQuads.insert(decorationQuads.begin() + 2, bl_floor_dec_semi_in);
                     } else {
-                        decorationQuads.insert(decorationQuads.begin() + 2, bl_floor_dec_full_horiz);
+//                        decorationQuads.insert(decorationQuads.begin() + 2, bl_floor_dec_full_horiz);
                     }
                 } else {
                     if(w) {
-                        decorationQuads.insert(decorationQuads.begin() + 2, bl_floor_dec_full_vert);
-                    } else {
-                        if(sw) {
+                        if(nw) {
+                            decorationQuads.insert(decorationQuads.begin() + 2, bl_floor_dec_full_vert);
+                        } else {
                             decorationQuads.insert(decorationQuads.begin() + 2, bl_floor_dec_semi_out);
                         }
                     }
@@ -221,14 +221,12 @@ void Terrain::buildTilemaps(std::vector<std::vector<TileType> > tileList) {
                 if(s) {
                     if(e) {
                         decorationQuads.insert(decorationQuads.begin() + 3, br_floor_dec_semi_in);
-                    } else {
-                        decorationQuads.insert(decorationQuads.begin() + 3, br_floor_dec_full_horiz);
                     }
                 } else {
                     if(e) {
-                        decorationQuads.insert(decorationQuads.begin() + 3, br_floor_dec_full_vert);
-                    } else {
-                        if(se) {
+                        if(ne) {
+                            decorationQuads.insert(decorationQuads.begin() + 3, br_floor_dec_full_vert);
+                        } else {
                             decorationQuads.insert(decorationQuads.begin() + 3, br_floor_dec_semi_out);
                         }
                     }
