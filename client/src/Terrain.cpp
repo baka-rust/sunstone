@@ -6,72 +6,80 @@ Terrain::Terrain() {
     tiletex.loadFromFile("resources/tilemap.png");
 
     complex = new Tilemap(tiletex, quadSize, height, width);
-
-    generateFromSeed(120); // TODO make sample menu dungeon
-    // buildTilemaps();
-
+    decoration = new Tilemap(tiletex, quadSize, height, width);
+    
+//    std::vector<std::vector<TileType> > lobbyTiles(width);
+//    for(int i = 0; i < width; i++) {
+//        lobbyTiles[i] = std::vector<TileType>(height, wall);
+//    }
+//    
+//    for(int i = 61; i < 67; i++) {
+//        for(int j = 61; j < 67; j++) {
+//            lobbyTiles[i][j] = ground;
+//        }
+//    }
+//    
+//    buildTilemaps(lobbyTiles);
+    
+    generateFromSeed(12);
 }
 
 void Terrain::generateFromSeed(int seed) {
     dungeon = new Dungeon(height, width, 6, 10, seed);
     dungeon->create();
     
-    buildTilemaps();
+    buildTilemaps(dungeon->getTiles());
     
-//    complex->setPosition(0, 0);
-//    complex->setOrigin(-height * 16 / 2, -512);
     std::cout << "Built tilemaps!" << std::endl;
 }
 
-void Terrain::buildTilemaps() {
+void Terrain::buildTilemaps(std::vector<std::vector<TileType> > tileList) {
     for (int y = 0; y < height; y++) {
         for(int x = 0; x < width; x++) {
-            std::vector<QuadType> quads;
-            quads.reserve(4);
+            std::vector<QuadType> complexQuads(4, blank);
+            std::vector<QuadType> decorationQuads(4, blank);
             
-            TileType ttype = dungeon->getTile(x, y);
-            physics[y][x] = ttype;
+            TileType ttype = tileList[x][y];
+            physics[x][y] = ttype;
         
+            // check around wall to see what's wall and what's not.
+            bool n  = (y == 0   || tileList[x][y - 1] == wall);
+            bool e  = (x == 127 || tileList[x + 1][y] == wall);
+            bool s  = (y == 127 || tileList[x][y + 1] == wall);
+            bool w  = (x == 0   || tileList[x - 1][y] == wall);
+            
+            bool ne = (y == 0   || x == 127 || tileList[x + 1][y - 1] == wall);
+            bool nw = (y == 0   || x == 0   || tileList[x - 1][y - 1] == wall);
+            bool se = (y == 127 || x == 127 || tileList[x + 1][y + 1] == wall);
+            bool sw = (y == 127 || x == 0   || tileList[x - 1][y + 1] == wall);
+            
             if(ttype == wall) {
-                // draw walls
-                
-                // TODO morgan's new code should fix
-                
-                // check around wall to see what's wall and what's not.
-                bool n  = (y == 0   || dungeon->getTile(x, y - 1) == 1);
-                bool e  = (x == 127 || dungeon->getTile(x + 1, y) == 1);
-                bool s  = (y == 127 || dungeon->getTile(x, y + 1) == 1);
-                bool w  = (x == 0   || dungeon->getTile(x - 1, y) == 1);
-                
-                bool ne = (y == 0   || x == 127 || dungeon->getTile(x + 1, y - 1) == 1);
-                bool nw = (y == 0   || x == 0   || dungeon->getTile(x - 1, y - 1) == 1);
-                bool se = (y == 127 || x == 127 || dungeon->getTile(x + 1, y + 1) == 1);
-                bool sw = (y == 127 || x == 0   || dungeon->getTile(x - 1, y + 1) == 1);
+                physics[x][y] = wall;
                 
                 // Top Left
                 if(!s) {
                     if(!w) {
-                        quads.insert(quads.begin() + 0, tl_wall_back_vert);
+                        complexQuads.insert(complexQuads.begin() + 0, tl_wall_back_vert);
                     } else {
-                        quads.insert(quads.begin() + 0, tl_wall_back_horiz);
+                        complexQuads.insert(complexQuads.begin() + 0, tl_wall_back_horiz);
                     }
                 } else {
                     if(!n) {
                         if(!w) {
-                            quads.insert(quads.begin() + 0, tl_wall_bottom_down);
+                            complexQuads.insert(complexQuads.begin() + 0, tl_wall_bottom_down);
                         } else {
-                            quads.insert(quads.begin() + 0, tl_wall_bottom_horiz);
+                            complexQuads.insert(complexQuads.begin() + 0, tl_wall_bottom_horiz);
                         }
                     } else {
                         if(!w) {
-                            quads.insert(quads.begin() + 0, tl_wall_right_vert);
+                            complexQuads.insert(complexQuads.begin() + 0, tl_wall_right_vert);
                         } else {
                             if(!sw) {
-                                quads.insert(quads.begin() + 0, tl_wall_right_horiz);
+                                complexQuads.insert(complexQuads.begin() + 0, tl_wall_right_horiz);
                             } else if(!nw) {
-                                quads.insert(quads.begin() + 0, tl_wall_bottom_up);
+                                complexQuads.insert(complexQuads.begin() + 0, tl_wall_bottom_up);
                             } else {
-                                quads.insert(quads.begin() + 0, tl_black);
+                                complexQuads.insert(complexQuads.begin() + 0, tl_black);
                             }
                         }
                     }
@@ -80,27 +88,27 @@ void Terrain::buildTilemaps() {
                 // Top Right
                 if(!s) {
                     if(!e) {
-                        quads.insert(quads.begin() + 1, tr_wall_back_vert);
+                        complexQuads.insert(complexQuads.begin() + 1, tr_wall_back_vert);
                     } else {
-                        quads.insert(quads.begin() + 1, tr_wall_back_horiz);
+                        complexQuads.insert(complexQuads.begin() + 1, tr_wall_back_horiz);
                     }
                 } else {
                     if(!n) {
                         if(!e) {
-                            quads.insert(quads.begin() + 1, tr_wall_bottom_down);
+                            complexQuads.insert(complexQuads.begin() + 1, tr_wall_bottom_down);
                         } else {
-                            quads.insert(quads.begin() + 1, tr_wall_bottom_horiz);
+                            complexQuads.insert(complexQuads.begin() + 1, tr_wall_bottom_horiz);
                         }
                     } else {
                         if(!e) {
-                            quads.insert(quads.begin() + 1, tr_wall_left_vert);
+                            complexQuads.insert(complexQuads.begin() + 1, tr_wall_left_vert);
                         } else {
                             if(!se) {
-                                quads.insert(quads.begin() + 1, tr_wall_left_horiz);
+                                complexQuads.insert(complexQuads.begin() + 1, tr_wall_left_horiz);
                             } else if(!ne) {
-                                quads.insert(quads.begin() + 1, tr_wall_bottom_up);
+                                complexQuads.insert(complexQuads.begin() + 1, tr_wall_bottom_up);
                             } else {
-                                quads.insert(quads.begin() + 1, tr_black);
+                                complexQuads.insert(complexQuads.begin() + 1, tr_black);
                             }
                         }
                     }
@@ -109,53 +117,130 @@ void Terrain::buildTilemaps() {
                 // Bottom left
                 if(!s) {
                     if(!w) {
-                        quads.insert(quads.begin() + 2, bl_wall_back_vert);
+                        complexQuads.insert(complexQuads.begin() + 2, bl_wall_back_vert);
                     } else {
-                        quads.insert(quads.begin() + 2, bl_wall_back_horiz);
+                        complexQuads.insert(complexQuads.begin() + 2, bl_wall_back_horiz);
                     }
                 } else {
                     if(!w || !sw) {
-                        quads.insert(quads.begin() + 2, bl_wall_right_vert);
+                        complexQuads.insert(complexQuads.begin() + 2, bl_wall_right_vert);
                     } else {
-                        quads.insert(quads.begin() + 2, bl_black);
+                        complexQuads.insert(complexQuads.begin() + 2, bl_black);
                     }
                 }
             
                 // Bottom right
                 if(!s) {
                     if(!e) {
-                        quads.insert(quads.begin() + 3, br_wall_back_vert);
+                        complexQuads.insert(complexQuads.begin() + 3, br_wall_back_vert);
                     } else {
-                        quads.insert(quads.begin() + 3, br_wall_back_horiz);
+                        complexQuads.insert(complexQuads.begin() + 3, br_wall_back_horiz);
                     }
                 } else {
                     if(!e || !se) {
-                        quads.insert(quads.begin() + 3, br_wall_left_vert);
+                        complexQuads.insert(complexQuads.begin() + 3, br_wall_left_vert);
                     } else {
-                        quads.insert(quads.begin() + 3, br_black);
+                        complexQuads.insert(complexQuads.begin() + 3, br_black);
+                    }
+                }
+//                
+//            } else if(ttype == door){
+//                // TODO pass through doors
+//                physics[x][y] = ground;
+//                
+//                // TODO doors
+//                complexQuads.insert(complexQuads.begin() + 0, tl_floor);
+//                complexQuads.insert(complexQuads.begin() + 1, tr_floor);
+//                complexQuads.insert(complexQuads.begin() + 2, bl_floor);
+//                complexQuads.insert(complexQuads.begin() + 3, br_floor);
+                
+            } else {
+                // TODO pass through doors
+                physics[x][y] = ground;
+                
+                // Draw the floor
+                complexQuads.insert(complexQuads.begin() + 0, tl_floor);
+                complexQuads.insert(complexQuads.begin() + 1, tr_floor);
+                complexQuads.insert(complexQuads.begin() + 2, bl_floor);
+                complexQuads.insert(complexQuads.begin() + 3, br_floor);
+                
+                // Determine what floor ring to draw
+                
+                // Draw top left quad
+                if(n) {
+                    if(w) {
+                        decorationQuads.insert(decorationQuads.begin() + 0, tl_floor_dec_semi_in);
+                    } else {
+                        decorationQuads.insert(decorationQuads.begin() + 0, tl_floor_dec_full_horiz);
+                    }
+                } else {
+                    if(w) {
+                        decorationQuads.insert(decorationQuads.begin() + 0, tl_floor_dec_full_vert);
+                    } else {
+                        if(nw) {
+                            decorationQuads.insert(decorationQuads.begin() + 0, tl_floor_dec_semi_out);
+                        }
                     }
                 }
                 
-            } else if(ttype == door){
-                // TODO pass through doors
-                physics[y][x] = ground;
+                // Draw top right quad
+                if(n) {
+                    if(e) {
+                        decorationQuads.insert(decorationQuads.begin() + 1, tr_floor_dec_semi_in);
+                    } else {
+                        decorationQuads.insert(decorationQuads.begin() + 1, tr_floor_dec_full_horiz);
+                    }
+                } else {
+                    if(e) {
+                        decorationQuads.insert(decorationQuads.begin() + 1, tr_floor_dec_full_vert);
+                    } else {
+                        if(ne) {
+                            decorationQuads.insert(decorationQuads.begin() + 1, tr_floor_dec_semi_out);
+                        }
+                    }
+                }
                 
-                // TODO doors
-                quads.insert(quads.begin() + 0, tl_floor);
-                quads.insert(quads.begin() + 1, tr_floor);
-                quads.insert(quads.begin() + 2, bl_floor);
-                quads.insert(quads.begin() + 3, br_floor);
+                // Draw bottom left quad
+                if(s) {
+                    if(w) {
+                        decorationQuads.insert(decorationQuads.begin() + 2, bl_floor_dec_semi_in);
+                    } else {
+                        decorationQuads.insert(decorationQuads.begin() + 2, bl_floor_dec_full_horiz);
+                    }
+                } else {
+                    if(w) {
+                        decorationQuads.insert(decorationQuads.begin() + 2, bl_floor_dec_full_vert);
+                    } else {
+                        if(sw) {
+                            decorationQuads.insert(decorationQuads.begin() + 2, bl_floor_dec_semi_out);
+                        }
+                    }
+                }
                 
-            } else {
+                // Draw bottom right quad
+                if(s) {
+                    if(e) {
+                        decorationQuads.insert(decorationQuads.begin() + 3, br_floor_dec_semi_in);
+                    } else {
+                        decorationQuads.insert(decorationQuads.begin() + 3, br_floor_dec_full_horiz);
+                    }
+                } else {
+                    if(e) {
+                        decorationQuads.insert(decorationQuads.begin() + 3, br_floor_dec_full_vert);
+                    } else {
+                        if(se) {
+                            decorationQuads.insert(decorationQuads.begin() + 3, br_floor_dec_semi_out);
+                        }
+                    }
+                }
                 
-                quads.insert(quads.begin() + 0, tl_floor);
-                quads.insert(quads.begin() + 1, tr_floor);
-                quads.insert(quads.begin() + 2, bl_floor);
-                quads.insert(quads.begin() + 3, br_floor);
             }
             
-            Tile tile = Tile(x, y, quads);
-            complex->setTile(tile);
+            Tile complexTile = Tile(x, y, complexQuads);
+            Tile decorationTile = Tile(x, y, decorationQuads);
+            
+            complex->setTile(complexTile);
+            decoration->setTile(decorationTile);
         }
     }
 }
@@ -166,8 +251,9 @@ void Terrain::update(float elapsedTime) {
 
 void Terrain::draw(float cameraX, float cameraY, sf::RenderWindow *app) {
     app->draw(*complex);
+    app->draw(*decoration);
 }
 
 TileType Terrain::getTile(int tileX, int tileY, std::string layer) {
-    return physics[tileY][tileX];
+    return physics[tileX][tileY];
 }
