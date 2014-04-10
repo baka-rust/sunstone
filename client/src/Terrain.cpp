@@ -8,20 +8,20 @@ Terrain::Terrain() {
     complex = new Tilemap(tiletex, quadSize, height, width);
     decoration = new Tilemap(tiletex, quadSize, height, width);
     
-//    std::vector<std::vector<TileType> > lobbyTiles(width);
-//    for(int i = 0; i < width; i++) {
-//        lobbyTiles[i] = std::vector<TileType>(height, wall);
-//    }
-//    
-//    for(int i = 61; i < 67; i++) {
-//        for(int j = 61; j < 67; j++) {
-//            lobbyTiles[i][j] = ground;
-//        }
-//    }
-//    
-//    buildTilemaps(lobbyTiles);
+    std::vector<std::vector<TileType> > lobbyTiles(width);
+    for(int i = 0; i < width; i++) {
+        lobbyTiles[i] = std::vector<TileType>(height, wall);
+    }
     
-    generateFromSeed(12);
+    for(int i = 62; i < 67; i++) {
+        for(int j = 62; j < 67; j++) {
+            lobbyTiles[i][j] = ground;
+        }
+    }
+    
+    buildTilemaps(lobbyTiles);
+    
+//    generateFromSeed(12);
 }
 
 void Terrain::generateFromSeed(int seed) {
@@ -204,8 +204,6 @@ void Terrain::buildTilemaps(std::vector<std::vector<TileType> > tileList) {
                 if(s) {
                     if(w) {
                         decorationQuads.insert(decorationQuads.begin() + 2, bl_floor_dec_semi_in);
-                    } else {
-//                        decorationQuads.insert(decorationQuads.begin() + 2, bl_floor_dec_full_horiz);
                     }
                 } else {
                     if(w) {
