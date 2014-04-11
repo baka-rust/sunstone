@@ -27,28 +27,28 @@ class Dungeon {
         int getRoom(int x, int y);
 
         // get bitmap of whether tile[i]==value
-        std::vector< std::vector<bool> > getBitmap(int value);
+        std::vector< std::vector<bool> > getBitmap(TileType);
     
         // get a bitmap of features
         std::vector< std::vector<bool> > getWalls();
         std::vector< std::vector<bool> > getFloors();
-    
-        // returns a 2D int-grid of distances from (x,y) in the room (x,y) is in
-        std::vector< std::vector<int> > getPathMap(int x, int y);
-    
+        
         // accessors
         int width() { return (int) grid.size(); };
         int height() { return (int) grid[0].size(); };
         TileType getTile(int x, int y);
         bool isFloor(int x, int y);
         bool isWall(int x, int y);
-
+        std::vector< std::vector <TileType> > getTiles();
+        std::vector<int> getLights();
     
     private:
 
         std::vector< std::vector<TileType> > grid;
         std::vector<Room> rooms;
         std::vector<Door> doors;
+    
+        std::vector<int> lights;
     
         int roomCount;
         int minRoomSize;

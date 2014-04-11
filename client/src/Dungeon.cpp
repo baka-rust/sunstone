@@ -74,7 +74,7 @@ int Dungeon::createAttempt() {
     }
     
     for(int i = 0; i < roomCount; i++){
-//        decorateRoom(rooms[i]);
+        decorateRoom(rooms[i]);
     }
     
     carveSquare((int) grid.size() / 2, (int)grid[0].size() / 2, 8, 8, ground);       // overwrite the starting and final rooms
@@ -105,72 +105,7 @@ int Dungeon::getRoom(int x, int y) {
     return -1;
 }
 
-std::vector< std::vector<int> > Dungeon::getPathMap(int x, int y) {
-    int rm = getRoom(x, y);
-    if(rm == -1) {
-        throw "Error!  Trying to pathfind outside of the dungeon";
-        return std::vector< std::vector<int> >(0);
-    }
-    Room room = rooms[rm];
-    
-    int width = room.width() + 2;
-    int height = room.height() + 2;
-    std::vector< std::vector<int> > r(width);
-
-    for(int i = 0; i < width - 1; i++) {
-        r[i] = std::vector<int>(height);
-        for(int j = 0; j < width; j++) {
-            r[i][j] = -1;
-        }
-    }
-    
-    // TODO: add doors HERE
-    
-    std::queue<int> queue;
-    r[x - room.x()][y - room.y()] = 0;
-    queue.push(x - room.x());
-    queue.push(y - room.y());
-
-    int item_x;
-    int item_y;
-    while(queue.size() != 0) {
-        item_x = queue.front();
-        queue.pop();
-        item_y = queue.front();
-        queue.pop();
-        if(item_x > 0) {
-            if(r[item_x-1][item_y] == -1) {
-                r[item_x-1][item_y] = r[item_x][item_y] + 1;
-                queue.push(item_x - 1);
-                queue.push(item_y);
-            }
-        }
-        if(item_x<room.width() - 1) {
-            if(r[item_x + 1][item_y] == -1) {
-                r[item_x + 1][item_y] = r[item_x][item_y] + 1;
-                queue.push(item_x + 1);
-                queue.push(item_y);
-            }
-        }
-        if(item_y>  0) {
-            if(r[item_x][item_y - 1] == -1) {
-                r[item_x][item_y - 1] = r[item_x][item_y]+1;
-                queue.push(item_x);
-                queue.push(item_y - 1);
-            }
-        }
-        if(item_y < room.height() - 1) {
-            if(r[item_x][item_y + 1] == -1) {
-                r[item_x][item_y + 1] = r[item_x][item_y] + 1;
-                queue.push(item_x);
-                queue.push(item_y + 1);
-            }
-        }
-    }
-    return r;
-}
-
-std::vector< std::vector<bool> > Dungeon::getBitmap(int value) {
+std::vector< std::vector<bool> > Dungeon::getBitmap(TileType value) {
     std::vector< std::vector<bool> > r = std::vector< std::vector<bool> >(grid.size());
     for(int i = 0; i < r.size(); i++) {
         r[i] = std::vector<bool>(grid[0].size());
@@ -185,11 +120,19 @@ std::vector< std::vector<bool> > Dungeon::getBitmap(int value) {
 }
 
 std::vector< std::vector<bool> > Dungeon::getWalls() {
-    return getBitmap(1);
+    return getBitmap(wall);
 }
 
 std::vector< std::vector<bool> > Dungeon::getFloors() {
-    return getBitmap(0);
+    return getBitmap(ground);
+}
+
+std::vector< std::vector<TileType> > Dungeon::getTiles() {
+    return grid;
+}
+
+std::vector<int> Dungeon::getLights(){
+    return lights;
 }
 
 bool Dungeon::checkSquare(int x, int y, int width, int height, TileType value) {
@@ -267,7 +210,15 @@ void Dungeon::decorateRoom(Room room) {
         }
         grid[x][y] = spawner;
     }
-
+    
+    for(int i=0; i<5; i++) {
+        x = randInt(room.x() + 1, room.endX() - 1);
+        y = randInt(room.y() + 1, room.endY() - 1);
+        if(grid[x][y]!=wall) {
+            lights.push_back(x);
+            lights.push_back(y);
+        }
+    }
 }
 
 bool Dungeon::addBranch(Room room) { // try to add a random room to the input
