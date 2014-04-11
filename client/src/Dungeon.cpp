@@ -35,6 +35,7 @@ void Dungeon::create(){
         lastRandomNumber++;
         n = createAttempt();
     }
+    printGrid();
 }
 
 int Dungeon::createAttempt() {
@@ -73,7 +74,7 @@ int Dungeon::createAttempt() {
     }
     
     for(int i = 0; i < roomCount; i++){
-//        decorateRoom(rooms[i]);
+        decorateRoom(rooms[i]);
     }
     
     carveSquare((int) grid.size() / 2, (int)grid[0].size() / 2, 8, 8, ground);       // overwrite the starting and final rooms
@@ -128,6 +129,10 @@ std::vector< std::vector<bool> > Dungeon::getFloors() {
 
 std::vector< std::vector<TileType> > Dungeon::getTiles() {
     return grid;
+}
+
+std::vector<int> Dungeon::getLights(){
+    return lights;
 }
 
 bool Dungeon::checkSquare(int x, int y, int width, int height, TileType value) {
@@ -205,7 +210,15 @@ void Dungeon::decorateRoom(Room room) {
         }
         grid[x][y] = spawner;
     }
-
+    
+    for(int i=0; i<5; i++) {
+        x = randInt(room.x() + 1, room.endX() - 1);
+        y = randInt(room.y() + 1, room.endY() - 1);
+        if(grid[x][y]!=wall) {
+            lights.push_back(x);
+            lights.push_back(y);
+        }
+    }
 }
 
 bool Dungeon::addBranch(Room room) { // try to add a random room to the input

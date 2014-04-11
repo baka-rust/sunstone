@@ -40,13 +40,15 @@ class Dungeon {
         bool isFloor(int x, int y);
         bool isWall(int x, int y);
         std::vector< std::vector <TileType> > getTiles();
-
+        std::vector<int> getLights();
     
     private:
 
         std::vector< std::vector<TileType> > grid;
         std::vector<Room> rooms;
         std::vector<Door> doors;
+    
+        std::vector<int> lights;
     
         int roomCount;
         int minRoomSize;
