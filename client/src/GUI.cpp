@@ -5,7 +5,7 @@ GUITextArea::GUITextArea(int x, int windowHeight, int w, int h) {
     this->w = w;
     height = windowHeight;
 
-    inputMessage = std::vector<sf::String>(10," ");
+    inputMessage = std::vector<std::string>(10," ");
     if (!font.loadFromFile("resources/arial.ttf"))
     {
     // error...
@@ -18,6 +18,7 @@ GUITextArea::GUITextArea(int x, int windowHeight, int w, int h) {
     currentText.setCharacterSize(14);
     currentText.setColor(sf::Color::Yellow);
     currentText.setScale(.5,.5);
+    currentText.scale(.5,.5);
 
     archivedText.setFont(font);
     archivedText.setString(inputMessage.back());
@@ -38,17 +39,16 @@ GUITextArea::GUITextArea(){
     GUITextArea(0,0,1,1);
 }
 
-void GUITextArea::addMessage(sf::String s){
-    inputMessage.erase(inputMessage.begin());
+void GUITextArea::addMessage(std::string s){
+
     inputMessage.push_back(s);
 
-     sf::String str = "";
+     std::string str = "";
     for(int i = inputMessage.size()- startDisplayIndex; i < inputMessage.size(); i++){
         str += inputMessage[i];
         str += "\n";
 
     }
-     std::cout << str.toAnsiString();
     archivedText.setString(str);
 
 }
@@ -61,6 +61,8 @@ void GUITextArea::draw(sf::RenderWindow* app){
    if(display){
     float textBounds = archivedText.getGlobalBounds().height + currentText.getLocalBounds().height + 2*marginy;
     (height/3 > textBounds)? dimentions.y = height/3: dimentions.y = textBounds;
+    (archivedText.getGlobalBounds().width > currentText.getGlobalBounds().width)? dimentions.x = archivedText.getGlobalBounds().width: dimentions.x = currentText.getGlobalBounds().width;
+    if(dimentions.x < w) dimentions.x = w;
     background.setSize(dimentions);
     background.setPosition(shiftx + x,shifty + height - background.getGlobalBounds().height);
     app->draw(background);
@@ -111,32 +113,32 @@ GUI::GUI(int w, int h, Terrain* d): textArea(0,h,w/2,h/4), tooltip(1,1,3,3){
     crosshair.crosshair.setOutlineThickness(5.f);
     crosshair.crosshair.setOutlineColor(sf::Color::Blue);
 
-    ammoBox.texture.loadFromFile("resources/ammo.jpg");
-    ammoBox.monitor.setTexture(ammoBox.texture);
-    ammoBox.x = w-ammoBox.texture.getSize().x;
-    ammoBox.y = 0;
-    ammoBox.monitor.setPosition(ammoBox.x, ammoBox.y);
-    ammoBox.index = 0;
-    ammoBox.maxValue = 9;
-    ammoBox.currentValue = 0;
+    switch(currentState){
+        case MAIN:
+        break;
+        case LOGIN:
+            textArea.addMessage(
+                                "Welcome to SUNSTONE!\n To Start playing enter your name then a , Then your Port , and then your server address \n example:  John Doe, 84294, 12.121.12.12"
+            );
+    }
 
 
 
 }
 
-void GUI::createToolTipArea(int x, int y, int w, int h, sf::String message){
 
+
+void GUI::createToolTipArea(int x, int y, int w, int h, std::string message){
 
     tooltip.x = x;
-    tooltip.height = y;
+    tooltip.setShift(0, y);
     tooltip.toggleDisplay(true);
-    tooltip.background.setSize(sf::Vector2f(w,h));
 
     setToolTipInfo(message);
 
 }
 
-void GUI::setToolTipInfo(sf::String message){
+void GUI::setToolTipInfo(std::string message){
     tooltip.tempString = message;
 }
 
@@ -165,6 +167,9 @@ void GUI::mouseClick(){
     }
     if(sf::Mouse::isButtonPressed(sf::Mouse::Right)){
         createToolTipArea(crosshair.x, crosshair.y, 20, 20, "test");
+        std::cout << "\nCrosshair at " << crosshair.y;
+        std::cout << "\n Tooltip at " << tooltip.background.getPosition().y;
+
 
     }
 
@@ -194,6 +199,10 @@ void GUI::updateCrosshair(sf::Vector2i pos){
 */
     //divide by 15 since each tile is 16 wide
     crosshair.tileType = dungeon->getTile(crosshair.x/16, crosshair.y/16, "");
+    switch(crosshair.tileType){
+    case ground:
+        setToolTipInfo("ground");
+    }
 
     crosshair.crosshair.setPosition(crosshair.x,crosshair.y);
     mouseClick();
@@ -204,9 +213,7 @@ void GUI::update(float elapsedTime, sf::Vector2i pos){
     float r = .5 + static_cast<float>(rand())/ static_cast<float>(RAND_MAX);
     setHealth(r);
 
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Return)){
-        clearLastCommand();
-    }
+
 
     updateCrosshair(pos);
 
@@ -215,15 +222,17 @@ void GUI::update(float elapsedTime, sf::Vector2i pos){
 void GUI::draw(sf::RenderWindow *app){
     healthBar.barHandle.setPosition(shiftx + healthBar.posx, shifty + healthBar.posy);
     ammoBox.monitor.setPosition(shiftx + ammoBox.x, shifty + ammoBox.y);
-     app->draw(healthBar.barHandle);
-    app->draw(ammoBox.monitor);
 
-    textArea.draw(app);
-
-    tooltip.draw(app);
-
-    app->draw(crosshair.crosshair);
-
+    switch(currentState){
+    case MAIN:
+        app->draw(healthBar.barHandle);
+        textArea.draw(app);
+        tooltip.draw(app);
+        app->draw(crosshair.crosshair);
+    case LOGIN:
+        textArea.draw(app);
+        app->draw(crosshair.crosshair);
+    }
 
 }
 
@@ -232,30 +241,57 @@ void GUI::setCenter(float x, float y){
     shifty = y;
 
       textArea.setShift(shiftx, shifty);
+
 }
 
-void GUI::processCommand(sf::String command){
-    switch(lastCommand){
-        case ' ':
-            lastCommand = command[0];
+void GUI::processCommand(char command){
+    if(command == 13){//return
+        clearLastCommand();
+    }else{
+        switch(currentState){
+        case MAIN:
+            switch(lastCommand){
+                case ' ':
+                    lastCommand = command;
+                    break;
+                case '/':
+                    currentCommand += command;
+                    if(currentCommand.size() % 20 == 0)
+                        currentCommand += "\n";
+                    textArea.tempString =  "/: " +currentCommand;
+                    break;
+            }
             break;
-        case '/':
-            currentCommand += command;
+        case LOGIN:
 
-            textArea.tempString = lastCommand + ": " +currentCommand;
-            break;
+                    currentCommand += command;
+                    textArea.tempString =  ": " +currentCommand;
+
+        }
     }
 
 }
 
 void GUI::clearLastCommand(){
-    switch(lastCommand){
-        case '/':
-            textArea.addMessage(currentCommand);
-            currentCommand = "";
-            lastCommand = ' ';
-            textArea.tempString = "";
+    switch(currentState){
+        case MAIN:
+            switch(lastCommand){
+                case '/':
+                    textArea.addMessage(currentCommand);
+                    currentCommand = "";
+                    lastCommand = ' ';
+                    textArea.tempString = "";
 
+                    break;
+                default:
+                     currentCommand = "";
+                    lastCommand = ' ';
+                    textArea.tempString = "";
+            }
             break;
+        case LOGIN:
+            //login(stuff);
+            break;
+
     }
 }

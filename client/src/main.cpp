@@ -75,8 +75,11 @@ int main() {
 
         app.clear();
        terrain.draw(camera.getCenter().x - 128, camera.getCenter().y - 80, &app);
-       network.draw(&app);
-      player.draw(&app);
+        network.draw(&app);
+        player.draw(&app);
+        /**
+            Get the window Stuff
+        */
         gui.draw(&app);
 
         app.display();

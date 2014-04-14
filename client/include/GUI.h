@@ -41,7 +41,7 @@ public:
 
 
 
-	std::vector<sf::String> inputMessage;
+	std::vector<std::string> inputMessage;
     float shiftx = 0, shifty=0;
     float height;
     int x, w;
@@ -55,13 +55,16 @@ public:
 	sf::RectangleShape background;
 	sf::Vector2f dimentions;
 	int startDisplayIndex = 5; // Position on string where message beings displaying
-    sf::String tempString;
+    std::string tempString;
+
+    bool hasOutputStream = false;
+
 
 	GUITextArea(int x, int windowHeight, int w, int h);
 	GUITextArea();
 
 	void toggleDisplay(bool d);
-	void addMessage(sf::String s);
+	void addMessage(std::string s);
 	void draw(sf::RenderWindow* app);
 	void setShift(float x, float y);
 private:
@@ -73,7 +76,12 @@ class GUI {
 
 public:
 
+    enum GameStates{
+        LOGIN,
+        MAIN
+    };
 
+    GameStates currentState = LOGIN;
 
 	GUIBar healthBar;
 	GUICrosshair crosshair;
@@ -85,8 +93,8 @@ public:
 	GUI(int w, int h, Terrain* d);
 
 	 //overlay creations
-    void createToolTipArea(int x, int y, int w, int h, sf::String s);
-	void setToolTipInfo(sf::String messages);
+    void createToolTipArea(int x, int y, int w, int h, std::string s);
+	void setToolTipInfo(std::string messages);
 	void displayToolTip(bool bDisplay);
 	void setHealth(float health);
 	void toggleRecoil(bool recoil);
@@ -94,7 +102,7 @@ public:
 	void draw(sf::RenderWindow* app);
     void setCenter(float x, float y);
 	//Commands
-	void processCommand(sf::String command);
+	void processCommand(char command);
 	void clearLastCommand();
 
 
@@ -103,7 +111,7 @@ private:
     int height, width;
 	float shiftx, shifty;
 	char lastCommand = ' ';
-	sf::String currentCommand = "";
+	std::string currentCommand = "";
 	Terrain* dungeon;
 
     void updateCrosshair(sf::Vector2i pos);
