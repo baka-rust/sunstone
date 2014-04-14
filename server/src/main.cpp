@@ -2,7 +2,7 @@
 
 #include "Network.h"
 #include "Dungeon.h"
-#include "PathMapper.h"
+#include "PathMaster.h"
 
 int main() {
 
