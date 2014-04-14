@@ -25,6 +25,9 @@ void Network::update(float elapsedTime) {
     for(i_networkPlayers iterator = networkPlayers.begin(); iterator != networkPlayers.end(); iterator++) {
         iterator->second->update(elapsedTime);
     }
+    for(Projectile *projectile : projectiles) {
+    	projectile->update(elapsedTime);
+    }
 
     // join server after grabbing terrain
     if(requestedPlayers == false && gotSeed == true) {
@@ -116,8 +119,16 @@ void Network::draw(sf::RenderWindow *app) {
     for(i_networkPlayers iterator = networkPlayers.begin(); iterator != networkPlayers.end(); iterator++) {
         iterator->second->draw(app);
     }
+    for(Projectile *projectile : projectiles) {
+    	projectile->draw(app);
+    }
 }
 
+void Network::emitProjectile(int pureX, int pureY, std::string direction) {
+
+	projectiles.push_back(new Projectile(pureX, pureY, direction));
+
+}
 
 void Network::updatePlayerLocation(int x, int y, std::string direction) {
 

@@ -122,6 +122,17 @@ void Player::update(float elapsedTime) {
             network->updatePlayerLocation(tileX, tileY, direction);
         }
     }
+    
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Z) && focused) {
+    	fireTime = fireTime + elapsedTime;
+    	if(fireTime > .5) {
+    		fireTime = 0.0;
+    		network->emitProjectile(x, y, direction);
+    	}
+    }
+    else {
+    	fireTime = 0.0;
+    }
 
     if(!moving && onTile) {
         x = tileX * 16;

@@ -11,6 +11,7 @@
 #include "Player.h"
 #include "NetworkedPlayer.h"
 #include "Terrain.h"
+#include "Projectile.h"
 
 class Terrain;
 class Player;
@@ -31,6 +32,7 @@ class Network {
         void update(float elapsedTime);
         void draw(sf::RenderWindow *app);
 
+		void emitProjectile(int pureX, int pureY, std::string direction);
         void updatePlayerLocation(int x, int y, std::string direction);
 
     private:
@@ -40,6 +42,8 @@ class Network {
 
         std::map<std::string, NetworkedPlayer*> networkPlayers;
         typedef std::map<std::string, NetworkedPlayer*>::iterator i_networkPlayers;
+        
+        std::vector<Projectile*> projectiles;
 
         sf::UdpSocket socket;
         char data[2048];

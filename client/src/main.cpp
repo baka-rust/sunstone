@@ -52,7 +52,6 @@ int main() {
                 std::cout << "focus lost" << std::endl;
             }
 
-
         }
 
         elapsedTime = clock.restart().asSeconds();
