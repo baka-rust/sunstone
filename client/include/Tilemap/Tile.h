@@ -1,9 +1,9 @@
 #ifndef TILE_H
 #define TILE_H
 
-#include <Vector>
+#include <vector>
 
-#include <SFML/graphics.hpp>
+#include <SFML/Graphics.hpp>
 
 #include "Tilemap/QuadTypes.h"
 
