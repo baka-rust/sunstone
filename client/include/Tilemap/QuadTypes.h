@@ -27,6 +27,7 @@ enum QuadType {
     // These groupings are horribly arbitrary.
     
     // First row
+    blank = 0,
     tl_blank = 0,
     tr_blank,
     
@@ -72,7 +73,7 @@ enum QuadType {
     tl_floor_dec_semi_in,
     tr_floor_dec_semi_in,
     
-    tl_floor_hec_semi_out,
+    tl_floor_dec_semi_out,
     tr_floor_dec_semi_out,
     
     // Second row

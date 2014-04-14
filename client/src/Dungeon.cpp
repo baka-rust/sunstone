@@ -192,6 +192,10 @@ std::vector< std::vector<bool> > Dungeon::getFloors() {
     return getBitmap(0);
 }
 
+std::vector< std::vector<TileType> > Dungeon::getTiles() {
+    return grid;
+}
+
 bool Dungeon::checkSquare(int x, int y, int width, int height, TileType value) {
     // check to see if a rectangle contains only a given value
     for(int _x = x; _x < x + width; _x++) {

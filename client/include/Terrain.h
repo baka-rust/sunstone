@@ -21,7 +21,6 @@ class Terrain {
         Terrain();
 
         void generateFromSeed(int seed);
-        void buildTilemaps();
 
         void update(float elapsedTime);
 
@@ -43,6 +42,8 @@ class Terrain {
         int quadSize = 8;
         int height = 128;
         int width = 128;
+    
+        void buildTilemaps(std::vector<std::vector<TileType> > tileList);
 
 
 };
