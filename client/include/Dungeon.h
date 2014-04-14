@@ -42,6 +42,7 @@ class Dungeon {
         TileType getTile(int x, int y);
         bool isFloor(int x, int y);
         bool isWall(int x, int y);
+        std::vector< std::vector<TileType> > getTiles();
 
     
     private:
