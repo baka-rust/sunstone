@@ -11,14 +11,15 @@ class Room {
     public:
 
         Room(int x, int y, int width, int height);
-        int x() { return _x; };
-        int y() { return _y; };
-        int height() { return _height; };
-        int width() { return _width; };
-        int endX() { return _endX; };
-        int endY() { return _endY; };
         void addConnectedRoom(Room room, Door door);
         bool inRoom(int x, int y);
+    
+        int x() { return _x; };
+        int y() { return _y; };
+        int width() { return _width; };
+        int height() { return _height; };
+        int endX() { return _endX; };
+        int endY() { return _endY; };
 
     private:
 

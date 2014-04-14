@@ -56,13 +56,15 @@ int main() {
         }
 
         elapsedTime = clock.restart().asSeconds();
+
+        terrain.update(elapsedTime);
         player.update(elapsedTime);
         network.update(elapsedTime);
 
         camera.setCenter(player.x, player.y);
         app.setView(camera);
 
-        app.clear(sf::Color::Black);
+        app.clear(sf::Color::Cyan);
 
         terrain.draw(camera.getCenter().x - 128, camera.getCenter().y - 80, &app);
         network.draw(&app);
