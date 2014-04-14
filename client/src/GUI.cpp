@@ -1,32 +1,56 @@
 #include "GUI.h"
 
-GUITextArea::GUITextArea(int x, int y, int w, int h) {
+GUITextArea::GUITextArea(int x, int windowHeight, int w, int h) {
     this->x = x;
-    this->y = y;
+    this->w = w;
+    height = windowHeight;
 
-    inputMessage = std::vector<sf::String>(10,"");
+    inputMessage = std::vector<sf::String>(10," ");
     if (!font.loadFromFile("resources/arial.ttf"))
     {
     // error...
     }
-    addMessage("text");
-    text.setFont(font);
-    text.setString(inputMessage.back());
-    text.setCharacterSize(14);
-    text.setColor(sf::Color::Red);
-    text.setScale(.5,.5);
 
-    background.setPosition(x, y);
-    background.setSize(sf::Vector2f(w,h));
-    background.setFillColor(sf::Color(0,0,0,150));//white
+    tempString = "";
+    addMessage("text");
+    currentText.setFont(font);
+    currentText.setString(inputMessage.back());
+    currentText.setCharacterSize(14);
+    currentText.setColor(sf::Color::Yellow);
+    currentText.setScale(.5,.5);
+
+    archivedText.setFont(font);
+    archivedText.setString(inputMessage.back());
+    archivedText.setCharacterSize(14);
+    archivedText.setColor(sf::Color::Yellow);
+    archivedText.setScale(.5,.5);
+
+    background.setPosition(x, height-20);
+    dimentions = sf::Vector2f(w,h);
+    background.setSize(dimentions);
+    background.setFillColor(sf::Color(0,0,255,150));//blue
 
 
 
 }
 
+GUITextArea::GUITextArea(){
+    GUITextArea(0,0,1,1);
+}
+
 void GUITextArea::addMessage(sf::String s){
     inputMessage.erase(inputMessage.begin());
     inputMessage.push_back(s);
+
+     sf::String str = "";
+    for(int i = inputMessage.size()- startDisplayIndex; i < inputMessage.size(); i++){
+        str += inputMessage[i];
+        str += "\n";
+
+    }
+     std::cout << str.toAnsiString();
+    archivedText.setString(str);
+
 }
 
 void GUITextArea::toggleDisplay(bool d){
@@ -34,11 +58,24 @@ void GUITextArea::toggleDisplay(bool d){
 }
 
 void GUITextArea::draw(sf::RenderWindow* app){
-    background.setPosition(x+shiftx,y+shifty);
+   if(display){
+    float textBounds = archivedText.getGlobalBounds().height + currentText.getLocalBounds().height + 2*marginy;
+    (height/3 > textBounds)? dimentions.y = height/3: dimentions.y = textBounds;
+    background.setSize(dimentions);
+    background.setPosition(shiftx + x,shifty + height - background.getGlobalBounds().height);
     app->draw(background);
-    text.setPosition(background.getPosition());
-    text.setString(inputMessage.back());
-    app->draw(text);
+    sf::Vector2f pos = background.getPosition();
+
+
+
+    archivedText.setPosition(pos);
+
+    currentText.setPosition(pos.x, pos.y + background.getGlobalBounds().height - currentText.getGlobalBounds().height - marginy);
+    currentText.setString(tempString);
+    if(displayArchivedText)
+        app->draw(archivedText);
+    app->draw(currentText);
+   }
 }
 
 void GUITextArea::setShift(float x, float y){
@@ -47,26 +84,32 @@ void GUITextArea::setShift(float x, float y){
 }
 
 
-GUI::GUI(int w, int h, Terrain* d): textArea(0,3*h/4,w/2,h/4){
+GUI::GUI(int w, int h, Terrain* d): textArea(0,h,w/2,h/4), tooltip(1,1,3,3){
 
     height = h;
     width = w;
     dungeon = d;
 
-	healthBar.curentValue = 1.f;
-   healthBar.texture.loadFromFile("resources/health.png");
-	healthBar.barHandle.setTexture(healthBar.texture);
-	healthBar.barHandle.setPosition(healthBar.posx, healthBar.posy);
-	healthBar.barHandle.setScale(.5, .5);
+    tooltip.toggleDisplay(false);
+    tooltip.background.setFillColor(sf::Color::White);
+    tooltip.setShift(0,0);
+    tooltip.displayArchivedText=false;
 
-   crosshair.texture.loadFromFile("resources/crosshairs.png");
-	crosshair.crosshair.setTexture(crosshair.texture);
-    crosshair.crosshair.setColor(sf::Color::Cyan);
+    healthBar.barHandle = sf::RectangleShape(sf::Vector2f(10, 2));
+	healthBar.curentValue = 1.f;
+    healthBar.barHandle.setPosition(healthBar.posx, healthBar.posy);
+
+    crosshair.crosshair = sf::RectangleShape(sf::Vector2f(5, 5));
+
+   crosshair.crosshair.setFillColor(sf::Color::Cyan);
     //crosshair.crosshair.setPosition(sf::Vector2f(w/2,h/2));
-    int orgx = crosshair.texture.getSize().x;
-	int orgy = crosshair.texture.getSize().y;
+    int orgx = crosshair.crosshair.getSize().x;
+	int orgy = crosshair.crosshair.getSize().y;
     crosshair.crosshair.setOrigin(sf::Vector2f(orgx/2, orgy/2));
-    crosshair.crosshair.setScale(.5,.5);
+
+
+    crosshair.crosshair.setOutlineThickness(5.f);
+    crosshair.crosshair.setOutlineColor(sf::Color::Blue);
 
     ammoBox.texture.loadFromFile("resources/ammo.jpg");
     ammoBox.monitor.setTexture(ammoBox.texture);
@@ -84,32 +127,21 @@ GUI::GUI(int w, int h, Terrain* d): textArea(0,3*h/4,w/2,h/4){
 void GUI::createToolTipArea(int x, int y, int w, int h, sf::String message){
 
 
-	tooltip.background.setSize(sf::Vector2f(w,h));
-	tooltip.background.setPosition(x, y);
-	tooltip.background.setFillColor(sf::Color::White);
-	displayToolTip(true);
+    tooltip.x = x;
+    tooltip.height = y;
+    tooltip.toggleDisplay(true);
+    tooltip.background.setSize(sf::Vector2f(w,h));
 
-    if(!tooltip.font.loadFromFile("resources/arial.ttf")){
-    //error
-    }
-
-    tooltip.text.setFont(tooltip.font);
-    tooltip.text.setCharacterSize(14);
-    tooltip.text.setColor(sf::Color::Red);
-    tooltip.text.setString(message);
-
+    setToolTipInfo(message);
 
 }
 
 void GUI::setToolTipInfo(sf::String message){
-    tooltip.text.setString(message);
+    tooltip.tempString = message;
 }
 
 void GUI::displayToolTip(bool bDisplay){
-	if(bDisplay == false){
-        tooltip.text.setString("");
-	}
-	tooltip.display = bDisplay;
+	tooltip.toggleDisplay(bDisplay);
 }
 
 void GUI::setHealth(float health){
@@ -120,14 +152,23 @@ void GUI::setHealth(float health){
 }
 
 void GUI::mouseClick(){
-      crosshair.crosshair.setScale(.5,.5);
 
     if(sf::Mouse::isButtonPressed(sf::Mouse::Left)){
         if(crosshair.tileType == 0){
-            float r = static_cast<float>(rand())/ static_cast<float>(RAND_MAX);
-            crosshair.crosshair.setScale(r,r);
+            float r = (static_cast<float>(rand())/ static_cast<float>(RAND_MAX))*3;
+             crosshair.crosshair.setOutlineThickness(r);
+             crosshair.crosshair.setScale(r/3, r/3);
         }
+    }else{
+         crosshair.crosshair.setOutlineThickness(3.f);
+         crosshair.crosshair.setScale(.5, .5);
     }
+    if(sf::Mouse::isButtonPressed(sf::Mouse::Right)){
+        createToolTipArea(crosshair.x, crosshair.y, 20, 20, "test");
+
+    }
+
+
 }
 
 void GUI::updateCrosshair(sf::Vector2i pos){
@@ -163,7 +204,12 @@ void GUI::update(float elapsedTime, sf::Vector2i pos){
     float r = .5 + static_cast<float>(rand())/ static_cast<float>(RAND_MAX);
     setHealth(r);
 
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Return)){
+        clearLastCommand();
+    }
+
     updateCrosshair(pos);
+
 }
 
 void GUI::draw(sf::RenderWindow *app){
@@ -172,8 +218,10 @@ void GUI::draw(sf::RenderWindow *app){
      app->draw(healthBar.barHandle);
     app->draw(ammoBox.monitor);
 
-    textArea.setShift(shiftx, shifty);
     textArea.draw(app);
+
+    tooltip.draw(app);
+
     app->draw(crosshair.crosshair);
 
 
@@ -182,6 +230,8 @@ void GUI::draw(sf::RenderWindow *app){
 void GUI::setCenter(float x, float y){
     shiftx = x;
     shifty = y;
+
+      textArea.setShift(shiftx, shifty);
 }
 
 void GUI::processCommand(sf::String command){
@@ -191,7 +241,8 @@ void GUI::processCommand(sf::String command){
             break;
         case '/':
             currentCommand += command;
-            std::cout<<currentCommand.toAnsiString();
+
+            textArea.tempString = lastCommand + ": " +currentCommand;
             break;
     }
 
@@ -201,7 +252,10 @@ void GUI::clearLastCommand(){
     switch(lastCommand){
         case '/':
             textArea.addMessage(currentCommand);
+            currentCommand = "";
             lastCommand = ' ';
+            textArea.tempString = "";
+
             break;
     }
 }

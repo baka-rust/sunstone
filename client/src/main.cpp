@@ -54,6 +54,10 @@ int main() {
                 focused = false;
                 std::cout << "focus lost" << std::endl;
             }
+            else if(event.type == sf::Event::TextEntered){
+                gui.processCommand(event.text.unicode);
+            }
+
 
 
         }

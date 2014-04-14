@@ -11,8 +11,7 @@ const int HEALTHBAR_Y = 10;
 struct GUIBar{
 	int posx=0;
 	int posy=0;
-	sf::Texture texture;
-	sf::Sprite barHandle;
+	sf::RectangleShape barHandle;
 	float max = 10;
 	float curentValue = 1.f;
 };
@@ -21,21 +20,10 @@ struct GUICrosshair{
     int x, y;
     int speed = 2; //bigger the number, the slower the mouse, but the more jagged the movements
     int tileType = 0;
-    sf::Texture texture;
-	sf::Sprite crosshair;
+    sf::RectangleShape crosshair;
 
 };
 
-struct GUIToolTip{
-
-    int x, y;
-	bool display;
-	sf::Font font;
-	sf::Text text;
-	sf::RectangleShape background;
-	int startDisplayIndex = 0; // Position on string where message beings displaying
-
-};
 
 struct GUIConsumableMonitor{//Ammo Monitor
     int x,y;
@@ -54,15 +42,24 @@ public:
 
 
 	std::vector<sf::String> inputMessage;
-    float shiftx, shifty;
-    int x, y;
+    float shiftx = 0, shifty=0;
+    float height;
+    int x, w;
+    float marginy = 4;
 
 	sf::Font font;
-	sf::Text text;
-	sf::RectangleShape background;
-	int startDisplayIndex = 0; // Position on string where message beings displaying
+	sf::Text currentText;
+	sf::Text archivedText;
+	bool displayArchivedText = true;
 
-	GUITextArea(int x, int y, int w, int h);
+	sf::RectangleShape background;
+	sf::Vector2f dimentions;
+	int startDisplayIndex = 5; // Position on string where message beings displaying
+    sf::String tempString;
+
+	GUITextArea(int x, int windowHeight, int w, int h);
+	GUITextArea();
+
 	void toggleDisplay(bool d);
 	void addMessage(sf::String s);
 	void draw(sf::RenderWindow* app);
@@ -80,11 +77,9 @@ public:
 
 	GUIBar healthBar;
 	GUICrosshair crosshair;
-	GUIToolTip tooltip;
-	GUIToolTip messageArea;
 	GUIConsumableMonitor ammoBox;
 	GUITextArea textArea;
-
+    GUITextArea tooltip;
 
 
 	GUI(int w, int h, Terrain* d);
