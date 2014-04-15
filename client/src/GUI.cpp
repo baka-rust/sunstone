@@ -1,9 +1,9 @@
 #include "GUI.h"
 
-GUITextArea::GUITextArea(int x, int windowHeight, int w, int h) {
-    this->x = x;
-    this->w = w;
-    height = windowHeight;
+GUITextArea::GUITextArea(int x, int y, int w, int h) {
+    pos.x =x;
+    pos.y = y;
+
 
     inputMessage = std::vector<std::string>(10," ");
     if (!font.loadFromFile("resources/arial.ttf"))
@@ -11,8 +11,8 @@ GUITextArea::GUITextArea(int x, int windowHeight, int w, int h) {
     // error...
     }
 
-    tempString = "";
-    addMessage("text");
+    tempString = "Hi";
+    addMessage(tempString);
     currentText.setFont(font);
     currentText.setString(inputMessage.back());
     currentText.setCharacterSize(14);
@@ -25,11 +25,13 @@ GUITextArea::GUITextArea(int x, int windowHeight, int w, int h) {
     archivedText.setCharacterSize(14);
     archivedText.setColor(sf::Color::Yellow);
     archivedText.setScale(.5,.5);
+    archivedText.scale(.5,.5);
 
-    background.setPosition(x, height-20);
-    dimentions = sf::Vector2f(w,h);
-    background.setSize(dimentions);
-    background.setFillColor(sf::Color(0,0,255,150));//blue
+
+    background.setPosition(x, y);
+    dimentions.x = w;
+    dimentions.y = h;
+    background.setFillColor(sf::Color(0,0,255,100));//blue
 
 
 
@@ -59,20 +61,29 @@ void GUITextArea::toggleDisplay(bool d){
 
 void GUITextArea::draw(sf::RenderWindow* app){
    if(display){
-    float textBounds = archivedText.getGlobalBounds().height + currentText.getLocalBounds().height + 2*marginy;
-    (height/3 > textBounds)? dimentions.y = height/3: dimentions.y = textBounds;
-    (archivedText.getGlobalBounds().width > currentText.getGlobalBounds().width)? dimentions.x = archivedText.getGlobalBounds().width: dimentions.x = currentText.getGlobalBounds().width;
-    if(dimentions.x < w) dimentions.x = w;
+
+    float textBounds;
+    if(displayArchivedText)
+        textBounds= archivedText.getGlobalBounds().height + currentText.getGlobalBounds().height + 2*marginy;
+    else
+    textBounds = currentText.getGlobalBounds().height + 2*marginy;
+
+    if(dimentions.y < textBounds) dimentions.y = textBounds;
+    float width;
+    (archivedText.getGlobalBounds().width > currentText.getGlobalBounds().width)? width = archivedText.getGlobalBounds().width: width = currentText.getGlobalBounds().width;
+    if(dimentions.x < width) dimentions.x = width;
+
     background.setSize(dimentions);
-    background.setPosition(shiftx + x,shifty + height - background.getGlobalBounds().height);
+
+    sf::Vector2f worldPos = app->mapPixelToCoords(sf::Vector2i(pos.x, pos.y - dimentions.y));
+
+    background.setPosition(worldPos);
     app->draw(background);
-    sf::Vector2f pos = background.getPosition();
+    sf::Vector2f backPos = background.getPosition();
 
+    archivedText.setPosition(backPos);
 
-
-    archivedText.setPosition(pos);
-
-    currentText.setPosition(pos.x, pos.y + background.getGlobalBounds().height - currentText.getGlobalBounds().height - marginy);
+    currentText.setPosition(archivedText.getPosition().x ,  archivedText.getPosition().y + marginy + archivedText.getGlobalBounds().height);
     currentText.setString(tempString);
     if(displayArchivedText)
         app->draw(archivedText);
@@ -80,26 +91,25 @@ void GUITextArea::draw(sf::RenderWindow* app){
    }
 }
 
-void GUITextArea::setShift(float x, float y){
-    shiftx = x;
-    shifty = y;
-}
 
 
-GUI::GUI(int w, int h, Terrain* d): textArea(0,h,w/2,h/4), tooltip(1,1,3,3){
+GUI::GUI(int w, int h): textArea(0,h-100,50,100), tooltip(1,1,3,3){
 
     height = h;
     width = w;
-    dungeon = d;
 
     tooltip.toggleDisplay(false);
     tooltip.background.setFillColor(sf::Color::White);
-    tooltip.setShift(0,0);
+
     tooltip.displayArchivedText=false;
 
-    healthBar.barHandle = sf::RectangleShape(sf::Vector2f(10, 2));
+    healthBar.barHandle = sf::RectangleShape(sf::Vector2f(10, 5));
+    healthBar.barHandle.setFillColor(sf::Color::Red);
 	healthBar.curentValue = 1.f;
-    healthBar.barHandle.setPosition(healthBar.posx, healthBar.posy);
+	healthBar.pos.x = 0;
+	healthBar.pos.y = 0;
+	setHealth(1.f);
+    healthBar.barHandle.setPosition(healthBar.pos.x, healthBar.pos.y);
 
     crosshair.crosshair = sf::RectangleShape(sf::Vector2f(5, 5));
 
@@ -130,8 +140,10 @@ GUI::GUI(int w, int h, Terrain* d): textArea(0,h,w/2,h/4), tooltip(1,1,3,3){
 
 void GUI::createToolTipArea(int x, int y, int w, int h, std::string message){
 
-    tooltip.x = x;
-    tooltip.setShift(0, y);
+    tooltip.pos.x = x;
+    tooltip.pos.y = y;
+    tooltip.dimentions.x  = w;
+    tooltip.dimentions.y = h;
     tooltip.toggleDisplay(true);
 
     setToolTipInfo(message);
@@ -150,46 +162,45 @@ void GUI::setHealth(float health){
     if(health*healthBar.max > healthBar.max)
         health = 1.f;
     healthBar.curentValue = health;
-    healthBar.barHandle.setScale(.5*(health*healthBar.max), .5);
+    healthBar.barHandle.setScale(.5*(health*healthBar.max), 1);
 }
 
 void GUI::mouseClick(){
 
     if(sf::Mouse::isButtonPressed(sf::Mouse::Left)){
-        if(crosshair.tileType == 0){
+        if(crosshair.tileType < 3){
             float r = (static_cast<float>(rand())/ static_cast<float>(RAND_MAX))*3;
-             crosshair.crosshair.setOutlineThickness(r);
              crosshair.crosshair.setScale(r/3, r/3);
         }
-    }else{
-         crosshair.crosshair.setOutlineThickness(3.f);
-         crosshair.crosshair.setScale(.5, .5);
-    }
-    if(sf::Mouse::isButtonPressed(sf::Mouse::Right)){
-        createToolTipArea(crosshair.x, crosshair.y, 20, 20, "test");
+    }else  if(sf::Mouse::isButtonPressed(sf::Mouse::Right)){
+        createToolTipArea(crosshair.x, crosshair.y, 20, 20, "");
         std::cout << "\nCrosshair at " << crosshair.y;
         std::cout << "\n Tooltip at " << tooltip.background.getPosition().y;
 
 
+    }else{
+         crosshair.crosshair.setScale(.5, .5);
     }
+
 
 
 }
 
-void GUI::updateCrosshair(sf::Vector2i pos){
+void GUI::updateCrosshair(sf::RenderWindow *app){
 
-    crosshair.x = (pos.x)/crosshair.speed + shiftx;
-    crosshair.y = (pos.y)/crosshair.speed + shifty;
+   sf::Vector2i pixelPos = sf::Mouse::getPosition(*app);
+    crosshair.x = pixelPos.x;
+    crosshair.y = pixelPos.y;
 
-    if(crosshair.x > shiftx + width)
-        crosshair.x = shiftx + width;
-    if(crosshair.x < shiftx)
-        crosshair.x = shiftx;
+    if(crosshair.x > width)
+        crosshair.x = width;
+    if(crosshair.x < 0)
+        crosshair.x = 0;
 
-    if(crosshair.y > shifty + height)
-        crosshair.y = shifty + height;
-    if(crosshair.y < shifty)
-        crosshair.y = shifty;
+    if(crosshair.y > height)
+        crosshair.y = height;
+    if(crosshair.y < 0)
+        crosshair.y = 0;
 /**
     ground = 0 ,
     wall ,
@@ -198,33 +209,44 @@ void GUI::updateCrosshair(sf::Vector2i pos){
     spawner
 */
     //divide by 15 since each tile is 16 wide
-    crosshair.tileType = dungeon->getTile(crosshair.x/16, crosshair.y/16, "");
+    sf::Vector2f worldPos = app->mapPixelToCoords(pixelPos);
+    crosshair.crosshair.setPosition(worldPos);
+  //  crosshair.tileType = dungeon->getTile(crosshair.x, crosshair.y, "low");
     switch(crosshair.tileType){
     case ground:
         setToolTipInfo("ground");
+        break;
+    case wall:
+        setToolTipInfo("Wall");
+        break;
+    case door:
+        setToolTipInfo("door");
+        break;
+    case healthpack:
+        setToolTipInfo("Health pack");
+        break;
+    case spawner:
+        setToolTipInfo("Spawner");
+        break;
     }
 
-    crosshair.crosshair.setPosition(crosshair.x,crosshair.y);
     mouseClick();
 }
 
 
-void GUI::update(float elapsedTime, sf::Vector2i pos){
-    float r = .5 + static_cast<float>(rand())/ static_cast<float>(RAND_MAX);
-    setHealth(r);
-
-
-
-    updateCrosshair(pos);
+void GUI::update(sf::RenderWindow *app){
+    healthBar.barHandle.setPosition(app->mapPixelToCoords(healthBar.pos));
+    updateCrosshair(app);
 
 }
 
 void GUI::draw(sf::RenderWindow *app){
-    healthBar.barHandle.setPosition(shiftx + healthBar.posx, shifty + healthBar.posy);
-    ammoBox.monitor.setPosition(shiftx + ammoBox.x, shifty + ammoBox.y);
+   update(app);
+
 
     switch(currentState){
     case MAIN:
+
         app->draw(healthBar.barHandle);
         textArea.draw(app);
         tooltip.draw(app);
@@ -232,19 +254,14 @@ void GUI::draw(sf::RenderWindow *app){
     case LOGIN:
         textArea.draw(app);
         app->draw(crosshair.crosshair);
+        tooltip.draw(app);
     }
 
 }
 
-void GUI::setCenter(float x, float y){
-    shiftx = x;
-    shifty = y;
-
-      textArea.setShift(shiftx, shifty);
-
-}
 
 void GUI::processCommand(char command){
+    //std::cout << command << " , " << static_cast<int>(command) <<std::endl;
     if(command == 13){//return
         clearLastCommand();
     }else{
@@ -252,10 +269,14 @@ void GUI::processCommand(char command){
         case MAIN:
             switch(lastCommand){
                 case ' ':
+                    if(command != '?' && (command == '/'))
                     lastCommand = command;
                     break;
                 case '/':
-                    currentCommand += command;
+                     if(command == 8 && currentCommand.size() > 0){
+                       currentCommand = currentCommand.substr(0, currentCommand.size() - 1 );
+                    }else
+                        currentCommand += command;
                     if(currentCommand.size() % 20 == 0)
                         currentCommand += "\n";
                     textArea.tempString =  "/: " +currentCommand;
@@ -263,7 +284,10 @@ void GUI::processCommand(char command){
             }
             break;
         case LOGIN:
-
+                    lastCommand = '?';
+                     if(command == 8 && currentCommand.size() > 0){
+                       currentCommand = currentCommand.substr(0, currentCommand.size() - 1 );
+                    }else
                     currentCommand += command;
                     textArea.tempString =  ": " +currentCommand;
 
@@ -290,8 +314,58 @@ void GUI::clearLastCommand(){
             }
             break;
         case LOGIN:
-            //login(stuff);
+            switch(lastCommand){
+            case '?':
+
+                    int error = processLogin(currentCommand);
+                    if(error == 1){
+                        textArea.addMessage("Bad Port number");
+                    }else if(error == 0){
+                        textArea.addMessage("Good Login");
+                        currentState = MAIN;
+                    }else{
+                        std::ostringstream errorMessage(": Bad Login");
+                        errorMessage << error;
+
+                        textArea.addMessage(errorMessage.str());
+                    }
+                     currentCommand = "";
+                    lastCommand = ' ';
+                    textArea.tempString = "";
+
+            }
             break;
 
     }
+
+
 }
+
+int GUI::processLogin(std::string input){
+        std::string name;
+        std::string portString;
+        unsigned short port;
+        std::string ip;
+        int error = 0;
+
+        std::istringstream ss(input);
+        std::string token;
+
+         std::getline(ss, token, ',');
+         name = token;
+        std::getline(ss, token, ',');
+        portString = token;
+        std::getline(ss, token, ',');
+        ip = token;
+
+        std::istringstream convert(portString);
+        if(!(convert >> port)){
+            error = 1;
+        }
+
+       // error = network->login(name, port, ip);
+
+        std::cout << name << " //" << portString << " //" << ip<< " //" <<std::endl;
+
+        return error;
+    }

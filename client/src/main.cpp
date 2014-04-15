@@ -32,7 +32,10 @@ int main() {
     Player player(64, 64, "down");
     Terrain terrain;
     Network network;
-    GUI gui(width, height, &terrain);
+    GUI gui(width*scale, height*scale);
+
+    gui.dungeon = &terrain;
+    gui.network = &network;
 
     player.terrain = &terrain;
     player.network = &network;
@@ -67,10 +70,8 @@ int main() {
         terrain.update(elapsedTime);
         player.update(elapsedTime);
         network.update(elapsedTime);
-        gui.update(elapsedTime, sf::Mouse::getPosition(app));
 
         camera.setCenter(player.x, player.y);
-        gui.setCenter(camera.getCenter().x - 128, camera.getCenter().y - 80);
         app.setView(camera);
 
         app.clear();

@@ -32,7 +32,10 @@ class Network {
         void update(float elapsedTime);
         void draw(sf::RenderWindow *app);
 
-        void login(std::string pName, unsigned short sPort, sf::IpAddress sAddress){playerName = pName; serverPort = sPort; serverAddress = sAddress;}
+        int login(std::string pName, unsigned short sPort, sf::IpAddress sAddress){
+            playerName = pName; serverPort = sPort; serverAddress = sAddress;
+            return 0;
+        }
         void updatePlayerLocation(int x, int y, std::string direction);
 
     private:

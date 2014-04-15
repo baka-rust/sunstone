@@ -3,14 +3,14 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include <Terrain.h>
+#include <Network.h>
 
 
 
 const int HEALTHBAR_Y = 10;
 
 struct GUIBar{
-	int posx=0;
-	int posy=0;
+	sf::Vector2i pos;
 	sf::RectangleShape barHandle;
 	float max = 10;
 	float curentValue = 1.f;
@@ -25,15 +25,7 @@ struct GUICrosshair{
 };
 
 
-struct GUIConsumableMonitor{//Ammo Monitor
-    int x,y;
-    sf::Texture texture;
-    sf::Sprite monitor;
-    int index; //texture Index
-    int currentValue;
-    int maxValue;
 
-};
 
 class GUITextArea{
 
@@ -42,9 +34,7 @@ public:
 
 
 	std::vector<std::string> inputMessage;
-    float shiftx = 0, shifty=0;
-    float height;
-    int x, w;
+    sf::Vector2i pos;
     float marginy = 4;
 
 	sf::Font font;
@@ -66,7 +56,7 @@ public:
 	void toggleDisplay(bool d);
 	void addMessage(std::string s);
 	void draw(sf::RenderWindow* app);
-	void setShift(float x, float y);
+
 private:
 
     bool display = true;
@@ -85,12 +75,13 @@ public:
 
 	GUIBar healthBar;
 	GUICrosshair crosshair;
-	GUIConsumableMonitor ammoBox;
 	GUITextArea textArea;
     GUITextArea tooltip;
 
+    Terrain* dungeon;
+    Network* network;
 
-	GUI(int w, int h, Terrain* d);
+	GUI(int w, int h);
 
 	 //overlay creations
     void createToolTipArea(int x, int y, int w, int h, std::string s);
@@ -98,10 +89,9 @@ public:
 	void displayToolTip(bool bDisplay);
 	void setHealth(float health);
 	void toggleRecoil(bool recoil);
-	void update(float elapsedTime, sf::Vector2i pos);
+	void update(sf::RenderWindow* app);
 	void draw(sf::RenderWindow* app);
-    void setCenter(float x, float y);
-	//Commands
+  //Commands
 	void processCommand(char command);
 	void clearLastCommand();
 
@@ -109,13 +99,13 @@ public:
 private:
 
     int height, width;
-	float shiftx, shifty;
 	char lastCommand = ' ';
 	std::string currentCommand = "";
-	Terrain* dungeon;
 
-    void updateCrosshair(sf::Vector2i pos);
+
+    void updateCrosshair(sf::RenderWindow* app);
     void mouseClick();
+    int processLogin(std::string);
 
 
 /**
