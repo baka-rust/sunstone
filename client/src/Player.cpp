@@ -16,20 +16,43 @@ Player::Player(int xPos, int yPos, std::string dir) {
     y = tileY * 16;
 
     direction = dir;
-
-    //animations["up"] = new AnimationSequence("resources/player/up", 2, .25);
-    //animations["down"] = new AnimationSequence("resources/player/down", 2, .25);
-    //animations["left"] = new AnimationSequence("resources/player/left", 2, .25);
-    //animations["right"] = new AnimationSequence("resources/player/right", 2, .25);
-
+    
+    std::string idleResource = "resources/player/walk"; // TODO change
+    int idleFrames = 1; // TODO change
+    float idleSpeed = 0.01;
+    
     std::string walkResource = "resources/player/walk";
     int walkFrames = 8;
-    float walkSpeed = 0.02;
+    float walkSpeed = 0.01;
     
+    std::string shootResource = "resources/player/walk"; // TODO change
+    int shootFrames = 1; // TODO change
+    float shootSpeed = 0.01;
+    
+    std::string dieResource = "resources/player/walk"; // TODO change
+    int dieFrames = 1; // TODO change
+    float dieSpeed = 0.01;
+    
+    // idle
+    animations["idle_up"] = new AnimationSequence(idleResource, idleFrames, idleSpeed);
+    animations["idle_down"] = new AnimationSequence(idleResource, idleFrames, idleSpeed);
+    animations["idle_left"] = new AnimationSequence(idleResource, idleFrames, idleSpeed);
+    animations["idle_right"] = new AnimationSequence(idleResource, idleFrames, idleSpeed);
+    
+    // walk
     animations["up"] = new AnimationSequence(walkResource, walkFrames, walkSpeed);
     animations["down"] = new AnimationSequence(walkResource, walkFrames, walkSpeed);
     animations["left"] = new AnimationSequence(walkResource, walkFrames, walkSpeed);
     animations["right"] = new AnimationSequence(walkResource, walkFrames, walkSpeed);
+    
+    // shoot
+    animations["shoot_up"] = new AnimationSequence(shootResource, shootFrames, shootSpeed);
+    animations["shoot_down"] = new AnimationSequence(shootResource, shootFrames, shootSpeed);
+    animations["shoot_left"] = new AnimationSequence(shootResource, shootFrames, shootSpeed);
+    animations["shoot_right"] = new AnimationSequence(shootResource, shootFrames, shootSpeed);
+    
+    // die
+    animations["die"] = new AnimationSequence(dieResource, dieFrames, dieSpeed);
 
 }
 
