@@ -8,6 +8,7 @@
 #include "Player.h"
 #include "Terrain.h"
 #include "Network.h"
+#include "GUI.h"
 
 bool focused = true;
 
