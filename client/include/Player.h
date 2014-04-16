@@ -8,6 +8,8 @@
 #include <vector>
 #include <map>
 
+#include "Player/Directions.h"
+#include "Player/States.h"
 #include "AnimationSequence.h"
 #include "Terrain.h"
 #include "Network.h"
@@ -24,7 +26,8 @@ class Player {
         float x, y;
         int tileX, tileY;
         int speed = 40; // rely on stats later
-        std::string direction;
+        Direction direction;
+        State state;
         bool onTile = true;
 
         Terrain *terrain; // we should figure out a better way to handle this. singletons in cpp are dumb.
@@ -38,8 +41,9 @@ class Player {
 
     private:
 
-        std::map<std::string, AnimationSequence*> animations;
-        typedef std::map<std::string, AnimationSequence*>::iterator i_animations;
+        std::vector<std::vector<AnimationSequence*> > animations = std::vector<std::vector<AnimationSequence*>>(4);
+        typedef std::vector<std::vector<AnimationSequence*> >::iterator i_anim_row;
+        typedef std::vector<AnimationSequence*>::iterator i_anim_col;
 
 };
 

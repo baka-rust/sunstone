@@ -4,8 +4,10 @@
 
 #include <string>
 #include <vector>
-
 #include <iostream>
+
+#include "Player/Directions.h"
+#include "Player/States.h"
 
 Player::Player(int xPos, int yPos, std::string dir) {
 
@@ -15,7 +17,17 @@ Player::Player(int xPos, int yPos, std::string dir) {
     x = tileX * 16;
     y = tileY * 16;
 
-    direction = dir;
+    if (dir == "up") {
+        direction = Up;
+    } else if (dir == "down") {
+        direction = Down;
+    } else if (dir == "left") {
+        direction = Left;
+    } else {
+        direction = Right;
+    }
+    
+    state = Idle;
     
     std::string idleResource = "resources/player/walk"; // TODO change
     int idleFrames = 1; // TODO change
@@ -23,7 +35,7 @@ Player::Player(int xPos, int yPos, std::string dir) {
     
     std::string walkResource = "resources/player/walk";
     int walkFrames = 8;
-    float walkSpeed = 0.01;
+    float walkSpeed = 0.02;
     
     std::string shootResource = "resources/player/walk"; // TODO change
     int shootFrames = 1; // TODO change
@@ -34,144 +46,135 @@ Player::Player(int xPos, int yPos, std::string dir) {
     float dieSpeed = 0.01;
     
     // idle
-    animations["idle_up"] = new AnimationSequence(idleResource, idleFrames, idleSpeed);
-    animations["idle_down"] = new AnimationSequence(idleResource, idleFrames, idleSpeed);
-    animations["idle_left"] = new AnimationSequence(idleResource, idleFrames, idleSpeed);
-    animations["idle_right"] = new AnimationSequence(idleResource, idleFrames, idleSpeed);
+    animations[Idle] = std::vector<AnimationSequence*>(4);
+    animations[Idle][Up] = new AnimationSequence(idleResource, idleFrames, idleSpeed);
+    animations[Idle][Down]  = new AnimationSequence(idleResource, idleFrames, idleSpeed);
+    animations[Idle][Left] = new AnimationSequence(idleResource, idleFrames, idleSpeed);
+    animations[Idle][Right] = new AnimationSequence(idleResource, idleFrames, idleSpeed);
     
     // walk
-    animations["up"] = new AnimationSequence(walkResource, walkFrames, walkSpeed);
-    animations["down"] = new AnimationSequence(walkResource, walkFrames, walkSpeed);
-    animations["left"] = new AnimationSequence(walkResource, walkFrames, walkSpeed);
-    animations["right"] = new AnimationSequence(walkResource, walkFrames, walkSpeed);
+    animations[Walking] = std::vector<AnimationSequence*>(4);
+    animations[Walking][Up]= new AnimationSequence(walkResource, walkFrames, walkSpeed);
+    animations[Walking][Down] = new AnimationSequence(walkResource, walkFrames, walkSpeed);
+    animations[Walking][Right] = new AnimationSequence(walkResource, walkFrames, walkSpeed);
+    animations[Walking][Left] = new AnimationSequence(walkResource, walkFrames, walkSpeed);
     
     // shoot
-    animations["shoot_up"] = new AnimationSequence(shootResource, shootFrames, shootSpeed);
-    animations["shoot_down"] = new AnimationSequence(shootResource, shootFrames, shootSpeed);
-    animations["shoot_left"] = new AnimationSequence(shootResource, shootFrames, shootSpeed);
-    animations["shoot_right"] = new AnimationSequence(shootResource, shootFrames, shootSpeed);
+    animations[Firing] = std::vector<AnimationSequence*>(4);
+    animations[Firing][Up] = new AnimationSequence(shootResource, shootFrames, shootSpeed);
+    animations[Firing][Down] = new AnimationSequence(shootResource, shootFrames, shootSpeed);
+    animations[Firing][Left] = new AnimationSequence(shootResource, shootFrames, shootSpeed);
+    animations[Firing][Right] = new AnimationSequence(shootResource, shootFrames, shootSpeed);
     
     // die
-    animations["die"] = new AnimationSequence(dieResource, dieFrames, dieSpeed);
-
+    AnimationSequence* dying = new AnimationSequence(dieResource, dieFrames, dieSpeed);
+    animations[Dying] = std::vector<AnimationSequence*>(4, dying);
 }
 
 void Player::update(float elapsedTime) {
-
-    bool moving = false;
-
-    if(direction == "up") {
+    state = Idle;
+    
+    if(direction == Up) {
         if(y <= (tileY * 16)) {
             onTile = true;
         }
         else {
             onTile = false;
-            moving = true;
+            state = Walking;
             y = y - (speed * elapsedTime);
-            animations["up"]->update(elapsedTime);
+            animations[Walking][Up]->update(elapsedTime);
         }
     }
-    else if(direction == "down") {
+    else if(direction == Down) {
         if(y >= (tileY * 16)) {
             onTile = true;
         }
         else {
             onTile = false;
-            moving = true;
+            state = Walking;
             y = y + (speed * elapsedTime);
-            animations["down"]->update(elapsedTime);
+            animations[Walking][Down]->update(elapsedTime);
         }
     }
-    else if(direction == "left") {
+    else if(direction == Left) {
         if(x <= (tileX * 16)) {
             onTile = true;
         }
         else {
             onTile = false;
-            moving = true;
+            state = Walking;
             x = x - (speed * elapsedTime);
-            animations["left"]->update(elapsedTime);
+            animations[Walking][Left]->update(elapsedTime);
         }
     }
-    else if(direction == "right") {
+    else if(direction == Right) {
         if(x >= (tileX * 16)) {
             onTile = true;
         }
         else {
             onTile = false;
-            moving = true;
+            state = Walking;
             x = x + (speed * elapsedTime);
-            animations["right"]->update(elapsedTime);
+            animations[Walking][Right]->update(elapsedTime);
         }
     }
 
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && focused) {
-        if(!moving) {
+        if(state != Walking) {
             if(terrain->getTile(tileX, tileY-1, "mid") == 0) {
                 tileY = tileY - 1;
-                moving = true;
+                state = Walking;
             }
-            direction = "up";
-            network->updatePlayerLocation(tileX, tileY, direction);
+            direction = Up;
+            network->updatePlayerLocation(tileX, tileY, "up");
         }
     }
     else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Down) && focused) {
-        if(!moving) {
+        if(state != Walking) {
             if(terrain->getTile(tileX, tileY+1, "mid") == 0) {
                 tileY = tileY + 1;
-                moving = true;
+                state = Walking;
             }
-            direction = "down";
-            network->updatePlayerLocation(tileX, tileY, direction);
+            direction = Down;
+            network->updatePlayerLocation(tileX, tileY, "down");
         }
     }
     else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && focused) {
-        if(!moving) {
+        if(state != Walking) {
             if(terrain->getTile(tileX-1, tileY, "mid") == 0) {
                 tileX = tileX - 1;
-                moving = true;
+                state = Walking;
             }
-            direction = "left";
-            network->updatePlayerLocation(tileX, tileY, direction);
+            direction = Left;
+            network->updatePlayerLocation(tileX, tileY, "left");
         }
     }
     else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && focused) {
-        if(!moving) {
+        if(state != Walking) {
             if(terrain->getTile(tileX+1, tileY, "mid") == 0) {
                 tileX = tileX + 1;
-                moving = true;
+                state = Walking;
             }
-            direction = "right";
-            network->updatePlayerLocation(tileX, tileY, direction);
+            direction = Right;
+            network->updatePlayerLocation(tileX, tileY, "right");
         }
     }
 
-    if(!moving && onTile) {
+    if(state != Walking && onTile) {
         x = tileX * 16;
         y = tileY * 16;
     }
 
     // set animation positions
-    for(i_animations iterator = animations.begin(); iterator != animations.end(); iterator++) {
-        iterator->second->x = x;
-        iterator->second->y = y;
+    for(auto row : animations) {
+        for(auto col : row) {
+            col->x = x;
+            col->y = y;
+        }
     }
 
 }
 
 void Player::draw(sf::RenderWindow *app) {
-
-    if(direction == "up") {
-        animations["up"]->draw(app);
-    }
-    else if(direction == "down" ) {
-        animations["down"]->draw(app);
-    }
-    else if(direction == "left") {
-        animations["left"]->draw(app);
-    }
-    else if(direction == "right") {
-        animations["right"]->draw(app);
-    }
-
+    animations[state][direction]->draw(app);
 }
