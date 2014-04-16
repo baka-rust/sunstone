@@ -4,6 +4,7 @@ GUIButton::GUIButton(int x, int y, std::string message, void (*cb)()){
     pos.x = x;
     pos.y = y;
     callback = cb;
+    //For commit purposes
 
     if (!font.loadFromFile("resources/arial.ttf"))
     {
