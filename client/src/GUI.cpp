@@ -33,7 +33,7 @@ void GUIButton::update(sf::RenderWindow* app){
     sf::Vector2i mousePos = sf::Mouse::getPosition(*app);
     //std::cout << background.getPosition().y << "," << bounds.height << "," << app->mapPixelToCoords(mousePos).y << std::endl;
     if(bounds.contains(app->mapPixelToCoords(mousePos))){
-        std::cout << "hovering" <<std::endl;
+        //std::cout << "hovering" <<std::endl;
         if(sf::Mouse::isButtonPressed(sf::Mouse::Left)){
             buttonClicked();
        }
@@ -88,10 +88,12 @@ GUITextArea::GUITextArea(int x, int y, int w, int h) {
     archivedText.scale(.5,.5);
 
 
+
     background.setPosition(x, y);
     dimentions.x = w;
     dimentions.y = h;
     background.setFillColor(sf::Color(0,0,255,100));//blue
+    slider.setPosition(x,y);
 
 
 
@@ -117,6 +119,7 @@ void GUITextArea::addMessage(std::string s){
 
 void GUITextArea::toggleDisplay(bool d){
     display = d;
+    clock.restart();
 }
 
 void GUITextArea::draw(sf::RenderWindow* app){
@@ -148,6 +151,16 @@ void GUITextArea::draw(sf::RenderWindow* app){
     if(displayArchivedText)
         app->draw(archivedText);
     app->draw(currentText);
+   }
+   else{
+        float closingPercent = clock.getElapsedTime().asSeconds()/closingTime;
+        if(closingPercent <= 1 && closingPercent >= .1){
+            slider.setPosition(background.getPosition());
+            slider.setSize(background.getSize());
+            slider.setScale(closingPercent, closingPercent);
+            app->draw(slider);
+        }
+
    }
 }
 
@@ -348,6 +361,8 @@ void GUI::processCommand(char command){
                     if(currentCommand.size() % 20 == 0)
                         currentCommand += "\n";
                     textArea.tempString =  "/: " +currentCommand;
+
+                    textArea.toggleDisplay(true);
                     break;
             }
             break;
@@ -373,7 +388,7 @@ void GUI::clearLastCommand(){
                     currentCommand = "";
                     lastCommand = ' ';
                     textArea.tempString = "";
-
+                    textArea.toggleDisplay(false);
                     break;
                 default:
                      currentCommand = "";
@@ -391,6 +406,7 @@ void GUI::clearLastCommand(){
                     }else if(error == 0){
                         textArea.addMessage("Good Login");
                         currentState = MAIN;
+                        textArea.toggleDisplay(false);
                     }else{
                         std::ostringstream errorMessage(": Bad Login");
                         errorMessage << error;
@@ -431,7 +447,7 @@ int GUI::processLogin(std::string input){
             error = 1;
         }
 
-       // error = network->login(name, port, ip);
+       error = network->login(name, port, ip);
 
         std::cout << name << " //" << portString << " //" << ip<< " //" <<std::endl;
 

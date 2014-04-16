@@ -64,6 +64,10 @@ public:
 	bool displayArchivedText = true;
 
 	sf::RectangleShape background;
+	sf::RectangleShape slider; //closing and opening animation
+	int closingTime = 1;
+	sf::Clock clock;
+
 	sf::Vector2f dimentions;
 	int startDisplayIndex = 5; // Position on string where message beings displaying
     std::string tempString;
