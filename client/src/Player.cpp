@@ -82,7 +82,7 @@ void Player::update(float elapsedTime) {
             onTile = false;
             state = Walking;
             y = y - (speed * elapsedTime);
-            animations[Walking][Up]->update(elapsedTime);
+            animations[Walking][direction]->update(elapsedTime);
         }
     }
     else if(direction == Down) {
@@ -93,7 +93,7 @@ void Player::update(float elapsedTime) {
             onTile = false;
             state = Walking;
             y = y + (speed * elapsedTime);
-            animations[Walking][Down]->update(elapsedTime);
+            animations[Walking][direction]->update(elapsedTime);
         }
     }
     else if(direction == Left) {
@@ -104,7 +104,7 @@ void Player::update(float elapsedTime) {
             onTile = false;
             state = Walking;
             x = x - (speed * elapsedTime);
-            animations[Walking][Left]->update(elapsedTime);
+            animations[Walking][direction]->update(elapsedTime);
         }
     }
     else if(direction == Right) {
@@ -115,51 +115,50 @@ void Player::update(float elapsedTime) {
             onTile = false;
             state = Walking;
             x = x + (speed * elapsedTime);
-            animations[Walking][Right]->update(elapsedTime);
+            animations[Walking][direction]->update(elapsedTime);
         }
     }
 
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && focused) {
-        if(state != Walking) {
+    // Handle user input
+    if(state != Walking && focused) {
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && focused) {
             if(terrain->getTile(tileX, tileY-1, "mid") == 0) {
                 tileY = tileY - 1;
                 state = Walking;
             }
+            
             direction = Up;
             network->updatePlayerLocation(tileX, tileY, "up");
-        }
-    }
-    else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Down) && focused) {
-        if(state != Walking) {
+        } else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
             if(terrain->getTile(tileX, tileY+1, "mid") == 0) {
                 tileY = tileY + 1;
                 state = Walking;
             }
+            
             direction = Down;
             network->updatePlayerLocation(tileX, tileY, "down");
-        }
-    }
-    else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && focused) {
-        if(state != Walking) {
+            
+        } else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
             if(terrain->getTile(tileX-1, tileY, "mid") == 0) {
                 tileX = tileX - 1;
                 state = Walking;
             }
+            
             direction = Left;
-            network->updatePlayerLocation(tileX, tileY, "left");
-        }
-    }
-    else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && focused) {
-        if(state != Walking) {
+            network->updatePlayerLocation(tileX, tileY, "down");
+            
+        } else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
             if(terrain->getTile(tileX+1, tileY, "mid") == 0) {
                 tileX = tileX + 1;
                 state = Walking;
             }
+            
             direction = Right;
             network->updatePlayerLocation(tileX, tileY, "right");
+            
         }
     }
-
+    
     if(state != Walking && onTile) {
         x = tileX * 16;
         y = tileY * 16;
