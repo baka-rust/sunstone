@@ -24,6 +24,27 @@ struct GUICrosshair{
 
 };
 
+class GUIButton{
+public:
+    sf::Vector2i pos;
+    sf::RectangleShape background;
+    sf::Font font;
+    sf::Text text;
+
+    int margin= 4;
+
+    bool deleteOnClick = true;
+
+    void (*callback)();
+
+    GUIButton(int x, int y, std::string message, void (*callback)());
+    void draw(sf::RenderWindow* app);
+    void update(sf::RenderWindow* app);
+
+private:
+    bool display = true;
+    void buttonClicked();
+};
 
 
 
@@ -77,6 +98,7 @@ public:
 	GUICrosshair crosshair;
 	GUITextArea textArea;
     GUITextArea tooltip;
+    GUIButton testButton;
 
     Terrain* dungeon;
     Network* network;

@@ -1,5 +1,65 @@
 #include "GUI.h"
 
+GUIButton::GUIButton(int x, int y, std::string message, void (*cb)()){
+    pos.x = x;
+    pos.y = y;
+    callback = cb;
+
+    if (!font.loadFromFile("resources/arial.ttf"))
+    {
+    // error...
+    }
+
+    text.setFont(font);
+    text.setString(message);
+    text.setCharacterSize(14);
+    text.setColor(sf::Color::Yellow);
+    text.setScale(.5,.5);
+    text.scale(.5,.5);
+
+    sf::Vector2f dimentions;
+    dimentions.x = text.getGlobalBounds().width + margin;
+    dimentions.y = text.getGlobalBounds().height + margin;
+    background.setSize(dimentions);
+    background.setFillColor(sf::Color::Blue);
+    background.setOutlineThickness(1);
+    background.setOutlineColor(sf::Color::Yellow);
+
+}
+
+void GUIButton::update(sf::RenderWindow* app){
+
+     sf::FloatRect bounds = background.getGlobalBounds();
+    sf::Vector2i mousePos = sf::Mouse::getPosition(*app);
+    //std::cout << background.getPosition().y << "," << bounds.height << "," << app->mapPixelToCoords(mousePos).y << std::endl;
+    if(bounds.contains(app->mapPixelToCoords(mousePos))){
+        std::cout << "hovering" <<std::endl;
+        if(sf::Mouse::isButtonPressed(sf::Mouse::Left)){
+            buttonClicked();
+       }
+    }
+}
+
+void GUIButton::buttonClicked(){
+    (*callback)();
+    if(deleteOnClick){
+        display = false;
+    }
+
+}
+
+void GUIButton::draw(sf::RenderWindow* app){
+    if(display){
+        background.setPosition(app->mapPixelToCoords(pos));
+        text.setPosition(background.getPosition().x + margin/2, background.getPosition().y + margin/2);
+        app->draw(background);
+        app->draw(text);
+        update(app);
+    }
+
+}
+
+
 GUITextArea::GUITextArea(int x, int y, int w, int h) {
     pos.x =x;
     pos.y = y;
@@ -91,12 +151,16 @@ void GUITextArea::draw(sf::RenderWindow* app){
    }
 }
 
+void test(){
+    std::cout << "Worked";
+}
 
-
-GUI::GUI(int w, int h): textArea(0,h-100,50,100), tooltip(1,1,3,3){
+GUI::GUI(int w, int h): textArea(0,h-100,50,100), tooltip(1,1,3,3), testButton(30, 30, "Hi", test ){
 
     height = h;
     width = w;
+
+
 
     tooltip.toggleDisplay(false);
     tooltip.background.setFillColor(sf::Color::White);
@@ -229,7 +293,10 @@ void GUI::updateCrosshair(sf::RenderWindow *app){
         setToolTipInfo("Spawner");
         break;
     }
-
+    sf::Vector2f distance = crosshair.crosshair.getPosition() - tooltip.background.getPosition();
+    float length = distance.x * distance.x + distance.y * distance.y;
+    if(length > 100)
+        tooltip.toggleDisplay(false);
     mouseClick();
 }
 
@@ -253,6 +320,7 @@ void GUI::draw(sf::RenderWindow *app){
         app->draw(crosshair.crosshair);
     case LOGIN:
         textArea.draw(app);
+        testButton.draw(app);
         app->draw(crosshair.crosshair);
         tooltip.draw(app);
     }
