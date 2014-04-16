@@ -71,7 +71,7 @@ int main() {
         player.update(elapsedTime);
         network.update(elapsedTime);
 
-        camera.setCenter(player.x, player.y);
+        camera.setCenter(floor(player.x * 10) / 10, floor(player.y * 10) / 10);
         app.setView(camera);
 
         app.clear();
