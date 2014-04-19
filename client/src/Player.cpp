@@ -57,7 +57,7 @@ Player::Player(int xPos, int yPos, std::string dir) {
     animations[Walking][Up]= new AnimationSequence(walkResource, walkFrames, walkSpeed);
     animations[Walking][Down] = new AnimationSequence(walkResource, walkFrames, walkSpeed);
     animations[Walking][Right] = new AnimationSequence(walkResource, walkFrames, walkSpeed);
-    animations[Walking][Left] = new AnimationSequence(walkResource + "Left", walkFrames, walkSpeed);
+    animations[Walking][Left] = new AnimationSequence(walkResource + "West", walkFrames, walkSpeed);
     
     // shoot
     animations[Firing] = std::vector<AnimationSequence*>(4);
