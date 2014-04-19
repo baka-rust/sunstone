@@ -29,9 +29,9 @@ Player::Player(int xPos, int yPos, std::string dir) {
     
     state = Idle;
     
-    std::string idleResource = "resources/player/walk"; // TODO change
-    int idleFrames = 1; // TODO change
-    float idleSpeed = 0.01;
+    std::string idleResource = "resources/player/idle";
+    int idleFrames = 1;
+    float idleSpeed = 1.0;
     
     std::string walkResource = "resources/player/walk";
     int walkFrames = 8;
@@ -41,9 +41,9 @@ Player::Player(int xPos, int yPos, std::string dir) {
     int shootFrames = 1; // TODO change
     float shootSpeed = 0.01;
     
-    std::string dieResource = "resources/player/walk"; // TODO change
-    int dieFrames = 1; // TODO change
-    float dieSpeed = 0.01;
+    std::string dieResource = "resources/player/die";
+    int dieFrames = 195;
+    float dieSpeed = 0.02;
     
     // idle
     animations[Idle] = std::vector<AnimationSequence*>(4);
