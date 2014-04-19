@@ -61,7 +61,7 @@ int main() {
         player.update(elapsedTime);
         network.update(elapsedTime);
 
-        camera.setCenter(player.x, player.y);
+        camera.setCenter(round(player.x * 10) / 10, round(player.y * 10) / 10);
         app.setView(camera);
 
         app.clear(sf::Color::Cyan);
