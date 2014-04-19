@@ -35,15 +35,15 @@ Player::Player(int xPos, int yPos, std::string dir) {
     
     std::string walkResource = "resources/player/walk";
     int walkFrames = 8;
-    float walkSpeed = 0.02;
+    float walkSpeed = 0.02  ;
     
-    std::string shootResource = "resources/player/walk"; // TODO change
-    int shootFrames = 1; // TODO change
-    float shootSpeed = 0.01;
+    std::string shootResource = "resources/player/fire";
+    int shootFrames = 5;
+    float shootSpeed = 0.02;
     
     std::string dieResource = "resources/player/die";
-    int dieFrames = 195;
-    float dieSpeed = 0.02;
+    int dieFrames = 98;
+    float dieSpeed = 0.05;
     
     // idle
     animations[Idle] = std::vector<AnimationSequence*>(4);
@@ -57,7 +57,7 @@ Player::Player(int xPos, int yPos, std::string dir) {
     animations[Walking][Up]= new AnimationSequence(walkResource, walkFrames, walkSpeed);
     animations[Walking][Down] = new AnimationSequence(walkResource, walkFrames, walkSpeed);
     animations[Walking][Right] = new AnimationSequence(walkResource, walkFrames, walkSpeed);
-    animations[Walking][Left] = new AnimationSequence(walkResource, walkFrames, walkSpeed);
+    animations[Walking][Left] = new AnimationSequence(walkResource + "Left", walkFrames, walkSpeed);
     
     // shoot
     animations[Firing] = std::vector<AnimationSequence*>(4);
