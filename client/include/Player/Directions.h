@@ -2,10 +2,16 @@
 #define DIRECTIONS_H
 
 enum Direction {
-    Up,
-    Down,
-    Left,
-    Right
+    N,
+    S,
+    E,
+    W,
+    
+    NE,
+    NW,
+    
+    SE,
+    SW
 };
 
 #endif // DIRECTIONS_H
