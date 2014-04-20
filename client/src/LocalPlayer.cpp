@@ -10,9 +10,11 @@
 #include "Player/States.h"
 
 void LocalPlayer::update(float elapsedTime) {
+    super::updateAnimations(elapsedTime);
+    
     // Handle user input
     if(state != Walking && focused) {
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && focused) {
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
             if(terrain->getTile(tileX, tileY-1, "mid") == 0) {
                 tileY = tileY - 1;
                 state = Walking;
@@ -49,4 +51,6 @@ void LocalPlayer::update(float elapsedTime) {
             
         }
     }
+    
+    super::updatePositions(elapsedTime);
 }

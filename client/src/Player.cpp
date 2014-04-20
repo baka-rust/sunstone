@@ -2,22 +2,6 @@
 
 #include <string>
 
-Player::Player(int x, int y, std::string dir) {
-    Direction direction;
-    
-    if (dir == "up") {
-        direction = N;
-    } else if (dir == "down") {
-        direction = S;
-    } else if (dir == "left") {
-        direction = W;
-    } else {
-        direction = E;
-    }
-    
-    Player(x, y, direction);
-}
-
 Player::Player(int x, int y, Direction dir) {
     // Init variables
     this->tileX = x;
@@ -28,6 +12,7 @@ Player::Player(int x, int y, Direction dir) {
     
     this->direction = dir;
     this->state = Idle;
+    this->speed = 40;
     
     // Init animations
     std::string idleResource = "resources/player/idle";
@@ -55,7 +40,7 @@ Player::Player(int x, int y, Direction dir) {
     
     // walk
     animations[Walking] = std::vector<AnimationSequence*>(4);
-    animations[Walking][N]= new AnimationSequence(walkResource, walkFrames, walkSpeed);
+    animations[Walking][N] = new AnimationSequence(walkResource, walkFrames, walkSpeed);
     animations[Walking][S] = new AnimationSequence(walkResource, walkFrames, walkSpeed);
     animations[Walking][W] = new AnimationSequence(walkResource + "West", walkFrames, walkSpeed);
     animations[Walking][E] = new AnimationSequence(walkResource, walkFrames, walkSpeed);
@@ -73,6 +58,48 @@ Player::Player(int x, int y, Direction dir) {
 }
 
 void Player::update(float elapsedTime) {
+    updateAnimations(elapsedTime);
+    
+    updatePositions(elapsedTime);
+}
+
+void Player::draw(sf::RenderWindow *app) {
+    animations[state][direction]->draw(app);
+}
+
+Direction Player::getDirection() {
+    return this->direction;
+};
+
+Direction Player::stringToDirection(std::string dir) {
+    if (dir == "up") {
+        return N;
+    } else if (dir == "down") {
+        return S;
+    } else if (dir == "left") {
+        return W;
+    } else {
+        return E;
+    }
+}
+
+float Player::getX() {
+    return this->x;
+};
+
+float Player::getY() {
+    return this->y;
+};
+
+int Player::getTileX() {
+    return this->tileX;
+};
+
+int Player::getTileY() {
+    return this->tileY;
+};
+
+void Player::updateAnimations(float elapsedTime) {
     state = Idle;
     
     if(direction == N) {
@@ -119,7 +146,9 @@ void Player::update(float elapsedTime) {
             animations[Walking][direction]->update(elapsedTime);
         }
     }
-    
+}
+
+void Player::updatePositions(float elapsedTime) {
     if(state != Walking && onTile) {
         x = tileX * 16;
         y = tileY * 16;
@@ -132,28 +161,4 @@ void Player::update(float elapsedTime) {
             col->y = y;
         }
     }
-}
-
-void Player::draw(sf::RenderWindow *app) {
-    animations[state][direction]->draw(app);
-}
-
-Direction Player::getDirection() {
-    return this->direction;
-};
-
-float Player::getX() {
-    return this->x;
-};
-
-float Player::getY() {
-    return this->y;
-};
-
-int Player::getTileX() {
-    return this->tileX;
-};
-
-int Player::getTileY() {
-    return this->tileY;
 };
