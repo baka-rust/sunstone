@@ -5,30 +5,23 @@
 #include <vector>
 #include <map>
 
+#include "Player/Player.h"
+#include "Player/Directions.h"
 #include "AnimationSequence.h"
 #include "Terrain.h"
 
-class NetworkedPlayer {
-
+class NetworkedPlayer : public Player {
     public:
+        typedef Player super;
+    
+        NetworkedPlayer(int x, int y, std::string dir) : super(x, y, dir) {};
+        NetworkedPlayer(int x, int y, Direction dir) : super(x, y, dir) {};
+    
+        void setTileX(int x);
+        void setTileY(int y);
 
-        float x, y;
-        int tileX, tileY;
-        int speed = 40;
-        std::string direction;
-        bool onTile = true;
-
-        sf::Sprite spriteLeft, spriteRight, spriteUp, spriteDown;
-
-        NetworkedPlayer(int xPos, int yPos, std::string dir);
-        void update(float elapsedTime);
-        void draw(sf::RenderWindow *app);
-
-    private:
-
-        std::map<std::string, AnimationSequence*> animations;
-        typedef std::map<std::string, AnimationSequence*>::iterator i_animations;
-
+        void setDirection(std::string dir);
+        void setDirection(Direction dir);
 };
 
 #endif // NETWORKEDPLAYER_H

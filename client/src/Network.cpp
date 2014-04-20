@@ -39,7 +39,7 @@ void Network::update(float elapsedTime) {
     if(networkTime > 5) {
         networkTime = 0;
         std::stringstream data;
-        data << "2," << playerID << "," << player->tileX << "," << player->tileY << "," << player->direction << ",";
+        data << "2," << playerID << "," << player->getTileX() << "," << player->getTileY() << "," << player->getDirection() << ",";
         socket.send(data.str().c_str(), data.str().length(), serverAddress, serverPort);
     }
 
@@ -85,9 +85,9 @@ void Network::update(float elapsedTime) {
                 convertY >> y;
                 if(!(networkPlayers.find(receivedArray[1]) == networkPlayers.end())) {
                     std::cout << "updated " << receivedArray[1] << " at " << x << ", " << y << " facing " << receivedArray[4] << std::endl;
-                    networkPlayers[receivedArray[1]]->tileX = x;
-                    networkPlayers[receivedArray[1]]->tileY = y;
-                    networkPlayers[receivedArray[1]]->direction = receivedArray[4];
+                    networkPlayers[receivedArray[1]]->setTileX(x);
+                    networkPlayers[receivedArray[1]]->setTileY(y);
+                    networkPlayers[receivedArray[1]]->setDirection(receivedArray[4]);
                 }
             }
 

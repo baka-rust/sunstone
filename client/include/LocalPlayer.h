@@ -8,6 +8,7 @@
 #include <vector>
 #include <map>
 
+#include "Player/Player.h"
 #include "Player/Directions.h"
 #include "Player/States.h"
 #include "AnimationSequence.h"
@@ -19,27 +20,18 @@ class Network;
 
 extern bool focused;
 
-class Player {
+class LocalPlayer : public Player {
 
     public:
-        float x, y;
-        int tileX, tileY;
-        int speed = 40; // rely on stats later
-        bool onTile = true;
+        typedef Player super;
     
-        Direction direction;
-        State state;
-
         Terrain *terrain; // we should figure out a better way to handle this. singletons in cpp are dumb.
         Network *network;
-
-        Player(int xPos, int yPos, std::string dir);
     
-        void update(float elapsedTime);
-        void draw(sf::RenderWindow *app);
-
-    private:
-        std::vector<std::vector<AnimationSequence*> > animations = std::vector<std::vector<AnimationSequence*>>(4);
+        LocalPlayer(int x, int y, std::string dir) : super(x, y, dir) {};
+        LocalPlayer(int x, int y, Direction dir) : super(x, y, dir) {};
+    
+        virtual void update(float elapsedTime);
 };
 
 #endif // PLAYER_H

@@ -5,7 +5,7 @@
 #include <string>
 #include <iostream>
 
-#include "Player.h"
+#include "LocalPlayer.h"
 #include "Terrain.h"
 #include "Network.h"
 
@@ -27,7 +27,7 @@ int main() {
     app.setVerticalSyncEnabled(true);
     app.setView(camera);
 
-    Player player(64, 64, "down");
+    LocalPlayer player(64, 64, "down");
     Terrain terrain;
     Network network;
 
@@ -61,7 +61,7 @@ int main() {
         player.update(elapsedTime);
         network.update(elapsedTime);
 
-        camera.setCenter(player.x, player.y);
+        camera.setCenter(player.getX(), player.getY());
         app.setView(camera);
 
         app.clear(sf::Color::Cyan);
