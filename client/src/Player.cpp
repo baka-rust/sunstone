@@ -74,52 +74,70 @@ Player::Player(int xPos, int yPos, std::string dir) {
 void Player::update(float elapsedTime) {
     state = Idle;
     
+    bool yOnTile = true;
     if(direction == N || direction == NE || direction == NW) {
-        if(y <= (tileY * 16)) {
-            onTile = true;
-        }
-        else {
-            onTile = false;
-            state = Walking;
-            y = y - (speed * elapsedTime);
-            animations[Walking][N]->update(elapsedTime);
-        }
-    }
-    else if(direction == S || direction == SE || direction == SW) {
-        if(y >= (tileY * 16)) {
-            onTile = true;
-        }
-        else {
-            onTile = false;
-            state = Walking;
-            y = y + (speed * elapsedTime);
-            animations[Walking][S]->update(elapsedTime);
-        }
+        yOnTile = (y <= (tileY * 16));
+    } else if(direction == S || direction == SE || direction == SW) {
+        yOnTile = (y >= (tileY * 16));
     }
     
-    if(direction == W || direction == NW || direction == SW) {
-        if(x <= (tileX * 16)) {
-            onTile = true;
-        }
-        else {
-            onTile = false;
-            state = Walking;
-            x = x - (speed * elapsedTime);
-            animations[Walking][W]->update(elapsedTime);
-        }
+    bool xOnTile = true;
+    if (direction == W || direction == NW || direction == SW) {
+        xOnTile = (x <= (tileX * 16));
+    } else if (direction == E || direction == NE || direction == SE) {
+        xOnTile = (x >= (tileX * 16));
     }
-    else if(direction == E || direction == NE || direction == SE) {
-        if(x >= (tileX * 16)) {
-            onTile = true;
-        }
-        else {
-            onTile = false;
-            state = Walking;
-            x = x + (speed * elapsedTime);
-            animations[Walking][E]->update(elapsedTime);
-        }
-    }
+    
+    onTile = yOnTile && xOnTile;
 
+    if (!onTile) {
+        state = Walking;
+        
+        
+    }
+    
+    if(direction == N) {
+        y = y - (speed * elapsedTime);
+        
+        animations[Walking][N]->update(elapsedTime);
+    } else if(direction == NE) {
+        y = y - sqrt(2) * (speed * elapsedTime) / 2;
+        x = x + sqrt(2) * (speed * elapsedTime) / 2;
+        
+        animations[Walking][N]->update(elapsedTime);
+        animations[Walking][E]->update(elapsedTime);
+    } else if(direction == E) {
+        x = x + (speed * elapsedTime);
+        
+        animations[Walking][E]->update(elapsedTime);
+    } else if(direction == SE) {
+        y = y + sqrt(2) * (speed * elapsedTime) / 2;
+        x = x + sqrt(2) * (speed * elapsedTime) / 2;
+        
+        animations[Walking][S]->update(elapsedTime);
+        animations[Walking][E]->update(elapsedTime);
+    } else if(direction == S) {
+        y = y + (speed * elapsedTime);
+        
+        animations[Walking][S]->update(elapsedTime);
+    } else if(direction == SW) {
+        y = y + sqrt(2) * (speed * elapsedTime) / 2;
+        x = x - sqrt(2) * (speed * elapsedTime) / 2;
+        
+        animations[Walking][S]->update(elapsedTime);
+        animations[Walking][W]->update(elapsedTime);
+    } else if(direction == W) {
+        x = x - (speed * elapsedTime);
+        
+        animations[Walking][W]->update(elapsedTime);
+    } else if(direction == NW) {
+        y = y - sqrt(2) * (speed * elapsedTime) / 2;
+        x = x - sqrt(2) * (speed * elapsedTime) / 2;
+        
+        animations[Walking][N]->update(elapsedTime);
+        animations[Walking][W]->update(elapsedTime);
+    }
+    
     // Handle user input
     if(state != Walking && focused) {
         int dY = 0;
