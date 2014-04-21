@@ -47,9 +47,9 @@ Player::Player(int xPos, int yPos, std::string dir) {
     
     // idle
     animations[Idle] = std::vector<AnimationSequence*>(4);
-    animations[Idle][N] = new AnimationSequence(idleResource, idleFrames, idleSpeed);
-    animations[Idle][S] = new AnimationSequence(idleResource, idleFrames, idleSpeed);
-    animations[Idle][W] = new AnimationSequence(idleResource, idleFrames, idleSpeed);
+    animations[Idle][N] = new AnimationSequence(idleResource + "North", idleFrames, idleSpeed);
+    animations[Idle][S] = new AnimationSequence(idleResource + "South", idleFrames, idleSpeed);
+    animations[Idle][W] = new AnimationSequence(idleResource + "West", idleFrames, idleSpeed);
     animations[Idle][E] = new AnimationSequence(idleResource, idleFrames, idleSpeed);
     
     // walk
