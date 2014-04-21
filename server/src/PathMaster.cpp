@@ -4,12 +4,12 @@
 #include "PathMaster.h"
 #include "Dungeon.h"
 
-PathMapper::PathMapper(Dungeon* d) {
+PathMaster::PathMaster(Dungeon* d) {
     dungeon = d;
     wallBitmap = dungeon->getWalls();
 }
 
-std::string PathMapper::getLocalPath(int ID, int fromX, int fromY, int toX, int toY) {
+std::string PathMaster::getLocalPath(int ID, int fromX, int fromY, int toX, int toY) {
     
     int dx = fromX - toX;
     int dy = fromY - toY;
@@ -44,7 +44,7 @@ std::string PathMapper::getLocalPath(int ID, int fromX, int fromY, int toX, int 
     }
 }
 
-void PathMapper::createMap(int ID, int x, int y) {
+void PathMaster::createMap(int ID, int x, int y) {
     if(wallBitmap[x][y]) {
         return;
     }

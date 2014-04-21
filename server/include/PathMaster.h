@@ -6,11 +6,11 @@
 
 #include "Dungeon.h"
 
-class PathMapper {
+class PathMaster {
     
     public:
     
-        PathMapper(Dungeon* d);
+        PathMaster(Dungeon* d);
     
         // overwrite pathMap[mapNumber] with distance mappings to (x,y)
         // in other words, to get to (x,y), call this function
