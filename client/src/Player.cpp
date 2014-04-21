@@ -33,7 +33,7 @@ Player::Player(int xPos, int yPos, std::string dir) {
     int idleFrames = 1;
     float idleSpeed = 1.0;
     
-    std::string walkResource = "resources/player/walkEast";
+    std::string walkResource = "resources/player/walk";
     int walkFrames = 8;
     float walkSpeed = 0.02  ;
     
@@ -54,10 +54,10 @@ Player::Player(int xPos, int yPos, std::string dir) {
     
     // walk
     animations[Walking] = std::vector<AnimationSequence*>(4);
-    animations[Walking][N]= new AnimationSequence(walkResource, walkFrames, walkSpeed);
-    animations[Walking][S] = new AnimationSequence(walkResource, walkFrames, walkSpeed);
-    animations[Walking][W] = new AnimationSequence(walkResource + "", walkFrames, walkSpeed);
-    animations[Walking][E] = new AnimationSequence(walkResource, walkFrames, walkSpeed);
+    animations[Walking][N] = new AnimationSequence(walkResource + "East", walkFrames, walkSpeed);
+    animations[Walking][S] = new AnimationSequence(walkResource + "East", walkFrames, walkSpeed);
+    animations[Walking][W] = new AnimationSequence(walkResource + "West", walkFrames, walkSpeed);
+    animations[Walking][E] = new AnimationSequence(walkResource + "East", walkFrames, walkSpeed);
     
     // shoot
     animations[Firing] = std::vector<AnimationSequence*>(4);
