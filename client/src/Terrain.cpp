@@ -13,15 +13,15 @@ Terrain::Terrain() {
         lobbyTiles[i] = std::vector<TileType>(height, wall);
     }
     
-//    for(int i = 62; i < 67; i++) {
-//        for(int j = 62; j < 67; j++) {
-//            lobbyTiles[i][j] = ground;
-//        }
-//    }
-//    
-//    buildTilemaps(lobbyTiles);
+    for(int i = 62; i < 67; i++) {
+        for(int j = 62; j < 67; j++) {
+            lobbyTiles[i][j] = ground;
+        }
+    }
     
-    generateFromSeed(2454   );
+    buildTilemaps(lobbyTiles);
+    
+//    generateFromSeed(2454);
 }
 
 void Terrain::generateFromSeed(int seed) {
