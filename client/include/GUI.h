@@ -65,7 +65,7 @@ public:
 
 	sf::RectangleShape background;
 	sf::RectangleShape slider; //closing and opening animation
-	int closingTime = 1;
+	float closingTime = 1;
 	sf::Clock clock;
 
 	sf::Vector2f dimentions;
@@ -81,10 +81,12 @@ public:
 	void toggleDisplay(bool d);
 	void addMessage(std::string s);
 	void draw(sf::RenderWindow* app);
+	bool getDisplay(){return display;}
 
 private:
 
     bool display = true;
+    bool openDisplay = true;
 };
 
 class GUI {
@@ -102,12 +104,12 @@ public:
 	GUICrosshair crosshair;
 	GUITextArea textArea;
     GUITextArea tooltip;
-    GUIButton testButton;
 
     Terrain* dungeon;
     Network* network;
 
 	GUI(int w, int h);
+	~GUI();
 
 	 //overlay creations
     void createToolTipArea(int x, int y, int w, int h, std::string s);
@@ -117,9 +119,13 @@ public:
 	void toggleRecoil(bool recoil);
 	void update(sf::RenderWindow* app);
 	void draw(sf::RenderWindow* app);
+	void drawButtons(sf::RenderWindow* app);
+	GUIButton* instanciateButton(int x,int y,std::string message, void (*callback)());
   //Commands
 	void processCommand(char command);
 	void clearLastCommand();
+
+
 
 
 private:
@@ -127,6 +133,7 @@ private:
     int height, width;
 	char lastCommand = ' ';
 	std::string currentCommand = "";
+	std::vector<GUIButton*> buttons;
 
 
     void updateCrosshair(sf::RenderWindow* app);

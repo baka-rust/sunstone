@@ -28,7 +28,7 @@ GUIButton::GUIButton(int x, int y, std::string message, void (*cb)()){
 }
 
 void GUIButton::update(sf::RenderWindow* app){
-
+    if(display){
      sf::FloatRect bounds = background.getGlobalBounds();
     sf::Vector2i mousePos = sf::Mouse::getPosition(*app);
     //std::cout << background.getPosition().y << "," << bounds.height << "," << app->mapPixelToCoords(mousePos).y << std::endl;
@@ -37,6 +37,7 @@ void GUIButton::update(sf::RenderWindow* app){
         if(sf::Mouse::isButtonPressed(sf::Mouse::Left)){
             buttonClicked();
        }
+    }
     }
 }
 
@@ -94,6 +95,7 @@ GUITextArea::GUITextArea(int x, int y, int w, int h) {
     dimentions.y = h;
     background.setFillColor(sf::Color(0,0,255,100));//blue
     slider.setPosition(x,y);
+    slider.setFillColor(sf::Color::Black);
 
 
 
@@ -119,11 +121,12 @@ void GUITextArea::addMessage(std::string s){
 
 void GUITextArea::toggleDisplay(bool d){
     display = d;
+    openDisplay = !d;
     clock.restart();
 }
 
 void GUITextArea::draw(sf::RenderWindow* app){
-   if(display){
+   if(display || openDisplay){
 
     float textBounds;
     if(displayArchivedText)
@@ -152,13 +155,15 @@ void GUITextArea::draw(sf::RenderWindow* app){
         app->draw(archivedText);
     app->draw(currentText);
    }
-   else{
+   if(!display && openDisplay){
         float closingPercent = clock.getElapsedTime().asSeconds()/closingTime;
         if(closingPercent <= 1 && closingPercent >= .1){
             slider.setPosition(background.getPosition());
             slider.setSize(background.getSize());
-            slider.setScale(closingPercent, closingPercent);
+            slider.setScale(1, closingPercent);
             app->draw(slider);
+        }if(closingPercent >.9){
+            openDisplay = false;
         }
 
    }
@@ -168,15 +173,17 @@ void test(){
     std::cout << "Worked";
 }
 
-GUI::GUI(int w, int h): textArea(0,h-100,50,100), tooltip(1,1,3,3), testButton(30, 30, "Hi", test ){
+GUI::GUI(int w, int h): textArea(0,h-100,50,100), tooltip(1,1,3,3){
 
     height = h;
     width = w;
 
 
+    instanciateButton(30,30,"Test", test);
 
     tooltip.toggleDisplay(false);
-    tooltip.background.setFillColor(sf::Color::White);
+    tooltip.background.setFillColor(sf::Color::Blue);
+    tooltip.closingTime = .5f;
 
     tooltip.displayArchivedText=false;
 
@@ -211,6 +218,18 @@ GUI::GUI(int w, int h): textArea(0,h-100,50,100), tooltip(1,1,3,3), testButton(3
 
 
 
+}
+GUI::~GUI(){
+    while(!buttons.empty()){
+        GUIButton* b = buttons.back();
+        buttons.pop_back();
+        delete b;
+    }
+}
+
+GUIButton* GUI::instanciateButton(int x, int y, std::string message, void (*callback)()){
+    buttons.push_back(new GUIButton(x,y,message,callback));
+    return buttons.back();
 }
 
 
@@ -251,8 +270,8 @@ void GUI::mouseClick(){
         }
     }else  if(sf::Mouse::isButtonPressed(sf::Mouse::Right)){
         createToolTipArea(crosshair.x, crosshair.y, 20, 20, "");
-        std::cout << "\nCrosshair at " << crosshair.y;
-        std::cout << "\n Tooltip at " << tooltip.background.getPosition().y;
+       // std::cout << "\nCrosshair at " << crosshair.y;
+       // std::cout << "\n Tooltip at " << tooltip.background.getPosition().y;
 
 
     }else{
@@ -288,7 +307,8 @@ void GUI::updateCrosshair(sf::RenderWindow *app){
     //divide by 15 since each tile is 16 wide
     sf::Vector2f worldPos = app->mapPixelToCoords(pixelPos);
     crosshair.crosshair.setPosition(worldPos);
-  //  crosshair.tileType = dungeon->getTile(crosshair.x, crosshair.y, "low");
+    crosshair.tileType = dungeon->getTile(worldPos.x/16, worldPos.y/16, "low");
+    //divide by 16 since tiles are 16 big
     switch(crosshair.tileType){
     case ground:
         setToolTipInfo("ground");
@@ -308,8 +328,10 @@ void GUI::updateCrosshair(sf::RenderWindow *app){
     }
     sf::Vector2f distance = crosshair.crosshair.getPosition() - tooltip.background.getPosition();
     float length = distance.x * distance.x + distance.y * distance.y;
-    if(length > 100)
+   // std::cout << tooltip.background.getPosition().x - tooltip.slider.getPosition().x <<std::endl;
+    if(length > 100 && tooltip.getDisplay() != false){
         tooltip.toggleDisplay(false);
+    }
     mouseClick();
 }
 
@@ -329,15 +351,22 @@ void GUI::draw(sf::RenderWindow *app){
 
         app->draw(healthBar.barHandle);
         textArea.draw(app);
+        drawButtons(app);
         tooltip.draw(app);
         app->draw(crosshair.crosshair);
     case LOGIN:
         textArea.draw(app);
-        testButton.draw(app);
+        drawButtons(app);
         app->draw(crosshair.crosshair);
         tooltip.draw(app);
     }
 
+}
+
+void GUI::drawButtons(sf::RenderWindow* app){
+    for(int i = 0; i < buttons.size(); i++){
+        buttons[i]->draw(app);
+    }
 }
 
 
@@ -442,14 +471,9 @@ int GUI::processLogin(std::string input){
         std::getline(ss, token, ',');
         ip = token;
 
-        std::istringstream convert(portString);
-        if(!(convert >> port)){
-            error = 1;
-        }
+            error = network->login(name, port, ip);
 
-       error = network->login(name, port, ip);
-
-        std::cout << name << " //" << portString << " //" << ip<< " //" <<std::endl;
+        //std::cout << name << " //" << portString << " //" << ip<< " //" <<std::endl;
 
         return error;
     }
