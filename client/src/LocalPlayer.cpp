@@ -38,7 +38,7 @@ void LocalPlayer::update(float elapsedTime) {
             }
             
             direction = W;
-            network->updatePlayerLocation(tileX, tileY, "down");
+            network->updatePlayerLocation(tileX, tileY, "left");
             
         } else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
             if(terrain->getTile(tileX+1, tileY, "mid") == 0) {
