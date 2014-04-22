@@ -29,7 +29,7 @@ Player::Player(int xPos, int yPos, std::string dir) {
     
     state = Idle;
     
-    std::string idleResource = "resources/player/walkEast";
+    std::string idleResource = "resources/player/idle";
     int idleFrames = 1;
     float idleSpeed = 1.0;
     
@@ -37,20 +37,20 @@ Player::Player(int xPos, int yPos, std::string dir) {
     int walkFrames = 8;
     float walkSpeed = 0.02  ;
     
-    std::string shootResource = "resources/player/walkEast";
-    int shootFrames = 5;
+    std::string shootResource = "resources/player/fireEast";
+    int shootFrames = 6;
     float shootSpeed = 0.02;
     
-    std::string dieResource = "resources/player/walkEast";
-    int dieFrames = 98;
+    std::string dieResource = "resources/player/walkEast"; // TODO change
+    int dieFrames = 8; // TODO change
     float dieSpeed = 0.05;
     
     // idle
     animations[Idle] = std::vector<AnimationSequence*>(4);
-    animations[Idle][N] = new AnimationSequence(idleResource, idleFrames, idleSpeed);
-    animations[Idle][S] = new AnimationSequence(idleResource, idleFrames, idleSpeed);
-    animations[Idle][W] = new AnimationSequence(idleResource, idleFrames, idleSpeed);
-    animations[Idle][E] = new AnimationSequence(idleResource, idleFrames, idleSpeed);
+    animations[Idle][N] = new AnimationSequence(idleResource + "North", idleFrames, idleSpeed);
+    animations[Idle][S] = new AnimationSequence(idleResource + "South", idleFrames, idleSpeed);
+    animations[Idle][W] = new AnimationSequence(idleResource + "West", idleFrames, idleSpeed);
+    animations[Idle][E] = new AnimationSequence(idleResource + "East", idleFrames, idleSpeed);
     
     // walk
     animations[Walking] = std::vector<AnimationSequence*>(4);
