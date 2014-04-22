@@ -41,8 +41,8 @@ Player::Player(int xPos, int yPos, std::string dir) {
     int shootFrames = 6;
     float shootSpeed = 0.02;
     
-    std::string dieResource = "resources/player/walkEast"; // TODO change
-    int dieFrames = 8; // TODO change
+    std::string dieResource = "resources/player/die";
+    int dieFrames = 98;
     float dieSpeed = 0.05;
     
     // idle
