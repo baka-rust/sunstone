@@ -54,7 +54,7 @@ Player::Player(int xPos, int yPos, std::string dir) {
     
     // walk
     animations[Walking] = std::vector<AnimationSequence*>(4);
-    animations[Walking][N] = new AnimationSequence(walkResource + "East", walkFrames, walkSpeed);
+    animations[Walking][N] = new AnimationSequence(walkResource + "North", walkFrames, walkSpeed);
     animations[Walking][S] = new AnimationSequence(walkResource + "East", walkFrames, walkSpeed);
     animations[Walking][W] = new AnimationSequence(walkResource + "West", walkFrames, walkSpeed);
     animations[Walking][E] = new AnimationSequence(walkResource + "East", walkFrames, walkSpeed);
