@@ -6,6 +6,7 @@
 #include <cstdlib>
 #include <time.h>
 #include <stdlib.h>
+#include <thread>
 
 #include "Room.h"
 #include "TileTypes.h"
@@ -47,9 +48,11 @@ public:
     
 private:
     
-    std::vector< std::vector<TileType> > grid;
     std::vector<Room> rooms;
+    std::vector< std::thread > decorationThreads;
     std::vector<Door> doors;
+    std::vector< std::vector<TileType> > grid;
+
     
     int roomCount;
     int minRoomSize;

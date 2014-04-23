@@ -18,3 +18,8 @@ void Room::addConnectedRoom(Room room, Door d) {
 bool Room::inRoom(int x, int y) {
     return x>=_x && x<_endX && y>=_y && y<_endY;
 }
+
+std::vector< std::vector< TileType > > Room::decorate(int width, int height) {
+    std::vector< std::vector< TileType > > r(width);
+    return r;
+}
