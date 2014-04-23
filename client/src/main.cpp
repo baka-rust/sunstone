@@ -9,7 +9,7 @@
 #include "Terrain.h"
 #include "Network.h"
 #include "Vision.h"
-//Dont have #include "Vision.h"
+#include "GUI.h"
 
 bool focused = true;
 
