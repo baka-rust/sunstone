@@ -11,7 +11,7 @@ TileType decorationGrid2[6][6];
 void dRooms1() {
     for(int i = 0; i < 6; i++) {
         for(int j = 0; j < 6; j++) {
-            if(rand()%100 < 50) {
+            if(rand()%100 < 20) {
                 decorationGrid1[i][j] = spawner;
             }
             else {
@@ -23,7 +23,7 @@ void dRooms1() {
 void dRooms2() {
     for(int i = 0; i < 6; i++) {
         for(int j = 0; j < 6; j++) {
-            if(rand()%100 < 50) {
+            if(rand()%100 < 20) {
                 decorationGrid2[i][j] = spawner;
             }
             else {
@@ -106,14 +106,15 @@ int Dungeon::createAttempt() {
     type1.join();
     type2.join();
     
+    
     for(int i = 1; i < roomCount; i++){
         for(int x = rooms[i].x(); x < rooms[i].endX(); x++) {
             for(int y = rooms[i].y(); y < rooms[i].endY(); y++) {
                 if(i%2==0) {
-                    grid[x][y] = decorationGrid1[x][y];
+                    grid[x][y] = decorationGrid1[x - rooms[i].x()][y - rooms[i].y()];
                 }
                 else {
-                    grid[x][y] = decorationGrid2[x][y];
+                    grid[x][y] = decorationGrid2[x - rooms[i].x()][y - rooms[i].y()];
                 }
             }
         }

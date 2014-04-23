@@ -44,7 +44,8 @@ public:
     bool isFloor(int x, int y);
     bool isWall(int x, int y);
     std::vector< std::vector<TileType> > getTiles();
-    
+    void printGrid();
+
     
 private:
     
@@ -75,8 +76,6 @@ private:
     
     // printing (for debugging)
     void printLine(int y);
-    void printGrid();
-    
 };
 
 #endif // DUNGEON_H
