@@ -26,6 +26,8 @@ class Player {
         int speed = 40; // rely on stats later
         std::string direction;
         bool onTile = true;
+        
+        float fireTime = 0.0;
 
         Terrain *terrain; // we should figure out a better way to handle this. singletons in cpp are dumb.
         Network *network;
