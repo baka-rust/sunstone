@@ -9,6 +9,7 @@
 #include "Terrain.h"
 #include "Network.h"
 #include "GUI.h"
+//Dont have #include "Vision.h"
 
 bool focused = true;
 
@@ -27,15 +28,13 @@ int main() {
 
     app.setVerticalSyncEnabled(true);
     app.setView(camera);
-    app.setMouseCursorVisible(false);
 
     Player player(64, 64, "down");
     Terrain terrain;
     Network network;
     GUI gui(width*scale, height*scale);
-
-    gui.dungeon = &terrain;
     gui.network = &network;
+    gui.dungeon = &terrain;
 
     player.terrain = &terrain;
     player.network = &network;
@@ -62,7 +61,6 @@ int main() {
             }
 
 
-
         }
 
         elapsedTime = clock.restart().asSeconds();
@@ -71,16 +69,14 @@ int main() {
         player.update(elapsedTime);
         network.update(elapsedTime);
 
-        camera.setCenter(player.x, player.y);
+        camera.setCenter(floor(player.x * 10) / 10, floor(player.y * 10) / 10);
         app.setView(camera);
 
-        app.clear();
-       terrain.draw(camera.getCenter().x - 128, camera.getCenter().y - 80, &app);
+        app.clear(sf::Color::Cyan);
+
+        terrain.draw(camera.getCenter().x - 128, camera.getCenter().y - 80, &app);
         network.draw(&app);
         player.draw(&app);
-        /**
-            Get the window Stuff
-        */
         gui.draw(&app);
 
         app.display();
