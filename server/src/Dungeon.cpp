@@ -1,8 +1,37 @@
 #include "Dungeon.h"
 
 #include <queue>
+#include <thread>
 
 #include "TileTypes.h"
+
+TileType decorationGrid1[6][6];
+TileType decorationGrid2[6][6];
+
+void dRooms1() {
+    for(int i = 0; i < 6; i++) {
+        for(int j = 0; j < 6; j++) {
+            if(rand()%100 < 20) {
+                decorationGrid1[i][j] = spawner;
+            }
+            else {
+                decorationGrid1[i][j] = ground;
+            }
+        }
+    }
+}
+void dRooms2() {
+    for(int i = 0; i < 6; i++) {
+        for(int j = 0; j < 6; j++) {
+            if(rand()%100 < 20) {
+                decorationGrid2[i][j] = spawner;
+            }
+            else {
+                decorationGrid2[i][j] = ground;
+            }
+        }
+    }
+}
 
 Dungeon::Dungeon(int width, int height, int minRoom, int maxRoom, int seed) {
     minRoomSize = minRoom;
@@ -72,8 +101,24 @@ int Dungeon::createAttempt() {
         }
     }
     
-    for(int i = 0; i < roomCount; i++){
-        //        decorateRoom(rooms[i]);
+    std::thread type1(dRooms1);
+    std::thread type2(dRooms2);
+    type1.join();
+    type2.join();
+    
+    
+    for(int i = 1; i < roomCount; i++){
+        for(int x = rooms[i].x(); x < rooms[i].endX(); x++) {
+            for(int y = rooms[i].y(); y < rooms[i].endY(); y++) {
+                if(i%2==0) {
+                    grid[x][y] = decorationGrid1[x - rooms[i].x()][y - rooms[i].y()];
+                }
+                else {
+                    grid[x][y] = decorationGrid2[x - rooms[i].x()][y - rooms[i].y()];
+                }
+            }
+        }
+//        decorateRoom(rooms[i]);
     }
     
     carveSquare((int) grid.size() / 2, (int)grid[0].size() / 2, 8, 8, ground);       // overwrite the starting and final rooms
@@ -233,32 +278,32 @@ void Dungeon::carveSquare(int x, int y, int width, int height, TileType value) {
 void Dungeon::decorateRoom(Room room) {
     int x;
     int y;
-    if(randInt(0,3) == 0) {
-        x = randInt(room.x() + 1, room.endX() - 1);
-        y = randInt(room.y() + 1, room.endY() - 1);
-        grid[x][y] = healthpack; // TODO somethignrater
-    }
+//    if(randInt(0,3) == 0) {
+//        x = randInt(room.x() + 1, room.endX() - 1);
+//        y = randInt(room.y() + 1, room.endY() - 1);
+//        grid[x][y] = healthpack; // TODO somethignrater
+//    }
     
+//    int j = 0;
+//    int n = randInt(0,room.width()*room.height()/6);
+//    x = randInt(room.x()+1, room.endX()-1);
+//    y = randInt(room.y()+1, room.endY()-1);
+//    for(int i = 0; i < n; i++) {
+//        while(grid[x][y] != 0) {
+//            j++;
+//            x = randInt(room.x() + 1, room.endX() - 1);
+//            y = randInt(room.y() + 1, room.endY() - 1);
+//            if(j > 256) {
+//                return;
+//            }
+//        }
+//        grid[x][y] = wall;
+//    }
+    
+    int n = randInt(3, 6);
+    x = randInt(room.x()+1, room.endX()-1);
+    y = randInt(room.y()+1, room.endY()-1);
     int j = 0;
-    int n = randInt(0,room.width()*room.height()/6);
-    x = randInt(room.x()+1, room.endX()-1);
-    y = randInt(room.y()+1, room.endY()-1);
-    for(int i = 0; i < n; i++) {
-        while(grid[x][y] != 0) {
-            j++;
-            x = randInt(room.x() + 1, room.endX() - 1);
-            y = randInt(room.y() + 1, room.endY() - 1);
-            if(j > 256) {
-                return;
-            }
-        }
-        grid[x][y] = wall;
-    }
-    
-    n = randInt(3, 6);
-    x = randInt(room.x()+1, room.endX()-1);
-    y = randInt(room.y()+1, room.endY()-1);
-    j = 0;
     for(int i = 0; i < n; i++) {
         while(grid[x][y] != 0) {
             j++;
