@@ -470,10 +470,21 @@ int GUI::processLogin(std::string input){
         portString = token;
         std::getline(ss, token, ',');
         ip = token;
-
-            error = network->login(name, port, ip);
+        if(!IsIPAddress(ip)){
+            error = 1;
+        }else
+        error = network->login(name, port, ip);
 
         //std::cout << name << " //" << portString << " //" << ip<< " //" <<std::endl;
 
         return error;
     }
+
+bool GUI::IsIPAddress(std::string & ipaddr)
+    {
+
+    std::string quad;
+    std::istringstream ss(ipaddr);
+
+    return true;
+}

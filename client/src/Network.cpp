@@ -9,8 +9,10 @@ Network::Network() {
     playerID = rand();
 
     std::stringstream data;
+    /*
     data.str("3,");
     socket.send(data.str().c_str(), data.str().length(), serverAddress, serverPort);
+    */
 }
 
 Network::~Network() {
@@ -26,13 +28,7 @@ void Network::update(float elapsedTime) {
         iterator->second->update(elapsedTime);
     }
 
-    // join server after grabbing terrain
-    if(requestedPlayers == false && gotSeed == true) {
-        std::stringstream data;
-        data << "1," << playerID << "," << 64 << "," << 64 << "," << "down" << ","; // use a random ID
-        socket.send(data.str().c_str(), data.str().length(), serverAddress, serverPort);
-        requestedPlayers = true;
-    }
+
 
     networkTime = networkTime + elapsedTime;
     // account for player timeout
@@ -110,6 +106,23 @@ void Network::draw(sf::RenderWindow *app) {
     for(i_networkPlayers iterator = networkPlayers.begin(); iterator != networkPlayers.end(); iterator++) {
         iterator->second->draw(app);
     }
+}
+
+int Network::login(std::string name, unsigned short port, std::string ip){
+
+    playerID = name;
+    serverPort = port;
+    serverAddress = sf::IpAddress(ip);
+    int error = 0;
+    // join server after grabbing terrain
+    if(requestedPlayers == false && gotSeed == true) {
+        std::stringstream data;
+        data << "1," << playerID << "," << 64 << "," << 64 << "," << "down" << ","; // use a random ID
+        socket.send(data.str().c_str(), data.str().length(), serverAddress, serverPort);
+        requestedPlayers = true;
+    }
+    return error;
+
 }
 
 

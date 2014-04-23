@@ -21,8 +21,7 @@ class Network {
 
         sf::IpAddress serverAddress = "127.0.0.1";  // give place to change this in game options
         unsigned short serverPort = 6666;
-        int playerID;
-        std::string playerName;
+        std::string playerID;
 
         Terrain *terrain;
         Player *player;
@@ -32,10 +31,7 @@ class Network {
         void update(float elapsedTime);
         void draw(sf::RenderWindow *app);
 
-        int login(std::string pName, unsigned short sPort, sf::IpAddress sAddress){
-            playerName = pName; serverPort = sPort; serverAddress = sAddress;
-            return 0;
-        }
+        int login(std::string pName, unsigned short sPort, std::string sAddress);
         void updatePlayerLocation(int x, int y, std::string direction);
 
     private:

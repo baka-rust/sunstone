@@ -121,6 +121,7 @@ public:
 	void draw(sf::RenderWindow* app);
 	void drawButtons(sf::RenderWindow* app);
 	GUIButton* instanciateButton(int x,int y,std::string message, void (*callback)());
+	bool IsIPAddress(std::string & ipaddr);
   //Commands
 	void processCommand(char command);
 	void clearLastCommand();
