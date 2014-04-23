@@ -6,6 +6,7 @@
 #include <cstdlib>
 #include <time.h>
 #include <stdlib.h>
+#include <thread>
 
 #include "Room.h"
 #include "TileTypes.h"
@@ -43,13 +44,16 @@ public:
     bool isFloor(int x, int y);
     bool isWall(int x, int y);
     std::vector< std::vector<TileType> > getTiles();
-    
+    void printGrid();
+
     
 private:
     
-    std::vector< std::vector<TileType> > grid;
     std::vector<Room> rooms;
+    std::vector< std::thread > decorationThreads;
     std::vector<Door> doors;
+    std::vector< std::vector<TileType> > grid;
+
     
     int roomCount;
     int minRoomSize;
@@ -72,8 +76,6 @@ private:
     
     // printing (for debugging)
     void printLine(int y);
-    void printGrid();
-    
 };
 
 #endif // DUNGEON_H

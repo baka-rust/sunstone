@@ -1,6 +1,9 @@
 #ifndef ROOM_H
 #define ROOM_H
 
+#include "TileTypes.h"
+#include <vector>
+
 struct Door {
     int x;
     int y;
@@ -19,6 +22,7 @@ class Room {
         int endY() { return _endY; };
         void addConnectedRoom(Room room, Door door);
         bool inRoom(int x, int y);
+        static std::vector< std::vector< TileType > > decorate(int width, int height);
 
     private:
 
