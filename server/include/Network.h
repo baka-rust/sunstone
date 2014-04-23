@@ -9,6 +9,7 @@
 #include <sstream>
 
 #include "Client.h"
+#include "Monster.h"
 
 class Network {
 
@@ -26,6 +27,10 @@ class Network {
 
         std::map<std::string, Client*> clients;
         typedef std::map<std::string, Client*>::iterator i_clients;
+
+        std::map<std::string, Monster*> monsters;
+        typedef std::map<std::string, Monster*>::iterator i_monsters;
+
 
         sf::UdpSocket socket;
 

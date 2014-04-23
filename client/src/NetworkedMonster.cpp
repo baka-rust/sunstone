@@ -12,10 +12,11 @@ NetworkedMonster::NetworkedMonster(int xPos, int yPos, std::string dir, int type
 	
 	direction = dir;
 	
-    animations["up"] = new AnimationSequence("resources/monsters/monsterA", 2, .25);
-    animations["down"] = new AnimationSequence("resources/player/monsterA", 2, .25);
-    animations["left"] = new AnimationSequence("resources/player/monsterA", 2, .25);
-    animations["right"] = new AnimationSequence("resources/player/monsterA", 2, .25);
+    // TODO change on integration to use correct anims
+    animations["up"] = new AnimationSequence("resources/player/walk", 6, .25);
+    animations["down"] = new AnimationSequence("resources/player/walk", 6, .25);
+    animations["left"] = new AnimationSequence("resources/player/walk", 6, .25);
+    animations["right"] = new AnimationSequence("resources/player/walk", 6, .25);
 
 }
 
@@ -82,12 +83,12 @@ void NetworkedMonster::update(float elapsedTime) {
 }
 
 void NetworkedMonster::draw(sf::RenderWindow *app) {
-
     if(direction == "up") {
         animations["up"]->draw(app);
     }
     else if(direction == "down" ) {
         animations["down"]->draw(app);
+        std::cout << animations["down"]->frameCount << std::endl;
     }
     else if(direction == "left") {
         animations["left"]->draw(app);

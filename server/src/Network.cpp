@@ -18,6 +18,8 @@ Network::~Network() {
 
 void Network::run() {
 
+    monsters["test"] = new Monster(66, 64, "down"); // TODO remove
+
     while(true) {
         if(socket.receive(data, 2048, received, recvAddress, recvPort) != sf::Socket::NotReady) {
 
@@ -63,9 +65,18 @@ void Network::run() {
                             Client *client = iterator->second;
                             if(client->name != receivedArray[1]) {
                                 sendData.str(std::string()); // clear it
-                                sendData << "1," << client->name << "," << client->x << "," << client->y << "," << client->direction << ",";
+                                sendData << "1," << client->name << "," << client->x << "," << client->y << "," << client->direction << "," << 0 << ",";
                                 socket.send(sendData.str().c_str(), sendData.str().length(), recvAddress, recvPort);
                             }
+                        }
+
+                        // tell it about monsters
+                        for(i_monsters iterator = monsters.begin(); iterator != monsters.end(); iterator++) {
+                            Monster *monster = iterator->second;
+
+                            sendData.str(std::string()); // clear it
+                            sendData << "1," << iterator->first << "," << monster->x << "," << monster->y << "," << monster->direction << "," << 1 << ",";
+                            socket.send(sendData.str().c_str(), sendData.str().length(), recvAddress, recvPort);
                         }
 
                         std::cout << "added new player " << receivedArray[1] << " at " << x << ", " << y << " facing " << receivedArray[4] << std::endl;

@@ -18,8 +18,6 @@ class NetworkedMonster {
 		std::string direction;
 		bool onTile = true;
 		
-		sf::Sprite spriteLeft, spriteRight, spriteUp, spriteDown;
-		
 		NetworkedMonster(int xPos, int yPos, std::string dir, int type);
 		void update(float elapsedTime);
 		void draw(sf::RenderWindow *app);

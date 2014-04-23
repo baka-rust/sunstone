@@ -124,14 +124,15 @@ void Player::update(float elapsedTime) {
     }
     
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::Z) && focused) {
-    	fireTime = fireTime + elapsedTime;
-    	if(fireTime > .5) {
-    		fireTime = 0.0;
+    	if(fireTime <= 0.00000001) {
+    		fireTime = 0.5;
     		network->emitProjectile(x, y, direction);
     	}
     }
-    else {
-    	fireTime = 0.0;
+
+    if(fireTime > 0.0)
+    {
+        fireTime = fireTime - elapsedTime;
     }
 
     if(!moving && onTile) {
