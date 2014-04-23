@@ -162,7 +162,19 @@ void Player::update(float elapsedTime) {
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::Z) && focused) {
     	if(fireTime <= 0.00000001) {
     		fireTime = 0.5;
-    		network->emitProjectile(x, y, direction);
+
+            std::string dir;
+            if(direction == N) {
+                dir = "up";
+            } else if(direction == E) {
+                dir = "right";
+            } else if(direction == S) {
+                dir = "down";
+            } else if(direction == W) {
+                dir = "left";
+            }
+
+    		network->emitProjectile(x, y, dir);
     	}
     }
 
