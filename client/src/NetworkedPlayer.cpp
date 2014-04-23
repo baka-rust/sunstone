@@ -12,10 +12,19 @@ NetworkedPlayer::NetworkedPlayer(int xPos, int yPos, std::string dir) {
 
     direction = dir;
 
-    animations["up"] = new AnimationSequence("resources/player/playerTest", 2, .25);
-    animations["down"] = new AnimationSequence("resources/player/playerTest", 2, .25);
-    animations["left"] = new AnimationSequence("resources/player/playerTest", 2, .25);
-    animations["right"] = new AnimationSequence("resources/player/playerTest", 2, .25);
+    //animations["up"] = new AnimationSequence("resources/player/playerTest", 2, .25);
+    //animations["down"] = new AnimationSequence("resources/player/playerTest", 2, .25);
+    //animations["left"] = new AnimationSequence("resources/player/playerTest", 2, .25);
+    //animations["right"] = new AnimationSequence("resources/player/playerTest", 2, .25);
+    
+    std::string walkResource = "resources/player/walk";
+    int walkFrames = 8;
+    float walkSpeed = 0.02;
+    
+	animations["up"] = new AnimationSequence(walkResource, walkFrames, walkSpeed);
+	animations["down"] = new AnimationSequence(walkResource, walkFrames, walkSpeed);
+	animations["left"] = new AnimationSequence(walkResource, walkFrames, walkSpeed);
+	animations["right"] = new AnimationSequence(walkResource, walkFrames, walkSpeed);
 
 }
 

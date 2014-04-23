@@ -8,8 +8,12 @@
 #include "Player.h"
 #include "Terrain.h"
 #include "Network.h"
-#include "Vision.h"
+<<<<<<< HEAD
+#include "GUI.h"
 //Dont have #include "Vision.h"
+=======
+#include "Vision.h"
+>>>>>>> master
 
 bool focused = true;
 

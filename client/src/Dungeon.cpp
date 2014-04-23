@@ -35,7 +35,6 @@ void Dungeon::create(){
         lastRandomNumber++;
         n = createAttempt();
     }
-    printGrid();
 }
 
 int Dungeon::createAttempt() {
@@ -190,6 +189,10 @@ std::vector< std::vector<bool> > Dungeon::getWalls() {
 
 std::vector< std::vector<bool> > Dungeon::getFloors() {
     return getBitmap(0);
+}
+
+std::vector< std::vector<TileType> > Dungeon::getTiles() {
+    return grid;
 }
 
 bool Dungeon::checkSquare(int x, int y, int width, int height, TileType value) {
