@@ -35,7 +35,7 @@ Player::Player(int xPos, int yPos, std::string dir) {
     
     std::string walkResource = "resources/player/walk";
     int walkFrames = 8;
-    float walkSpeed = 0.02  ;
+    float walkSpeed = 0.02;
     
     std::string shootResource = "resources/player/fireEast";
     int shootFrames = 6;
