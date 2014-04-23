@@ -21,7 +21,7 @@ Terrain::Terrain() {
     
     buildTilemaps(lobbyTiles);
     
-//    generateFromSeed(12);
+//    generateFromSeed(2454);
 }
 
 void Terrain::generateFromSeed(int seed) {
@@ -201,32 +201,28 @@ void Terrain::buildTilemaps(std::vector<std::vector<TileType> > tileList) {
                 }
                 
                 // Draw bottom left quad
-                if(s) {
-                    if(w) {
-                        decorationQuads.insert(decorationQuads.begin() + 2, bl_floor_dec_semi_in);
-                    }
-                } else {
-                    if(w) {
-                        if(nw) {
-                            decorationQuads.insert(decorationQuads.begin() + 2, bl_floor_dec_full_vert);
+                if(w) {
+                    if(nw) {
+                        if(s) {
+                            decorationQuads.insert(decorationQuads.begin() + 2, bl_floor_dec_semi_in);
                         } else {
-                            decorationQuads.insert(decorationQuads.begin() + 2, bl_floor_dec_semi_out);
+                            decorationQuads.insert(decorationQuads.begin() + 2, bl_floor_dec_full_vert);
                         }
+                    } else {
+                        decorationQuads.insert(decorationQuads.begin() + 2, bl_floor_dec_semi_out);
                     }
                 }
                 
                 // Draw bottom right quad
-                if(s) {
-                    if(e) {
-                        decorationQuads.insert(decorationQuads.begin() + 3, br_floor_dec_semi_in);
-                    }
-                } else {
-                    if(e) {
-                        if(ne) {
-                            decorationQuads.insert(decorationQuads.begin() + 3, br_floor_dec_full_vert);
+                if(e) {
+                    if(ne) {
+                        if(s) {
+                            decorationQuads.insert(decorationQuads.begin() + 3, br_floor_dec_semi_in);
                         } else {
-                            decorationQuads.insert(decorationQuads.begin() + 3, br_floor_dec_semi_out);
+                            decorationQuads.insert(decorationQuads.begin() + 3, br_floor_dec_full_vert);
                         }
+                    } else {
+                        decorationQuads.insert(decorationQuads.begin() + 3, br_floor_dec_semi_out);
                     }
                 }
                 
