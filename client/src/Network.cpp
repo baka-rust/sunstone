@@ -111,16 +111,16 @@ void Network::draw(sf::RenderWindow *app) {
 int Network::login(std::string name, unsigned short port, std::string ip){
 
     playerID = name;
-    serverPort = port;
-    serverAddress = sf::IpAddress(ip);
+//    serverPort = port;
+  //  serverAddress = sf::IpAddress(ip);
     int error = 0;
     // join server after grabbing terrain
-    if(requestedPlayers == false && gotSeed == true) {
+  //  if(requestedPlayers == false && gotSeed == true) {
         std::stringstream data;
         data << "1," << playerID << "," << 64 << "," << 64 << "," << "down" << ","; // use a random ID
         socket.send(data.str().c_str(), data.str().length(), serverAddress, serverPort);
         requestedPlayers = true;
-    }
+    //}
     return error;
 
 }
