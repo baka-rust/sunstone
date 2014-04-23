@@ -10,7 +10,9 @@
 
 #include "Player.h"
 #include "NetworkedPlayer.h"
+#include "NetworkedMonster.h"
 #include "Terrain.h"
+#include "Projectile.h"
 
 class Terrain;
 class Player;
@@ -21,7 +23,7 @@ class Network {
 
         sf::IpAddress serverAddress = "127.0.0.1";  // give place to change this in game options
         unsigned short serverPort = 6666;
-        std::string playerID;
+        int playerID;
 
         Terrain *terrain;
         Player *player;
@@ -31,7 +33,7 @@ class Network {
         void update(float elapsedTime);
         void draw(sf::RenderWindow *app);
 
-        int login(std::string pName, unsigned short sPort, std::string sAddress);
+        void emitProjectile(int pureX, int pureY, std::string direction);
         void updatePlayerLocation(int x, int y, std::string direction);
 
     private:
@@ -41,6 +43,13 @@ class Network {
 
         std::map<std::string, NetworkedPlayer*> networkPlayers;
         typedef std::map<std::string, NetworkedPlayer*>::iterator i_networkPlayers;
+
+        std::map<std::string, NetworkedMonster*> networkMonsters;
+        typedef std::map<std::string, NetworkedMonster*>::iterator i_networkMonsters;
+        
+        int projCount = 0;
+        std::map<std::string, Projectile*> projectiles;
+        typedef std::map<std::string, Projectile*>::iterator i_projectiles;
 
         sf::UdpSocket socket;
         char data[2048];

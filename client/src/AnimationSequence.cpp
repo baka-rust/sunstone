@@ -6,23 +6,21 @@
 #include <sstream>
 
 AnimationSequence::AnimationSequence(std::string path, int frameNum, float speed) {
-
+    
     frameCount = frameNum;
     frameLength = speed;
-
-    frames.resize(frameNum);
-    std::stringstream imagePath;
+    
+    texture = sf::Texture();
+    texture.loadFromFile(path + ".png");
+    
+    int frameWidth = texture.getSize().x / frameCount;
+    int frameHeight = texture.getSize().y;
+  
+    sprites = std::vector<sf::Sprite>(frameNum);
 
     for(int i=0; i<frameNum; i++) {
-        imagePath << path << i << ".png";
-        frames[i] = new sf::Texture();
-        frames[i]->loadFromFile(imagePath.str());
-        frames[i]->setSmooth(false);
-        imagePath.str("");
+        sprites[i] = sf::Sprite(texture, sf::IntRect(frameWidth * i, 0, frameHeight, frameWidth));
     }
-
-    sprite.setTexture(*frames[0]);
-
 }
 
 void AnimationSequence::update(float elapsedTime) {
@@ -39,7 +37,6 @@ void AnimationSequence::update(float elapsedTime) {
                     currentFrame = 0;
                 }
 
-                sprite.setTexture(*frames[currentFrame]);
                 frameTime = 0.0;
             }
         }
@@ -48,8 +45,8 @@ void AnimationSequence::update(float elapsedTime) {
 }
 
 void AnimationSequence::draw(sf::RenderWindow *app) {
-    sprite.setPosition(x, y);
-    app->draw(sprite);
+    sprites[currentFrame].setPosition(x, y);
+    app->draw(sprites[currentFrame]);
 }
 
 void AnimationSequence::stop() {
