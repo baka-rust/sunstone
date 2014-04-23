@@ -20,6 +20,7 @@ class AnimationSequence {
         AnimationSequence(std::string path, int frameNum, float speed);    // path starts at 0, steps up from there
         void update(float elapsedTime);
         void draw(sf::RenderWindow *app);
+    
         void stop();
         void play();
         void restart();
@@ -27,11 +28,11 @@ class AnimationSequence {
 
     private:
 
-        int currentFrame;   // current position in animation
+        int currentFrame = 0;   // current position in animation
         float frameTime;    // time on current frame
 
-        std::vector<sf::Texture*> frames;
-        sf::Sprite sprite;
+        sf::Texture texture;
+        std::vector<sf::Sprite> sprites;
 
 
 };

@@ -4,8 +4,10 @@
 
 #include <string>
 #include <vector>
-
 #include <iostream>
+
+#include "Player/Directions.h"
+#include "Player/States.h"
 
 Player::Player(int xPos, int yPos, std::string dir) {
 
@@ -15,118 +17,164 @@ Player::Player(int xPos, int yPos, std::string dir) {
     x = tileX * 16;
     y = tileY * 16;
 
-    direction = dir;
-
-    //animations["up"] = new AnimationSequence("resources/player/up", 2, .25);
-    //animations["down"] = new AnimationSequence("resources/player/down", 2, .25);
-    //animations["left"] = new AnimationSequence("resources/player/left", 2, .25);
-    //animations["right"] = new AnimationSequence("resources/player/right", 2, .25);
-
+    if (dir == "up") {
+        direction = N;
+    } else if (dir == "down") {
+        direction = S;
+    } else if (dir == "left") {
+        direction = W;
+    } else {
+        direction = E;
+    }
+    
+    state = Idle;
+    
+    std::string idleResource = "resources/player/idle";
+    int idleFrames = 1;
+    float idleSpeed = 1.0;
+    
     std::string walkResource = "resources/player/walk";
     int walkFrames = 8;
     float walkSpeed = 0.02;
     
-    animations["up"] = new AnimationSequence(walkResource, walkFrames, walkSpeed);
-    animations["down"] = new AnimationSequence(walkResource, walkFrames, walkSpeed);
-    animations["left"] = new AnimationSequence(walkResource, walkFrames, walkSpeed);
-    animations["right"] = new AnimationSequence(walkResource, walkFrames, walkSpeed);
-
+    std::string shootResource = "resources/player/fireEast";
+    int shootFrames = 6;
+    float shootSpeed = 0.02;
+    
+    std::string dieResource = "resources/player/die";
+    int dieFrames = 98;
+    float dieSpeed = 0.05;
+    
+    // idle
+    animations[Idle] = std::vector<AnimationSequence*>(4);
+    animations[Idle][N] = new AnimationSequence(idleResource + "North", idleFrames, idleSpeed);
+    animations[Idle][S] = new AnimationSequence(idleResource + "South", idleFrames, idleSpeed);
+    animations[Idle][W] = new AnimationSequence(idleResource + "West", idleFrames, idleSpeed);
+    animations[Idle][E] = new AnimationSequence(idleResource + "East", idleFrames, idleSpeed);
+    
+    // walk
+    animations[Walking] = std::vector<AnimationSequence*>(4);
+    animations[Walking][N] = new AnimationSequence(walkResource + "North", walkFrames, walkSpeed);
+    animations[Walking][S] = new AnimationSequence(walkResource + "East", walkFrames, walkSpeed);
+    animations[Walking][W] = new AnimationSequence(walkResource + "West", walkFrames, walkSpeed);
+    animations[Walking][E] = new AnimationSequence(walkResource + "East", walkFrames, walkSpeed);
+    
+    // shoot
+    animations[Firing] = std::vector<AnimationSequence*>(4);
+    animations[Firing][N] = new AnimationSequence(shootResource, shootFrames, shootSpeed);
+    animations[Firing][S] = new AnimationSequence(shootResource, shootFrames, shootSpeed);
+    animations[Firing][W] = new AnimationSequence(shootResource, shootFrames, shootSpeed);
+    animations[Firing][E] = new AnimationSequence(shootResource, shootFrames, shootSpeed);
+    
+    // die
+    AnimationSequence* dying = new AnimationSequence(dieResource, dieFrames, dieSpeed);
+    animations[Dying] = std::vector<AnimationSequence*>(4, dying);
 }
 
 void Player::update(float elapsedTime) {
-
-    bool moving = false;
-
-    if(direction == "up") {
+    state = Idle;
+    
+    if(direction == N) {
         if(y <= (tileY * 16)) {
             onTile = true;
         }
         else {
             onTile = false;
-            moving = true;
+            state = Walking;
             y = y - (speed * elapsedTime);
-            animations["up"]->update(elapsedTime);
+            animations[Walking][direction]->update(elapsedTime);
         }
     }
-    else if(direction == "down") {
+    else if(direction == S) {
         if(y >= (tileY * 16)) {
             onTile = true;
         }
         else {
             onTile = false;
-            moving = true;
+            state = Walking;
             y = y + (speed * elapsedTime);
-            animations["down"]->update(elapsedTime);
+            animations[Walking][direction]->update(elapsedTime);
         }
     }
-    else if(direction == "left") {
+    else if(direction == W) {
         if(x <= (tileX * 16)) {
             onTile = true;
         }
         else {
             onTile = false;
-            moving = true;
+            state = Walking;
             x = x - (speed * elapsedTime);
-            animations["left"]->update(elapsedTime);
+            animations[Walking][direction]->update(elapsedTime);
         }
     }
-    else if(direction == "right") {
+    else if(direction == E) {
         if(x >= (tileX * 16)) {
             onTile = true;
         }
         else {
             onTile = false;
-            moving = true;
+            state = Walking;
             x = x + (speed * elapsedTime);
-            animations["right"]->update(elapsedTime);
+            animations[Walking][direction]->update(elapsedTime);
         }
     }
 
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && focused) {
-        if(!moving) {
+    // Handle user input
+    if(state != Walking && focused) {
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && focused) {
             if(terrain->getTile(tileX, tileY-1, "mid") == 0) {
                 tileY = tileY - 1;
-                moving = true;
+                state = Walking;
             }
-            direction = "up";
-            network->updatePlayerLocation(tileX, tileY, direction);
-        }
-    }
-    else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Down) && focused) {
-        if(!moving) {
+            
+            direction = N;
+            network->updatePlayerLocation(tileX, tileY, "up");
+        } else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
             if(terrain->getTile(tileX, tileY+1, "mid") == 0) {
                 tileY = tileY + 1;
-                moving = true;
+                state = Walking;
             }
-            direction = "down";
-            network->updatePlayerLocation(tileX, tileY, direction);
-        }
-    }
-    else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && focused) {
-        if(!moving) {
+            
+            direction = S;
+            network->updatePlayerLocation(tileX, tileY, "down");
+            
+        } else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
             if(terrain->getTile(tileX-1, tileY, "mid") == 0) {
                 tileX = tileX - 1;
-                moving = true;
+                state = Walking;
             }
-            direction = "left";
-            network->updatePlayerLocation(tileX, tileY, direction);
-        }
-    }
-    else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && focused) {
-        if(!moving) {
+            
+            direction = W;
+            network->updatePlayerLocation(tileX, tileY, "down");
+            
+        } else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
             if(terrain->getTile(tileX+1, tileY, "mid") == 0) {
                 tileX = tileX + 1;
-                moving = true;
+                state = Walking;
             }
-            direction = "right";
-            network->updatePlayerLocation(tileX, tileY, direction);
+            
+            direction = E;
+            network->updatePlayerLocation(tileX, tileY, "right");
+            
         }
     }
     
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::Z) && focused) {
     	if(fireTime <= 0.00000001) {
     		fireTime = 0.5;
-    		network->emitProjectile(x, y, direction);
+
+            std::string dir;
+            if(direction == N) {
+                dir = "up";
+            } else if(direction == E) {
+                dir = "right";
+            } else if(direction == S) {
+                dir = "down";
+            } else if(direction == W) {
+                dir = "left";
+            }
+
+    		network->emitProjectile(x, y, dir);
     	}
     }
 
@@ -135,32 +183,21 @@ void Player::update(float elapsedTime) {
         fireTime = fireTime - elapsedTime;
     }
 
-    if(!moving && onTile) {
+    if(state != Walking && onTile) {
         x = tileX * 16;
         y = tileY * 16;
     }
 
     // set animation positions
-    for(i_animations iterator = animations.begin(); iterator != animations.end(); iterator++) {
-        iterator->second->x = x;
-        iterator->second->y = y;
+    for(auto row : animations) {
+        for(auto col : row) {
+            col->x = x;
+            col->y = y;
+        }
     }
 
 }
 
 void Player::draw(sf::RenderWindow *app) {
-
-    if(direction == "up") {
-        animations["up"]->draw(app);
-    }
-    else if(direction == "down" ) {
-        animations["down"]->draw(app);
-    }
-    else if(direction == "left") {
-        animations["left"]->draw(app);
-    }
-    else if(direction == "right") {
-        animations["right"]->draw(app);
-    }
-
+    animations[state][direction]->draw(app);
 }
