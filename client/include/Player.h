@@ -29,6 +29,8 @@ class Player {
     
         Direction direction;
         State state;
+        
+        float fireTime = 0.0;
 
         Terrain *terrain; // we should figure out a better way to handle this. singletons in cpp are dumb.
         Network *network;

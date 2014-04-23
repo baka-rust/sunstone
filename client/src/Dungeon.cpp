@@ -35,7 +35,6 @@ void Dungeon::create(){
         lastRandomNumber++;
         n = createAttempt();
     }
-    printGrid();
 }
 
 int Dungeon::createAttempt() {

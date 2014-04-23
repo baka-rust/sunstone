@@ -25,7 +25,16 @@ void Network::update(float elapsedTime) {
     for(i_networkPlayers iterator = networkPlayers.begin(); iterator != networkPlayers.end(); iterator++) {
         iterator->second->update(elapsedTime);
     }
+    
+    for(i_projectiles iterator = projectiles.begin(); iterator != projectiles.end(); iterator++) {
+        iterator->second->update(elapsedTime);
+    }
 
+
+    for(i_networkMonsters iterator = networkMonsters.begin(); iterator != networkMonsters.end(); iterator++) {
+        iterator->second->update(elapsedTime);
+    }
+    
     // join server after grabbing terrain
     if(requestedPlayers == false && gotSeed == true) {
         std::stringstream data;
@@ -61,17 +70,27 @@ void Network::update(float elapsedTime) {
 
             if(receivedArray[0] == "1") {
                 // join
-                // 1,{name},{x},{y},{direction},
+                // 1,{name},{x},{y},{direction},{type},
                 std::istringstream convertX(receivedArray[2]);
                 std::stringstream convertY(receivedArray[3]);
                 int x;
                 int y;
                 convertX >> x;
                 convertY >> y;
-                if(networkPlayers.find(receivedArray[1]) == networkPlayers.end()) {
-                    networkPlayers[receivedArray[1]] = new NetworkedPlayer(x, y, receivedArray[4]);
-                    std::cout << "added new player " << receivedArray[1] << " at " << x << ", " << y << " facing " << receivedArray[4] << std::endl;
+                if(receivedArray[5] == "0") {
+                    // player
+                    if(networkPlayers.find(receivedArray[1]) == networkPlayers.end()) {
+                        networkPlayers[receivedArray[1]] = new NetworkedPlayer(x, y, receivedArray[4]);
+                        std::cout << "added new player " << receivedArray[1] << " at " << x << ", " << y << " facing " << receivedArray[4] << std::endl;
+                    }
                 }
+                else if(receivedArray[5] == "1") {
+                    // monster
+                    if(networkMonsters.find(receivedArray[1]) == networkMonsters.end()) {
+                        networkMonsters[receivedArray[1]] = new NetworkedMonster(x, y, receivedArray[4], 1); // TODO using temporary type 1
+                        std::cout << "added new monster " << receivedArray[1] << " at " << x << ", " << y << " facing " << receivedArray[4] << std::endl;
+                    }
+                }   
             }
 
             else if(receivedArray[0] == "2") {
@@ -101,6 +120,28 @@ void Network::update(float elapsedTime) {
                 terrain->generateFromSeed(seed);
                 gotSeed = true;
             }
+            
+            else if(receivedArray[0] == "4") {
+                // attack
+                // 4,{username}-{projcID},{x},{y},{direction},
+                std::istringstream convertX(receivedArray[2]);
+                std::istringstream convertY(receivedArray[3]);
+                int x;
+                int y;
+                convertX >> x;
+                convertY >> y;
+                if(projectiles.find(receivedArray[1]) == projectiles.end()) {
+                    std::cout << "network fired" << std::endl;
+                    projectiles[receivedArray[1]] = new Projectile(x, y, receivedArray[4]);
+                }
+            }
+            
+            else if(receivedArray[0] == "5") {
+                std::cout << "culled projectile" << std::endl;
+                if(!(projectiles.find(receivedArray[1]) == projectiles.end())) {
+                    projectiles.erase(receivedArray[1]);
+                }
+            }
 
         }
     }
@@ -110,8 +151,31 @@ void Network::draw(sf::RenderWindow *app) {
     for(i_networkPlayers iterator = networkPlayers.begin(); iterator != networkPlayers.end(); iterator++) {
         iterator->second->draw(app);
     }
+
+    for(i_projectiles iterator = projectiles.begin(); iterator != projectiles.end(); iterator++) {
+        iterator->second->draw(app);
+    }
+
+    for(i_networkMonsters iterator = networkMonsters.begin(); iterator != networkMonsters.end(); iterator++) {
+        iterator->second->draw(app);
+    }
 }
 
+void Network::emitProjectile(int pureX, int pureY, std::string direction) {
+
+    std::stringstream data;
+    data << playerID << "-" << projCount;
+
+    projectiles[std::string(data.str().c_str())] = new Projectile(pureX, pureY, direction);
+    
+    data.str("");
+    
+    // 4,{username}-{projcID},{x},{y},{direction},
+    data << "4," << playerID << "-" << projCount << "," << pureX << "," << pureY << "," << direction << ",";
+    socket.send(data.str().c_str(), data.str().length(), serverAddress, serverPort);
+
+    projCount++;
+}
 
 void Network::updatePlayerLocation(int x, int y, std::string direction) {
 

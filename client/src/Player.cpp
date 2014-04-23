@@ -159,6 +159,18 @@ void Player::update(float elapsedTime) {
         }
     }
     
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Z) && focused) {
+    	if(fireTime <= 0.00000001) {
+    		fireTime = 0.5;
+    		network->emitProjectile(x, y, direction);
+    	}
+    }
+
+    if(fireTime > 0.0)
+    {
+        fireTime = fireTime - elapsedTime;
+    }
+
     if(state != Walking && onTile) {
         x = tileX * 16;
         y = tileY * 16;

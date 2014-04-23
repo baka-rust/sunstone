@@ -1,37 +1,29 @@
-#include "NetworkedPlayer.h"
+#include "NetworkedMonster.h"
 
 #include <iostream>
 
-NetworkedPlayer::NetworkedPlayer(int xPos, int yPos, std::string dir) {
+NetworkedMonster::NetworkedMonster(int xPos, int yPos, std::string dir, int type) {
 
-    tileX = xPos;
-    tileY = yPos;
-
-    x = tileX * 16;
-    y = tileY * 16;
-
-    direction = dir;
-
-    //animations["up"] = new AnimationSequence("resources/player/playerTest", 2, .25);
-    //animations["down"] = new AnimationSequence("resources/player/playerTest", 2, .25);
-    //animations["left"] = new AnimationSequence("resources/player/playerTest", 2, .25);
-    //animations["right"] = new AnimationSequence("resources/player/playerTest", 2, .25);
-    
-    std::string walkResource = "resources/player/walk";
-    int walkFrames = 8;
-    float walkSpeed = 0.02;
-    
-	animations["up"] = new AnimationSequence(walkResource, walkFrames, walkSpeed);
-	animations["down"] = new AnimationSequence(walkResource, walkFrames, walkSpeed);
-	animations["left"] = new AnimationSequence(walkResource, walkFrames, walkSpeed);
-	animations["right"] = new AnimationSequence(walkResource, walkFrames, walkSpeed);
+	tileX = xPos;
+	tileY = yPos;
+	
+	x = tileX * 16;
+	y = tileY * 16;
+	
+	direction = dir;
+	
+    // TODO change on integration to use correct anims
+    animations["up"] = new AnimationSequence("resources/player/walk", 6, .25);
+    animations["down"] = new AnimationSequence("resources/player/walk", 6, .25);
+    animations["left"] = new AnimationSequence("resources/player/walk", 6, .25);
+    animations["right"] = new AnimationSequence("resources/player/walk", 6, .25);
 
 }
 
-void NetworkedPlayer::update(float elapsedTime) {
+void NetworkedMonster::update(float elapsedTime) {
 
-bool moving = false;
-
+	bool moving = false;
+	
     if(direction == "up") {
         if(y <= (tileY * 16)) {
             onTile = true;
@@ -90,19 +82,19 @@ bool moving = false;
 
 }
 
-void NetworkedPlayer::draw(sf::RenderWindow *app) {
-
+void NetworkedMonster::draw(sf::RenderWindow *app) {
     if(direction == "up") {
         animations["up"]->draw(app);
     }
     else if(direction == "down" ) {
         animations["down"]->draw(app);
+        std::cout << animations["down"]->frameCount << std::endl;
     }
     else if(direction == "left") {
         animations["left"]->draw(app);
     }
     else if(direction == "right") {
         animations["right"]->draw(app);
-    }
+    }	
 
 }

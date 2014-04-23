@@ -7,19 +7,22 @@ Mobs are treated by the client as differet "types" of players,
 types are also classes and the like (for drawing)
 
 Join:
-	Client:	1,{username},{type},
-	Server:	1,{username},{type},{x},{y},
+	Client:	1,{name},{x},{y},{direction},{type},
+	Server:	1,{name},{x},{y},{direction},{type},
 
 Movement Update:
-	Client: 2,{username},{x},{y},
-	Server: 2,{username},{x},{y},
+	Client: 2,{name},{x},{y},{direction},
+	Server: 2,{name},{x},{y},{direction},
 	
 Map Request/Report:
 	Client: 3,
 	Server: 3,{seed},
 	(maps assumed to be 128x128)
 
-Attack: - (assuming can only attack 1 square, subject to change)
-	Client: 4,{username},{direction},
-	Server: 4,{username},{direction},
+Attack:
+	Client: 4,{username}-{projcID},{x},{y},{direction},
+	Server: 4,{username}-{projcID},{x},{y},{direction},
 
+Cull Projectile:
+	Client: N/A
+	Server: 5,{username}-{projcID},
