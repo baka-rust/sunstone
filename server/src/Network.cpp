@@ -1,15 +1,23 @@
 #include "Network.h"
+#include <SFML/Graphics.hpp>
 
-Network::Network() {
+Network::Network(){
 
     socket.setBlocking(false);
     socket.bind(port);
 
     srand(time(NULL));
     serverSeed = rand() % 9999;
+    
+    dungeon = new Dungeon(128, 128, 6, 8, serverSeed);
+    dungeon->create();
 
     std::cout << "current seed " << serverSeed << std::endl;
 
+    std::vector< sf::Vector2i > monsterCoords = dungeon->getMonsters();
+    for(int i = 0; i < monsterCoords.size(); i++) {
+        monsters[std::to_string(i)] = new Monster(monsterCoords[i].x, monsterCoords[i].y, "up");
+    }
 }
 
 Network::~Network() {
@@ -17,8 +25,6 @@ Network::~Network() {
 }
 
 void Network::run() {
-
-    monsters["test"] = new Monster(66, 64, "down"); // TODO remove
 
     while(true) {
         if(socket.receive(data, 2048, received, recvAddress, recvPort) != sf::Socket::NotReady) {

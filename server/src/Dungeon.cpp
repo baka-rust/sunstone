@@ -2,6 +2,7 @@
 
 #include <queue>
 #include <thread>
+#include <SFML/Graphics.hpp>
 
 #include "TileTypes.h"
 
@@ -11,7 +12,7 @@ TileType decorationGrid2[6][6];
 void dRooms1() {
     for(int i = 0; i < 6; i++) {
         for(int j = 0; j < 6; j++) {
-            if(rand()%100 < 20) {
+            if(rand()%100 < 10) {
                 decorationGrid1[i][j] = spawner;
             }
             else {
@@ -23,7 +24,7 @@ void dRooms1() {
 void dRooms2() {
     for(int i = 0; i < 6; i++) {
         for(int j = 0; j < 6; j++) {
-            if(rand()%100 < 20) {
+            if(rand()%100 < 10) {
                 decorationGrid2[i][j] = spawner;
             }
             else {
@@ -31,6 +32,10 @@ void dRooms2() {
             }
         }
     }
+}
+
+std::vector< sf::Vector2i > Dungeon::getMonsters() {
+    return monsters;
 }
 
 Dungeon::Dungeon(int width, int height, int minRoom, int maxRoom, int seed) {
@@ -118,7 +123,17 @@ int Dungeon::createAttempt() {
                 }
             }
         }
-//        decorateRoom(rooms[i]);
+    }
+    
+    printGrid();
+    
+    for(int x = 0; x < width(); x++) {
+        for(int y = 0; y < height(); y++) {
+            if(grid[x][y] == spawner) {
+                grid[x][y] = ground;
+                monsters.push_back(sf::Vector2i(x, y));
+            }
+        }
     }
     
     carveSquare((int) grid.size() / 2, (int)grid[0].size() / 2, 8, 8, ground);       // overwrite the starting and final rooms

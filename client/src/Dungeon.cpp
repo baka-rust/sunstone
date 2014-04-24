@@ -1,19 +1,25 @@
 #include "Dungeon.h"
 
 #include <queue>
+#include <thread>
+#include <SFML/Graphics.hpp>
 
-#include "Tilemap/TileTypes.h"
+#include "TileTypes.h"
+
+std::vector< sf::Vector2i > Dungeon::getMonsters() {
+    return monsters;
+}
 
 Dungeon::Dungeon(int width, int height, int minRoom, int maxRoom, int seed) {
     minRoomSize = minRoom;
     maxRoomSize = maxRoom;
-
+    
     lastRandomNumber = seed;
-
+    
     rooms.reserve(128);
     doors.reserve(128);
     roomCount = 0;
-
+    
     grid = std::vector< std::vector<TileType> >(width);
     for(int i = 0; i < width; i++) {
         grid[i] = std::vector<TileType>(height);
@@ -48,7 +54,7 @@ int Dungeon::createAttempt() {
     carveSquare((int) grid.size() / 2, (int) grid[0].size() / 2, 8, 8, ground);       // carve original room
     rooms[0] = Room((int) grid.size() / 2, (int) grid[0].size() / 2, 8, 8);         // and add it to list of rooms
     roomCount++;
-
+    
     for(int i = 0; i < 10; i++) {            // add 10 rooms along a single path (this is the main path)
         int j = 0;
         while(!addBranch(rooms[i])) {
@@ -56,10 +62,10 @@ int Dungeon::createAttempt() {
             if(j > 100) {
                 break;
             }
-        } 
+        }
     }
     int finalRoom = roomCount - 1;
-
+    
     for(int branch = 0; branch < 3; branch++){
         for(int i = 0; i < 10 + branch * 5; i++) {            // add a branch off of each room on the main path
             int j = 0;
@@ -70,10 +76,6 @@ int Dungeon::createAttempt() {
                 }
             }
         }
-    }
-    
-    for(int i = 0; i < roomCount; i++){
-//        decorateRoom(rooms[i]);
     }
     
     carveSquare((int) grid.size() / 2, (int)grid[0].size() / 2, 8, 8, ground);       // overwrite the starting and final rooms
@@ -115,7 +117,7 @@ std::vector< std::vector<int> > Dungeon::getPathMap(int x, int y) {
     int width = room.width() + 2;
     int height = room.height() + 2;
     std::vector< std::vector<int> > r(width);
-
+    
     for(int i = 0; i < width - 1; i++) {
         r[i] = std::vector<int>(height);
         for(int j = 0; j < width; j++) {
@@ -129,7 +131,7 @@ std::vector< std::vector<int> > Dungeon::getPathMap(int x, int y) {
     r[x - room.x()][y - room.y()] = 0;
     queue.push(x - room.x());
     queue.push(y - room.y());
-
+    
     int item_x;
     int item_y;
     while(queue.size() != 0) {
@@ -233,32 +235,32 @@ void Dungeon::carveSquare(int x, int y, int width, int height, TileType value) {
 void Dungeon::decorateRoom(Room room) {
     int x;
     int y;
-    if(randInt(0,3) == 0) {
-        x = randInt(room.x() + 1, room.endX() - 1);
-        y = randInt(room.y() + 1, room.endY() - 1);
-        grid[x][y] = healthpack; // TODO somethignrater
-    }
+    //    if(randInt(0,3) == 0) {
+    //        x = randInt(room.x() + 1, room.endX() - 1);
+    //        y = randInt(room.y() + 1, room.endY() - 1);
+    //        grid[x][y] = healthpack; // TODO somethignrater
+    //    }
     
+    //    int j = 0;
+    //    int n = randInt(0,room.width()*room.height()/6);
+    //    x = randInt(room.x()+1, room.endX()-1);
+    //    y = randInt(room.y()+1, room.endY()-1);
+    //    for(int i = 0; i < n; i++) {
+    //        while(grid[x][y] != 0) {
+    //            j++;
+    //            x = randInt(room.x() + 1, room.endX() - 1);
+    //            y = randInt(room.y() + 1, room.endY() - 1);
+    //            if(j > 256) {
+    //                return;
+    //            }
+    //        }
+    //        grid[x][y] = wall;
+    //    }
+    
+    int n = randInt(3, 6);
+    x = randInt(room.x()+1, room.endX()-1);
+    y = randInt(room.y()+1, room.endY()-1);
     int j = 0;
-    int n = randInt(0,room.width()*room.height()/6);
-    x = randInt(room.x()+1, room.endX()-1);
-    y = randInt(room.y()+1, room.endY()-1);
-    for(int i = 0; i < n; i++) {
-        while(grid[x][y] != 0) {
-            j++;
-            x = randInt(room.x() + 1, room.endX() - 1);
-            y = randInt(room.y() + 1, room.endY() - 1);
-            if(j > 256) {
-                return;
-            }
-        }
-        grid[x][y] = wall;
-    }
-    
-    n = randInt(3, 6);
-    x = randInt(room.x()+1, room.endX()-1);
-    y = randInt(room.y()+1, room.endY()-1);
-    j = 0;
     for(int i = 0; i < n; i++) {
         while(grid[x][y] != 0) {
             j++;
@@ -270,7 +272,7 @@ void Dungeon::decorateRoom(Room room) {
         }
         grid[x][y] = spawner;
     }
-
+    
 }
 
 bool Dungeon::addBranch(Room room) { // try to add a random room to the input
@@ -293,17 +295,17 @@ bool Dungeon::addBranch(Room room) { // try to add a random room to the input
                     return false;
                 }
             }
-
+            
             carveSquare(x, room.y() - height - 2, width, height, ground);    // carve both
 			carveSquare(n, room.y() - 2, 2, 2, door);
-
+            
             doors[roomCount-1].x = n;
             doors[roomCount-1].y = room.y() - 2;
-
+            
             rooms[roomCount] = Room(x, room.y() - height - 2, width, height);
             rooms[roomCount].addConnectedRoom(room, doors[roomCount-1]);
             room.addConnectedRoom(rooms[roomCount], doors[roomCount-1]);
-
+            
             roomCount++;
             return true;
         }
@@ -318,17 +320,17 @@ bool Dungeon::addBranch(Room room) { // try to add a random room to the input
             while(n < room.y() || n + 1 >= room.endY()) {
                 n = randInt(y, y + height - 1);
             }
-
+            
             carveSquare(room.x() + room.width() + 2, y, width, height, ground);  // carve both
             carveSquare(room.x() + room.width(), n, 2, 2, ground);
-
+            
             doors[roomCount-1].x = room.x() + room.width();
             doors[roomCount-1].y = n;
-
+            
             rooms[roomCount] = Room(room.x() + room.width() + 2, y, width, height);
             rooms[roomCount].addConnectedRoom(room, doors[roomCount-1]);
             room.addConnectedRoom(rooms[roomCount], doors[roomCount-1]);
-
+            
             roomCount++;
             return true;
         }
@@ -347,14 +349,14 @@ bool Dungeon::addBranch(Room room) { // try to add a random room to the input
             }
             carveSquare(x, room.y() + room.height() + 2, width, height, ground); // carve both
             carveSquare(n, room.y() + room.height(), 2, 2, door);
-
+            
             doors[roomCount-1].x = n;
             doors[roomCount-1].y = room.y() + room.height();
-
+            
             rooms[roomCount] = Room(x, room.y() + room.height() + 2, width, height);
             rooms[roomCount].addConnectedRoom(room, doors[roomCount-1]);
             room.addConnectedRoom(rooms[roomCount], doors[roomCount-1]);
-
+            
             roomCount++;
             return true;
         }
@@ -371,14 +373,14 @@ bool Dungeon::addBranch(Room room) { // try to add a random room to the input
             }
             carveSquare(room.x() - width - 2, y, width, height, ground); // carve both
             carveSquare(room.x() - 2, n, 2, 2, door);
-
+            
             doors[roomCount-1].x = room.x() - 2;
             doors[roomCount-1].y = n;
-
+            
             rooms[roomCount] = Room(room.x() - width - 2, y, width, height);
             rooms[roomCount].addConnectedRoom(room, doors[roomCount-1]);
             room.addConnectedRoom(rooms[roomCount], doors[roomCount-1]);
-
+            
             roomCount++;
             return true;
         }

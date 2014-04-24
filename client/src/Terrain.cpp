@@ -25,7 +25,7 @@ Terrain::Terrain() {
 }
 
 void Terrain::generateFromSeed(int seed) {
-    dungeon = new Dungeon(height, width, 6, 10, seed);
+    dungeon = new Dungeon(width, height, 6, 8, seed);
     dungeon->create();
     
     buildTilemaps(dungeon->getTiles());

@@ -88,7 +88,6 @@ void Network::update(float elapsedTime) {
                     // monster
                     if(networkMonsters.find(receivedArray[1]) == networkMonsters.end()) {
                         networkMonsters[receivedArray[1]] = new NetworkedMonster(x, y, receivedArray[4], 1); // TODO using temporary type 1
-                        std::cout << "added new monster " << receivedArray[1] << " at " << x << ", " << y << " facing " << receivedArray[4] << std::endl;
                     }
                 }   
             }

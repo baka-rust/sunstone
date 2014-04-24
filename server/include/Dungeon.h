@@ -7,6 +7,7 @@
 #include <time.h>
 #include <stdlib.h>
 #include <thread>
+#include <SFML/Graphics.hpp>
 
 #include "Room.h"
 #include "TileTypes.h"
@@ -44,6 +45,7 @@ public:
     bool isFloor(int x, int y);
     bool isWall(int x, int y);
     std::vector< std::vector<TileType> > getTiles();
+    std::vector< sf::Vector2i > getMonsters();
     void printGrid();
 
     
@@ -54,6 +56,7 @@ private:
     std::vector<Door> doors;
     std::vector< std::vector<TileType> > grid;
 
+    std::vector< sf::Vector2i > monsters;
     
     int roomCount;
     int minRoomSize;
