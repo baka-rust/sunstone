@@ -5,6 +5,8 @@
 #include <vector>
 #include <map>
 
+#include "Player/Directions.h"
+#include "Player/States.h"
 #include "AnimationSequence.h"
 #include "Terrain.h"
 
@@ -15,19 +17,18 @@ class NetworkedPlayer {
         float x, y;
         int tileX, tileY;
         int speed = 40;
-        std::string direction;
         bool onTile = true;
 
-        sf::Sprite spriteLeft, spriteRight, spriteUp, spriteDown;
+        Direction direction;
+        State state;
 
         NetworkedPlayer(int xPos, int yPos, std::string dir);
+        
         void update(float elapsedTime);
         void draw(sf::RenderWindow *app);
 
     private:
-
-        std::map<std::string, AnimationSequence*> animations;
-        typedef std::map<std::string, AnimationSequence*>::iterator i_animations;
+        std::vector<std::vector<AnimationSequence*> > animations = std::vector<std::vector<AnimationSequence*>>(4);
 
 };
 

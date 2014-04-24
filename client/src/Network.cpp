@@ -105,7 +105,18 @@ void Network::update(float elapsedTime) {
                     std::cout << "updated " << receivedArray[1] << " at " << x << ", " << y << " facing " << receivedArray[4] << std::endl;
                     networkPlayers[receivedArray[1]]->tileX = x;
                     networkPlayers[receivedArray[1]]->tileY = y;
-                    networkPlayers[receivedArray[1]]->direction = receivedArray[4];
+
+                    Direction dir;
+                    if (receivedArray[4] == "up") {
+                        dir = N;
+                    } else if (receivedArray[4] == "down") {
+                        dir = S;
+                    } else if (receivedArray[4] == "left") {
+                        dir = W;
+                    } else {
+                        dir = E;
+                    }
+                    networkPlayers[receivedArray[1]]->direction = dir;
                 }
             }
 
