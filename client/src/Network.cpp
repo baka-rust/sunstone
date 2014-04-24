@@ -68,6 +68,8 @@ void Network::update(float elapsedTime) {
 
         if(receivedArray.size() > 0) {
 
+            std::cout << "Received: " << receivedArray[0] << std::endl;
+
             if(receivedArray[0] == "1") {
                 // join
                 // 1,{name},{x},{y},{direction},{type},

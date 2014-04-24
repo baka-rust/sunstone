@@ -58,11 +58,12 @@ void Network::run() {
 
                         // tell other players about new one
                         sendData.str(std::string()); // clear it
-                        sendData << "1," << receivedArray[1] << "," << x << "," << y << "," << receivedArray[4] << ",";
+                        sendData << "1," << receivedArray[1] << "," << x << "," << y << "," << receivedArray[4] << ",0,";
                         for(i_clients iterator = clients.begin(); iterator != clients.end(); iterator++) {
                             Client *client = iterator->second;
                             if(client->name != receivedArray[1]) {
                                 socket.send(sendData.str().c_str(), sendData.str().length(), client->ip, client->port);
+                                std::cout << "notifying " << client->name << " about new player" << std::endl;
                             }
                         }
 
@@ -121,6 +122,22 @@ void Network::run() {
                     sendData.str(std::string());
                     sendData << "3," << serverSeed << ",";
                     socket.send(sendData.str().c_str(), sendData.str().length(), recvAddress, recvPort);
+                }
+
+                else if(receivedArray[0] == "4") {
+                    // particle
+                    
+                    // propagate it. don't even care about detection.
+                    // 4,{username}-{projcID},{x},{y},{direction},
+                    sendData.str(std::string()); // clear it
+                    sendData << "4," << receivedArray[1] << "," << receivedArray[2] << "," << receivedArray[3] << "," << receivedArray[4] << ",";
+                    for(i_clients iterator = clients.begin(); iterator != clients.end(); iterator++) {
+                        Client *client = iterator->second;
+                        if(client->name != receivedArray[1]) {
+                            socket.send(sendData.str().c_str(), sendData.str().length(), client->ip, client->port);
+                            std::cout << "notifying " << client->name << " about new projectile" << std::endl;
+                        }
+                    }
                 }
 
             }
